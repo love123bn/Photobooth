@@ -2,568 +2,891 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🌸 PhotoBooth Siêu Cute - Ghép Ảnh Dọc</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🌸PhotoBooth Cute</title>
     <style>
+        /* ============================================================
+           CSS RESET & ROOT VARIABLES
+           ============================================================ */
         :root {
-            --bg: #fce4ec;
-            --primary: #f8bbd0;
-            --primary-dark: #f06292;
-            --accent: #ec407a;
-            --white: #fff;
-            --text: #4a2c3e;
-            --shadow: 0 8px 32px rgba(236, 64, 122, 0.2);
-            --shadow-lg: 0 16px 48px rgba(236, 64, 122, 0.3);
-            --radius: 28px;
-            --radius-sm: 18px;
-            --transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            --bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --pink-50: #fff0f5;
+            --pink-100: #ffe0ec;
+            --pink-200: #ffc2d9;
+            --pink-300: #ff9ebb;
+            --pink-400: #ff7aa0;
+            --pink-500: #ff5c8a;
+            --pink-600: #ff3d6f;
+            --pink-700: #e8345e;
+            --pink-800: #c72b4f;
+            --pink-900: #a62040;
+            --white: #ffffff;
+            --white-pink: #fff5f8;
+            --soft-cream: #fffbfc;
+            --shadow-sm: 0 2px 8px rgba(255, 92, 138, 0.15);
+            --shadow-md: 0 4px 16px rgba(255, 92, 138, 0.22);
+            --shadow-lg: 0 8px 32px rgba(255, 92, 138, 0.28);
+            --shadow-btn: 0 6px 24px rgba(255, 61, 111, 0.35);
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-full: 9999px;
+            --font-main: 'Segoe UI', 'SF Pro Display', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans', sans-serif;
+            --font-cute: 'Segoe UI', 'Comic Sans MS', 'Kawaii', cursive, sans-serif;
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            --transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --safe-bottom: env(safe-area-inset-bottom, 12px);
         }
 
-        * {
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html,
         body {
-            font-family: 'Segoe UI', 'SF Pro Display', 'PingFang SC', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 25%, #f3e5f5 50%, #e8eaf6 75%, #fce4ec 100%);
-            background-size: 400% 400%;
-            animation: bgShift 20s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-overflow-scrolling: none;
+            overscroll-behavior: none;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
+            -webkit-text-size-adjust: 100%;
+            font-family: var(--font-main);
+            background: var(--pink-50);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
-        @keyframes bgShift {
+        /* ============================================================
+           MAIN CONTAINER - FULL SCREEN MOBILE
+           ============================================================ */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(180deg, #fff0f5 0%, #ffe4ec 30%, #ffd6e8 60%, #ffc8dd 100%);
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 60px rgba(255, 92, 138, 0.1);
+        }
+
+        /* ============================================================
+           ANIMATED BACKGROUND DECORATIONS
+           ============================================================ */
+        .bg-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.35;
+        }
+        .bg-heart-1 {
+            top: 8%;
+            left: 5%;
+            font-size: 42px;
+            animation: floatHeart1 7s ease-in-out infinite;
+        }
+        .bg-heart-2 {
+            top: 15%;
+            right: 8%;
+            font-size: 30px;
+            animation: floatHeart2 8s ease-in-out infinite 1.5s;
+        }
+        .bg-heart-3 {
+            bottom: 20%;
+            left: 10%;
+            font-size: 36px;
+            animation: floatHeart3 9s ease-in-out infinite 3s;
+        }
+        .bg-heart-4 {
+            bottom: 30%;
+            right: 6%;
+            font-size: 28px;
+            animation: floatHeart1 7.5s ease-in-out infinite 4s;
+        }
+        .bg-star-1 {
+            top: 25%;
+            left: 12%;
+            font-size: 20px;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        .bg-star-2 {
+            top: 40%;
+            right: 15%;
+            font-size: 18px;
+            animation: twinkle 3.5s ease-in-out infinite 1s;
+        }
+        .bg-sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--pink-300);
+            animation: sparkleFloat 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-sparkle:nth-child(7) {
+            top: 12%;
+            left: 30%;
+            animation-delay: 0s;
+        }
+        .bg-sparkle:nth-child(8) {
+            top: 35%;
+            left: 70%;
+            animation-delay: 1.5s;
+            width: 4px;
+            height: 4px;
+        }
+        .bg-sparkle:nth-child(9) {
+            top: 55%;
+            left: 20%;
+            animation-delay: 2.8s;
+            width: 5px;
+            height: 5px;
+        }
+        .bg-sparkle:nth-child(10) {
+            top: 65%;
+            left: 75%;
+            animation-delay: 0.7s;
+            width: 3px;
+            height: 3px;
+        }
+
+        @keyframes floatHeart1 {
             0%,
             100% {
-                background-position: 0% 50%;
+                transform: translateY(0) rotate(0deg) scale(1);
             }
             25% {
-                background-position: 100% 0%;
+                transform: translateY(-18px) rotate(5deg) scale(1.1);
             }
             50% {
-                background-position: 100% 100%;
+                transform: translateY(-8px) rotate(-3deg) scale(0.95);
             }
             75% {
-                background-position: 0% 100%;
+                transform: translateY(-22px) rotate(4deg) scale(1.08);
+            }
+        }
+        @keyframes floatHeart2 {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            30% {
+                transform: translateY(-14px) rotate(-6deg) scale(1.12);
+            }
+            60% {
+                transform: translateY(-20px) rotate(3deg) scale(0.9);
+            }
+            85% {
+                transform: translateY(-5px) rotate(-2deg) scale(1.05);
+            }
+        }
+        @keyframes floatHeart3 {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            20% {
+                transform: translateY(-16px) rotate(7deg) scale(1.1);
+            }
+            45% {
+                transform: translateY(-25px) rotate(-4deg) scale(0.88);
+            }
+            70% {
+                transform: translateY(-10px) rotate(2deg) scale(1.06);
+            }
+        }
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.6);
+            }
+        }
+        @keyframes sparkleFloat {
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-15px) scale(2);
             }
         }
 
-        /* Floating sparkles background */
-        .sparkles-container {
-            position: fixed;
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .app-header {
+            flex-shrink: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 20px 10px;
+            gap: 10px;
+            background: transparent;
+            position: relative;
+        }
+        .app-logo {
+            font-size: 26px;
+            animation: logoBounce 2s ease-in-out infinite;
+        }
+        @keyframes logoBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-6px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+        .app-title {
+            font-family: var(--font-cute);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--pink-700);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(255, 92, 138, 0.2);
+        }
+        .app-title .accent {
+            color: var(--pink-500);
+        }
+
+        /* ============================================================
+           CONTENT AREA - SWITCHABLE TABS
+           ============================================================ */
+        .content-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .tab-content {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .sparkle {
-            position: absolute;
-            font-size: 20px;
-            animation: floatUp linear infinite;
-            opacity: 0;
-            pointer-events: none;
-        }
-        @keyframes floatUp {
-            0% {
-                transform: translateY(110vh) scale(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            30% {
-                transform: translateY(70vh) scale(1.2) rotate(90deg);
-                opacity: 0.8;
-            }
-            70% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.1;
-            }
-            100% {
-                transform: translateY(-10vh) scale(0.3) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Main App Container */
-        .app-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 430px;
-            background: rgba(255, 255, 255, 0.55);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: 32px;
-            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.6);
-            padding: 16px 14px 20px;
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 20px;
+        }
+        .tab-content.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+            z-index: 2;
+        }
+
+        /* ============================================================
+           CAMERA TAB - MAIN PHOTOBOOTH VIEW
+           ============================================================ */
+        #tab-camera {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             gap: 10px;
-            transition: var(--transition);
-            border: 2px solid rgba(255, 255, 255, 0.7);
-            animation: appearIn 0.6s var(--bounce);
+            padding: 6px 12px;
         }
-        @keyframes appearIn {
-            0% {
-                transform: scale(0.85) translateY(40px);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Header */
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4px 8px;
-            gap: 8px;
-        }
-        .app-title {
-            font-size: 1.3em;
-            font-weight: 800;
-            color: var(--text);
-            letter-spacing: -0.3px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #ec407a, #ab47bc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .app-title .icon-title {
-            font-size: 1.5em;
-            animation: bounceIcon 1.5s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes bounceIcon {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-12px);
-            }
-            50% {
-                transform: translateY(0);
-            }
-            70% {
-                transform: translateY(-6px);
-            }
-        }
-        .badge-count {
-            background: linear-gradient(135deg, #ff6b9d, #c94b8c);
-            color: #fff;
-            font-size: 0.7em;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: 0 3px 12px rgba(236, 64, 122, 0.35);
-            animation: pulse-badge 2s ease-in-out infinite;
-        }
-        @keyframes pulse-badge {
-            0%,
-            100% {
-                box-shadow: 0 3px 12px rgba(236, 64, 122, 0.35);
-            }
-            50% {
-                box-shadow: 0 6px 24px rgba(236, 64, 122, 0.6);
-            }
-        }
-
-        /* Camera Preview Area */
-        .camera-wrapper {
+        .camera-viewport {
             position: relative;
             width: 100%;
+            max-width: 380px;
             aspect-ratio: 3/4;
             max-height: 55vh;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            background: #1a1a2e;
-            box-shadow: var(--shadow);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            transition: var(--transition);
+            background: #1a1a1a;
+            box-shadow: var(--shadow-lg);
+            flex-shrink: 0;
+            border: 4px solid var(--pink-200);
+            transition: all var(--transition-smooth);
+            animation: viewportGlow 3s ease-in-out infinite;
         }
-        .camera-wrapper.flash-effect {
-            animation: flashBang 0.5s ease-out;
-        }
-        @keyframes flashBang {
-            0% {
-                filter: brightness(3);
-                border-color: #fff;
-            }
+        @keyframes viewportGlow {
+            0%,
             100% {
-                filter: brightness(1);
-                border-color: rgba(255, 255, 255, 0.8);
+                box-shadow: var(--shadow-lg), 0 0 0 0 rgba(255, 92, 138, 0.3);
+            }
+            50% {
+                box-shadow: var(--shadow-lg), 0 0 0 12px rgba(255, 92, 138, 0);
             }
         }
-        .camera-wrapper.border-style-none {
-            border-width: 0;
+        .camera-viewport.mirror video {
+            transform: scaleX(-1);
         }
-        .camera-wrapper.border-style-white {
-            border: 6px solid #fff;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08), var(--shadow);
-        }
-        .camera-wrapper.border-style-pink {
-            border: 6px solid #f8bbd0;
-            box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.2), var(--shadow);
-        }
-        .camera-wrapper.border-style-purple {
-            border: 6px solid #ce93d8;
-            box-shadow: 0 0 0 3px rgba(171, 71, 188, 0.2), var(--shadow);
-        }
-        .camera-wrapper.border-style-gold {
-            border: 6px solid #ffd54f;
-            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25), var(--shadow);
-        }
-        .camera-wrapper.border-style-black {
-            border: 6px solid #333;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), var(--shadow);
-        }
-
-        #videoFeed {
+        .camera-viewport video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.3s ease;
+            transition: transform 0.15s ease;
         }
-        #videoFeed.mirror-mode {
-            transform: scaleX(-1);
-        }
-
-        /* Filter overlay */
-        .filter-overlay {
+        .camera-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 2;
-            border-radius: var(--radius);
-            transition: var(--transition);
+            z-index: 3;
+            border-radius: var(--radius-lg);
+            box-shadow: inset 0 0 60px rgba(255, 150, 180, 0.15);
         }
-        .filter-overlay.filter-vintage {
-            background: rgba(210, 160, 100, 0.25);
-            mix-blend-mode: overlay;
-        }
-        .filter-overlay.filter-sepia {
-            background: rgba(160, 100, 40, 0.35);
-            mix-blend-mode: multiply;
-        }
-        .filter-overlay.filter-warm {
-            background: rgba(255, 150, 80, 0.2);
-            mix-blend-mode: overlay;
-        }
-        .filter-overlay.filter-cool {
-            background: rgba(80, 140, 255, 0.2);
-            mix-blend-mode: overlay;
-        }
-
-        /* Countdown Overlay */
-        .countdown-overlay {
+        .photo-counter {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+            top: 14px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 8px 14px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--pink-700);
+            z-index: 5;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.5px;
+            transition: all var(--transition-fast);
+            animation: counterPulse 2s ease-in-out infinite;
         }
-        .countdown-overlay.active {
-            opacity: 1;
-        }
-        .countdown-number {
-            font-size: 7em;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 60px rgba(255, 255, 255, 0.9), 0 0 120px rgba(236, 64, 122, 0.7), 0 8px 30px rgba(0, 0, 0, 0.4);
-            animation: countPop 0.8s var(--bounce);
-        }
-        @keyframes countPop {
-            0% {
-                transform: scale(2.5);
-                opacity: 0;
+        @keyframes counterPulse {
+            0%,
+            100% {
+                transform: scale(1);
             }
-            60% {
-                transform: scale(0.9);
-                opacity: 1;
+            50% {
+                transform: scale(1.06);
+            }
+        }
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            border-radius: var(--radius-lg);
+            transition: opacity 0.08s ease-out;
+        }
+        .flash-overlay.active {
+            opacity: 1;
+            transition: opacity 0.05s ease-in;
+        }
+
+        /* Filter quick bar */
+        .filter-quick-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 4px 8px;
+            flex-shrink: 0;
+            z-index: 5;
+        }
+        .filter-chip {
+            padding: 7px 13px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid transparent;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pink-600);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        .filter-chip:hover {
+            background: rgba(255, 180, 200, 0.5);
+            transform: translateY(-1px);
+        }
+        .filter-chip.active {
+            background: var(--pink-500);
+            color: white;
+            border-color: var(--pink-600);
+            box-shadow: var(--shadow-md);
+            animation: chipSelect 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes chipSelect {
+            0% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(1.15);
             }
             100% {
                 transform: scale(1);
-                opacity: 1;
             }
         }
 
-        /* Photo slot indicator */
-        .photo-slots {
+        /* ============================================================
+           SHUTTER BUTTON - BIG CENTER BUTTON
+           ============================================================ */
+        .shutter-btn-wrapper {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 15;
             display: flex;
-            gap: 8px;
-            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            padding: 4px 0;
-            min-height: 36px;
+            justify-content: center;
+            padding: 6px 0;
         }
-        .slot-dot {
+        .shutter-btn-outer {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg,
+                    var(--pink-300), var(--pink-500), var(--pink-400),
+                    var(--pink-600), var(--pink-300));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: shutterRotate 6s linear infinite;
+            box-shadow: var(--shadow-btn);
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        @keyframes shutterRotate {
+            0% {
+                background: conic-gradient(from 0deg,
+                        var(--pink-300), var(--pink-500), var(--pink-400),
+                        var(--pink-600), var(--pink-300));
+            }
+            50% {
+                background: conic-gradient(from 180deg,
+                        var(--pink-300), var(--pink-500), var(--pink-400),
+                        var(--pink-600), var(--pink-300));
+            }
+            100% {
+                background: conic-gradient(from 360deg,
+                        var(--pink-300), var(--pink-500), var(--pink-400),
+                        var(--pink-600), var(--pink-300));
+            }
+        }
+        .shutter-btn-outer:active {
+            transform: scale(0.9);
+            box-shadow: 0 2px 10px rgba(255, 61, 111, 0.5);
+            animation: shutterRotate 2s linear infinite;
+        }
+        .shutter-btn-inner {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--pink-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            position: relative;
+            z-index: 2;
+        }
+        .shutter-btn-inner .icon-camera {
+            font-size: 28px;
+            color: var(--pink-500);
+            transition: all var(--transition-fast);
+        }
+        .shutter-btn-outer:active .shutter-btn-inner {
+            background: var(--pink-100);
+            border-color: var(--pink-400);
+        }
+        .shutter-btn-outer:active .icon-camera {
+            transform: scale(0.8);
+            color: var(--pink-700);
+        }
+        .shutter-ripple {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 92, 138, 0.5);
+            animation: rippleOut 2s ease-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .shutter-ripple:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+        .shutter-ripple:nth-child(3) {
+            animation-delay: 1.4s;
+        }
+        @keyframes rippleOut {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        /* Camera switch button */
+        .camera-switch-btn {
+            position: absolute;
+            bottom: 16px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid var(--pink-200);
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 6;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .camera-switch-btn:active {
+            background: var(--pink-100);
+            transform: rotate(180deg) scale(0.9);
+        }
+
+        /* ============================================================
+           GALLERY TAB
+           ============================================================ */
+        #tab-gallery {
+            padding: 10px 14px;
+            gap: 12px;
+        }
+        .gallery-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            padding: 4px 0;
+        }
+        .gallery-title {
+            font-family: var(--font-cute);
+            font-size: 20px;
+            color: var(--pink-700);
+            font-weight: 700;
+        }
+        .gallery-clear-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid var(--pink-200);
+            color: var(--pink-600);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all var(--transition-fast);
+        }
+        .gallery-clear-btn:active {
+            background: var(--pink-100);
+            transform: scale(0.95);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            overflow-y: auto;
+            flex: 1;
+            padding-bottom: 10px;
+        }
+        .gallery-item {
+            aspect-ratio: 3/4;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-smooth);
+            background: #eee;
+            border: 3px solid var(--pink-100);
+        }
+        .gallery-item:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-md);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #e0d5dc;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75em;
-            font-weight: 700;
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border: 2px solid transparent;
-        }
-        .slot-dot.filled {
-            background: linear-gradient(135deg, #f06292, #ec407a);
-            border-color: #fff;
-            box-shadow: 0 4px 16px rgba(236, 64, 122, 0.45);
-            animation: slotFillPop 0.5s var(--bounce);
-        }
-        @keyframes slotFillPop {
-            0% {
-                transform: scale(0.3);
-            }
-            60% {
-                transform: scale(1.25);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        .slot-dot.current {
-            border: 3px dashed #f06292;
-            animation: pulseCurrent 1.2s ease-in-out infinite;
-        }
-        @keyframes pulseCurrent {
-            0%,
-            100% {
-                border-color: #f06292;
-                box-shadow: 0 0 0 0 rgba(240, 98, 146, 0.4);
-            }
-            50% {
-                border-color: #ec407a;
-                box-shadow: 0 0 0 12px rgba(240, 98, 146, 0);
-            }
-        }
-
-        /* Controls Row */
-        .controls-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            padding: 4px 0;
-        }
-        .ctrl-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
             border: none;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             cursor: pointer;
-            font-size: 1.3em;
-            transition: var(--transition);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #4a2c3e;
-            position: relative;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
+            z-index: 3;
+            transition: all var(--transition-fast);
+            color: #e74c3c;
         }
-        .ctrl-btn:active {
-            transform: scale(0.88);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-            background: rgba(255, 255, 255, 0.95);
+        .gallery-item .delete-btn:active {
+            background: #ffe0e0;
+            transform: scale(0.85);
         }
-        .ctrl-btn.active-ctrl {
-            background: linear-gradient(135deg, #f06292, #ec407a);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(236, 64, 122, 0.4);
-            animation: gentlePulse 2s ease-in-out infinite;
+        .gallery-empty {
+            text-align: center;
+            color: var(--pink-400);
+            font-size: 15px;
+            padding: 40px 20px;
+            font-style: italic;
         }
-        @keyframes gentlePulse {
-            0%,
-            100% {
-                box-shadow: 0 6px 20px rgba(236, 64, 122, 0.4);
-            }
-            50% {
-                box-shadow: 0 10px 30px rgba(236, 64, 122, 0.65);
-            }
+        .gallery-download-all {
+            display: block;
+            margin: 8px auto;
+            padding: 10px 24px;
+            border-radius: var(--radius-full);
+            background: var(--pink-500);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0.5px;
         }
-        .ctrl-btn .tooltip-mini {
-            position: absolute;
-            bottom: -22px;
-            font-size: 0.6em;
-            white-space: nowrap;
-            background: #4a2c3e;
-            color: #fff;
-            padding: 3px 8px;
-            border-radius: 10px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-        .ctrl-btn:active .tooltip-mini,
-        .ctrl-btn:hover .tooltip-mini {
-            opacity: 1;
+        .gallery-download-all:active {
+            transform: scale(0.94);
+            background: var(--pink-700);
         }
 
-        /* Shutter Button */
-        .shutter-btn-wrapper {
+        /* ============================================================
+           SETTINGS TAB
+           ============================================================ */
+        #tab-settings {
+            padding: 10px 16px;
+            gap: 14px;
+        }
+        .settings-section {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid rgba(255, 180, 200, 0.4);
+            flex-shrink: 0;
+        }
+        .settings-label {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--pink-700);
+            margin-bottom: 10px;
+            display: block;
+            letter-spacing: 0.4px;
+        }
+        .stitch-count-selector {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 8px 0;
-            position: relative;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .shutter-btn {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            border: 4px solid #fff;
-            background: linear-gradient(135deg, #f06292, #d81b60);
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 8px 28px rgba(216, 27, 96, 0.45), 0 0 0 8px rgba(240, 98, 146, 0.2);
-            transition: var(--transition);
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-            animation: shutterGlow 2.5s ease-in-out infinite;
-        }
-        @keyframes shutterGlow {
-            0%,
-            100% {
-                box-shadow: 0 8px 28px rgba(216, 27, 96, 0.45), 0 0 0 8px rgba(240, 98, 146, 0.2);
-            }
-            50% {
-                box-shadow: 0 12px 36px rgba(216, 27, 96, 0.65), 0 0 0 16px rgba(240, 98, 146, 0.08);
-            }
-        }
-        .shutter-btn:active {
-            transform: scale(0.85);
-            box-shadow: 0 4px 16px rgba(216, 27, 96, 0.5), 0 0 0 4px rgba(240, 98, 146, 0.3);
-            transition: all 0.1s ease;
-        }
-        .shutter-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: var(--transition);
-        }
-        .shutter-btn:active::after {
+        .stitch-count-btn {
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.5);
-        }
-        .shutter-icon {
-            position: relative;
-            z-index: 1;
-            font-size: 1.8em;
-            color: #fff;
-            pointer-events: none;
-        }
-
-        /* Photo count selector */
-        .count-selector {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 2px 0;
-        }
-        .count-option {
-            padding: 8px 14px;
-            border-radius: 20px;
-            border: 2px solid #e0d5dc;
-            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            border: 2px solid var(--pink-200);
+            background: white;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.85em;
-            color: #6d5d6e;
-            transition: var(--transition);
-            -webkit-tap-highlight-color: transparent;
+            font-size: 15px;
+            color: var(--pink-600);
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stitch-count-btn.active {
+            background: var(--pink-500);
+            color: white;
+            border-color: var(--pink-600);
+            box-shadow: var(--shadow-md);
+            animation: chipSelect 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .stitch-count-btn:active {
+            transform: scale(0.9);
+        }
+        .frame-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .frame-option {
+            padding: 8px 14px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--pink-200);
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pink-600);
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        .frame-option.active {
+            background: var(--pink-500);
+            color: white;
+            border-color: var(--pink-600);
+            box-shadow: var(--shadow-md);
+        }
+        .frame-option:active {
+            transform: scale(0.93);
+        }
+
+        /* ============================================================
+           BOTTOM NAVIGATION BAR
+           ============================================================ */
+        .bottom-nav {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 16px calc(10px + var(--safe-bottom));
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 2px solid rgba(255, 180, 200, 0.5);
+            z-index: 20;
+            position: relative;
+            gap: 4px;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-smooth);
+            position: relative;
+            color: var(--pink-400);
+            font-weight: 600;
+            font-size: 11px;
             letter-spacing: 0.3px;
+            border: 2px solid transparent;
+            background: transparent;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
         }
-        .count-option.active-count {
-            background: linear-gradient(135deg, #f8bbd0, #f06292);
-            color: #fff;
-            border-color: #f06292;
-            box-shadow: 0 4px 16px rgba(240, 98, 146, 0.4);
-            animation: popIn 0.4s var(--bounce);
+        .nav-item .nav-icon {
+            font-size: 26px;
+            transition: all var(--transition-bounce);
         }
-        @keyframes popIn {
+        .nav-item.active {
+            color: var(--pink-600);
+            background: rgba(255, 200, 215, 0.4);
+            border-color: var(--pink-300);
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-3px);
+        }
+        .nav-item.active .nav-icon {
+            transform: scale(1.15);
+        }
+        .nav-item:active {
+            transform: scale(0.9);
+            background: rgba(255, 180, 200, 0.5);
+        }
+        .nav-badge {
+            position: absolute;
+            top: -2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--pink-500);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: badgePop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes badgePop {
             0% {
-                transform: scale(0.7);
+                transform: scale(0);
+            }
+            70% {
+                transform: scale(1.3);
             }
             100% {
                 transform: scale(1);
             }
         }
 
-        /* Modal overlay */
+        /* ============================================================
+           RESULT MODAL
+           ============================================================ */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 50;
             display: flex;
             align-items: center;
             justify-content: center;
             animation: fadeIn 0.3s ease;
-            padding: 20px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
         @keyframes fadeIn {
             from {
@@ -573,1097 +896,1234 @@
                 opacity: 1;
             }
         }
-        .modal-overlay.hidden {
-            display: none;
-        }
-        .modal-dialog {
-            background: #fff;
-            border-radius: 28px;
+        .modal-card {
+            background: white;
+            border-radius: var(--radius-xl);
             padding: 20px;
+            width: 90%;
             max-width: 400px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.45s var(--bounce);
             max-height: 85vh;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideUp 0.45s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            text-align: center;
+            border: 4px solid var(--pink-200);
         }
-        @keyframes slideUp {
-            0% {
-                transform: translateY(60px);
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(50px);
                 opacity: 0;
             }
-            100% {
+            to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
-        .modal-dialog h3 {
-            text-align: center;
-            color: #4a2c3e;
-            font-size: 1.2em;
-            font-weight: 800;
+        .modal-card h3 {
+            font-family: var(--font-cute);
+            color: var(--pink-700);
+            margin-bottom: 12px;
+            font-size: 20px;
         }
-        .modal-image-preview {
+        .modal-card img {
             width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            display: block;
-            transition: var(--transition);
-            border: 3px solid #f8bbd0;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 12px;
+            border: 3px solid var(--pink-100);
         }
-        .modal-buttons {
+        .modal-actions {
             display: flex;
             gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        .modal-btn {
+        .btn {
             padding: 12px 22px;
-            border-radius: 25px;
+            border-radius: var(--radius-full);
             border: none;
+            cursor: pointer;
             font-weight: 700;
-            font-size: 0.9em;
-            cursor: pointer;
-            letter-spacing: 0.4px;
-            transition: var(--transition);
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
         }
-        .modal-btn:active {
-            transform: scale(0.92);
+        .btn-primary {
+            background: var(--pink-500);
+            color: white;
+            box-shadow: var(--shadow-md);
         }
-        .btn-save {
-            background: linear-gradient(135deg, #4caf50, #2e7d32);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-        }
-        .btn-delete {
-            background: linear-gradient(135deg, #ef5350, #c62828);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(239, 83, 80, 0.4);
-        }
-        .btn-close-modal {
-            background: #e0e0e0;
-            color: #333;
-        }
-        .btn-download {
-            background: linear-gradient(135deg, #42a5f5, #1565c0);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(66, 165, 245, 0.4);
-        }
-
-        /* Gallery */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-height: 50vh;
-            overflow-y: auto;
-            padding: 4px;
-        }
-        .gallery-item {
-            aspect-ratio: 3/4;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-            position: relative;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            background: #f5f5f5;
-        }
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .gallery-item:active {
+        .btn-primary:active {
+            background: var(--pink-700);
             transform: scale(0.94);
-            border-color: #f06292;
         }
-        .gallery-item .delete-gallery-btn {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: rgba(239, 83, 80, 0.9);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 0.7em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-            transition: var(--transition);
+        .btn-secondary {
+            background: white;
+            color: var(--pink-600);
+            border: 2px solid var(--pink-300);
         }
-        .gallery-item .delete-gallery-btn:active {
-            transform: scale(1.3);
+        .btn-secondary:active {
+            background: var(--pink-50);
+            transform: scale(0.94);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--pink-500);
+            border: 2px solid var(--pink-300);
         }
 
-        /* Toast */
-        .toast-msg {
+        /* ============================================================
+           TOAST NOTIFICATION
+           ============================================================ */
+        .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 120px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #4a2c3e;
-            color: #fff;
+            transform: translateX(-50%);
+            background: var(--pink-700);
+            color: white;
             padding: 12px 24px;
-            border-radius: 25px;
+            border-radius: var(--radius-full);
             font-weight: 700;
-            z-index: 200;
-            transition: transform 0.4s var(--bounce);
+            font-size: 14px;
+            z-index: 100;
+            opacity: 0;
             pointer-events: none;
-            font-size: 0.9em;
-            letter-spacing: 0.3px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            transition: all var(--transition-smooth);
+            box-shadow: var(--shadow-lg);
+            letter-spacing: 0.5px;
         }
-        .toast-msg.show {
-            transform: translateX(-50%) translateY(0);
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
         }
 
-        /* Responsive */
-        @media (max-width: 440px) {
-            .app-container {
-                border-radius: 24px;
-                padding: 10px 8px 14px;
-                gap: 6px;
+        /* ============================================================
+           SCROLLBAR STYLING
+           ============================================================ */
+        .tab-content::-webkit-scrollbar,
+        .gallery-grid::-webkit-scrollbar {
+            width: 3px;
+        }
+        .tab-content::-webkit-scrollbar-track,
+        .gallery-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .tab-content::-webkit-scrollbar-thumb,
+        .gallery-grid::-webkit-scrollbar-thumb {
+            background: var(--pink-200);
+            border-radius: 10px;
+        }
+
+        /* ============================================================
+           RESPONSIVE FINE-TUNING
+           ============================================================ */
+        @media (max-width: 360px) {
+            .shutter-btn-outer {
+                width: 68px;
+                height: 68px;
             }
-            .camera-wrapper {
-                border-radius: 22px;
-                max-height: 48vh;
+            .shutter-btn-inner {
+                width: 52px;
+                height: 52px;
             }
-            .ctrl-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 1.1em;
+            .shutter-ripple {
+                width: 68px;
+                height: 68px;
             }
-            .shutter-btn {
-                width: 62px;
-                height: 62px;
+            .camera-viewport {
+                max-height: 45vh;
             }
-            .shutter-btn::after {
-                width: 42px;
-                height: 42px;
+            .filter-chip {
+                padding: 5px 10px;
+                font-size: 11px;
             }
-            .shutter-btn:active::after {
-                width: 32px;
-                height: 32px;
+            .app-title {
+                font-size: 18px;
             }
-            .count-option {
-                padding: 6px 11px;
-                font-size: 0.78em;
-            }
-            .slot-dot {
-                width: 24px;
-                height: 24px;
-                font-size: 0.65em;
+        }
+        @media (min-width: 400px) {
+            .camera-viewport {
+                max-height: 58vh;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Popup xác nhận -->
+<div id="customConfirm" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#ffb6c1; padding:30px 40px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); text-align:center; max-width:400px;">
+    <p id="confirmMessage" style="font-size:18px; color:#333; margin-bottom:25px;"></p>
+    <div>
+      <button id="confirmYes" style="background:#d87093; border:none; color:#fff; padding:10px 25px; border-radius:6px; font-size:16px; cursor:pointer; margin-right:10px;">Đồng ý</button>
+      <button id="confirmNo" style="background:#f0f0f0; border:1px solid #ccc; color:#333; padding:10px 25px; border-radius:6px; font-size:16px; cursor:pointer;">Hủy</button>
+    </div>
+  </div>
+</div>
 
-    <!-- Floating sparkles -->
-    <div class="sparkles-container" id="sparklesContainer"></div>
+    <!-- ============================================================
+    MAIN APP CONTAINER
+    ============================================================ -->
+    <div class="app-container" id="appContainer">
+
+        <!-- Background Decorations -->
+        <div class="bg-decoration bg-heart-1">💖</div>
+        <div class="bg-decoration bg-heart-2">💕</div>
+        <div class="bg-decoration bg-heart-3">💗</div>
+        <div class="bg-decoration bg-heart-4">💝</div>
+        <div class="bg-decoration bg-star-1">✨</div>
+        <div class="bg-decoration bg-star-2">⭐</div>
+        <div class="bg-sparkle"></div>
+        <div class="bg-sparkle"></div>
+        <div class="bg-sparkle"></div>
+        <div class="bg-sparkle"></div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <span class="app-logo">📸</span>
+            <span class="app-title">Photobooth <span class="accent">Cute</span> 🌸</span>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area" id="contentArea">
+
+            <!-- TAB: CAMERA (Trang chủ) -->
+            <div class="tab-content active" id="tab-camera">
+                <div class="camera-viewport mirror" id="cameraViewport">
+                    <video id="cameraVideo" autoplay playsinline muted></video>
+                    <div class="camera-overlay"></div>
+                    <div class="flash-overlay" id="flashOverlay"></div>
+                    <div class="photo-counter" id="photoCounter">📷 0/4</div>
+                    <button class="camera-switch-btn" id="cameraSwitchBtn" title="Đổi camera">🔄</button>
+                </div>
+                <!-- Filter Quick Bar -->
+                <div class="filter-quick-bar" id="filterQuickBar">
+                    <span class="filter-chip active" data-filter="none">🌸 Gốc</span>
+                    <span class="filter-chip" data-filter="sepia">🟤 Sepia</span>
+                    <span class="filter-chip" data-filter="grayscale">⚫ Xám</span>
+                    <span class="filter-chip" data-filter="vintage">📜 Vintage</span>
+                    <span class="filter-chip" data-filter="pink-tint">💗 Hồng</span>
+                    <span class="filter-chip" data-filter="warm">☀️ Ấm</span>
+                    <span class="filter-chip" data-filter="cool">❄️ Mát</span>
+                </div>
+                <!-- Shutter Button -->
+                <div class="shutter-btn-wrapper" id="shutterBtnWrapper">
+                    <div class="shutter-btn-outer" id="shutterBtn">
+                        <div class="shutter-ripple"></div>
+                        <div class="shutter-ripple"></div>
+                        <div class="shutter-ripple"></div>
+                        <div class="shutter-btn-inner">
+                            <span class="icon-camera">📷</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: GALLERY (Thư viện) -->
+            <div class="tab-content" id="tab-gallery">
+                <div class="gallery-header">
+                    <span class="gallery-title">🖼️ Thư viện ảnh</span>
+                    <button class="gallery-clear-btn" id="galleryClearBtn">🗑️ Xóa hết</button>
+                </div>
+                <div class="gallery-grid" id="galleryGrid">
+                    <div class="gallery-empty">🌸 Chưa có ảnh nào. Hãy chụp ảnh đầu tiên nhé!</div>
+                </div>
+                <button class="gallery-download-all" id="galleryDownloadAllBtn" style="display:none;">📥 Tải tất cả</button>
+            </div>
+
+            <!-- TAB: SETTINGS (Cài đặt) -->
+            <div class="tab-content" id="tab-settings">
+                <div class="settings-section">
+                    <span class="settings-label">🔢 Số ảnh ghép dọc</span>
+                    <div class="stitch-count-selector" id="stitchCountSelector">
+                        <button class="stitch-count-btn" data-count="2">2</button>
+                        <button class="stitch-count-btn" data-count="3">3</button>
+                        <button class="stitch-count-btn active" data-count="4">4</button>
+                        <button class="stitch-count-btn" data-count="5">5</button>
+                        <button class="stitch-count-btn" data-count="6">6</button>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <span class="settings-label">🖼️ Viền khung ảnh</span>
+                    <div class="frame-selector" id="frameSelector">
+                        <span class="frame-option active" data-frame="none">❌ Không viền</span>
+                        <span class="frame-option" data-frame="white">⬜ Viền trắng</span>
+                        <span class="frame-option" data-frame="pink">💗 Viền hồng</span>
+                        <span class="frame-option" data-frame="polaroid">📸 Polaroid</span>
+                        <span class="frame-option" data-frame="heart">💖 Tim</span>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <span class="settings-label">⏱️ Đếm ngược (giây)</span>
+                    <div class="stitch-count-selector" id="countdownSelector">
+                        <button class="stitch-count-btn active" data-delay="0">0</button>
+                        <button class="stitch-count-btn" data-delay="2">2</button>
+                        <button class="stitch-count-btn" data-delay="3">3</button>
+                        <button class="stitch-count-btn" data-delay="5">5</button>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <span class="settings-label">ℹ️ Thông tin</span>
+                    <p style="font-size:13px;color:var(--pink-500);line-height:1.5;">
+                        📸 Pink Booth v1.0 by Thuận<br>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav" id="bottomNav">
+            <button class="nav-item" data-tab="gallery" id="navGallery">
+                <span class="nav-icon">🖼️</span>
+                <span>Thư viện</span>
+                <span class="nav-badge" id="galleryBadge" style="display:none;">0</span>
+            </button>
+            <button class="nav-item active" data-tab="camera" id="navCamera">
+                <span class="nav-icon">📷</span>
+                <span>Trang chủ</span>
+            </button>
+            <button class="nav-item" data-tab="settings" id="navSettings">
+                <span class="nav-icon">⚙️</span>
+                <span>Cài đặt</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="modal-overlay" id="resultModal" style="display:none;">
+        <div class="modal-card" id="resultModalCard">
+            <h3>🎉 Ảnh ghép của bạn</h3>
+            <img id="resultImage" src="" alt="Ảnh ghép">
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnDownloadResult">📥 Tải về</button>
+                <button class="btn btn-secondary" id="btnNewSession">🔄 Chụp lại</button>
+                <button class="btn btn-outline" id="btnCloseModal">✖ Đóng</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast -->
-    <div class="toast-msg" id="toastMsg"></div>
-
-    <!-- Main App -->
-    <div class="app-container" id="appContainer">
-        <!-- Header -->
-        <div class="app-header">
-            <span class="app-title">
-                <span class="icon-title">📸</span> PhotoBooth Cute
-            </span>
-            <span class="badge-count" id="galleryBadge">📚 0 ảnh</span>
-        </div>
-
-        <!-- Photo slot indicator -->
-        <div class="photo-slots" id="photoSlots">
-            <span class="slot-dot current" data-slot="1">1</span>
-        </div>
-
-        <!-- Count selector -->
-        <div class="count-selector" id="countSelector">
-            <button class="count-option active-count" data-count="1">📷 1 ảnh</button>
-            <button class="count-option" data-count="2">✨ 2 ảnh</button>
-            <button class="count-option" data-count="3">🌟 3 ảnh</button>
-            <button class="count-option" data-count="4">💫 4 ảnh</button>
-            <button class="count-option" data-count="5">🎀 5 ảnh</button>
-            <button class="count-option" data-count="6">👑 6 ảnh</button>
-        </div>
-
-        <!-- Camera Preview -->
-        <div class="camera-wrapper border-style-pink" id="cameraWrapper">
-            <video id="videoFeed" autoplay playsinline muted></video>
-            <div class="filter-overlay" id="filterOverlay"></div>
-            <div class="countdown-overlay" id="countdownOverlay">
-                <span class="countdown-number" id="countdownNumber"></span>
-            </div>
-        </div>
-
-        <!-- Controls -->
-        <div class="controls-row">
-            <button class="ctrl-btn" id="btnFilter" title="Bộ lọc">
-                🎨<span class="tooltip-mini">Lọc</span>
-            </button>
-            <button class="ctrl-btn" id="btnTimer" title="Hẹn giờ">
-                ⏱️<span class="tooltip-mini">Hẹn giờ</span>
-            </button>
-            <button class="ctrl-btn" id="btnBorder" title="Viền khung">
-                🖼️<span class="tooltip-mini">Viền</span>
-            </button>
-            <button class="ctrl-btn" id="btnFlip" title="Lật camera">
-                🔄<span class="tooltip-mini">Flip</span>
-            </button>
-            <button class="ctrl-btn" id="btnMirror" title="Soi gương">
-                🪞<span class="tooltip-mini">Gương</span>
-            </button>
-            <button class="ctrl-btn" id="btnGallery" title="Thư viện">
-                🖼️<span class="tooltip-mini">Thư viện</span>
-            </button>
-        </div>
-
-        <!-- Shutter Button -->
-        <div class="shutter-btn-wrapper">
-            <button class="shutter-btn" id="btnShutter">
-                <span class="shutter-icon">📸</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Preview Modal (hiện sau khi chụp đủ ảnh) -->
-    <div class="modal-overlay hidden" id="previewModal">
-        <div class="modal-dialog">
-            <h3>🌟 Ảnh ghép của bạn 🌟</h3>
-            <img class="modal-image-preview" id="previewImage" src="" alt="Ảnh ghép" />
-            <p style="text-align:center;color:#888;font-size:0.8em;" id="previewInfo"></p>
-            <div class="modal-buttons">
-                <button class="modal-btn btn-save" id="btnSavePhoto">💾 Lưu</button>
-                <button class="modal-btn btn-download" id="btnDownloadPhoto">📥 Tải về</button>
-                <button class="modal-btn btn-delete" id="btnDeletePhoto">🗑️ Xoá</button>
-                <button class="modal-btn btn-close-modal" id="btnClosePreview">✖️ Đóng</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gallery Modal -->
-    <div class="modal-overlay hidden" id="galleryModal">
-        <div class="modal-dialog">
-            <h3>📚 Thư Viện Ảnh</h3>
-            <div class="gallery-grid" id="galleryGrid"></div>
-            <div class="modal-buttons" style="margin-top:8px;">
-                <button class="modal-btn btn-close-modal" id="btnCloseGallery">✖️ Đóng</button>
-                <button class="modal-btn btn-delete" id="btnClearGallery" style="font-size:0.75em;">🗑️ Xoá tất cả</button>
-            </div>
-        </div>
-    </div>
+    <div class="toast" id="toast"></div>
 
     <script>
         (function() {
-            // ==================== DOM ELEMENTS ====================
-            const videoFeed = document.getElementById('videoFeed');
-            const cameraWrapper = document.getElementById('cameraWrapper');
-            const filterOverlay = document.getElementById('filterOverlay');
-            const countdownOverlay = document.getElementById('countdownOverlay');
-            const countdownNumber = document.getElementById('countdownNumber');
-            const photoSlots = document.getElementById('photoSlots');
-            const countSelector = document.getElementById('countSelector');
-            const galleryBadge = document.getElementById('galleryBadge');
-            const previewModal = document.getElementById('previewModal');
-            const previewImage = document.getElementById('previewImage');
-            const previewInfo = document.getElementById('previewInfo');
-            const galleryModal = document.getElementById('galleryModal');
+            // ============================================================
+            // DOM ELEMENT REFERENCES
+            // ============================================================
+            const appContainer = document.getElementById('appContainer');
+            const contentArea = document.getElementById('contentArea');
+            const cameraViewport = document.getElementById('cameraViewport');
+            const cameraVideo = document.getElementById('cameraVideo');
+            const flashOverlay = document.getElementById('flashOverlay');
+            const photoCounter = document.getElementById('photoCounter');
+            const cameraSwitchBtn = document.getElementById('cameraSwitchBtn');
+            const shutterBtn = document.getElementById('shutterBtn');
+            const shutterBtnWrapper = document.getElementById('shutterBtnWrapper');
+            const filterQuickBar = document.getElementById('filterQuickBar');
             const galleryGrid = document.getElementById('galleryGrid');
-            const toastMsg = document.getElementById('toastMsg');
-            const sparklesContainer = document.getElementById('sparklesContainer');
-            const btnShutter = document.getElementById('btnShutter');
-            const btnFilter = document.getElementById('btnFilter');
-            const btnTimer = document.getElementById('btnTimer');
-            const btnBorder = document.getElementById('btnBorder');
-            const btnFlip = document.getElementById('btnFlip');
-            const btnMirror = document.getElementById('btnMirror');
-            const btnGallery = document.getElementById('btnGallery');
-            const btnSavePhoto = document.getElementById('btnSavePhoto');
-            const btnDownloadPhoto = document.getElementById('btnDownloadPhoto');
-            const btnDeletePhoto = document.getElementById('btnDeletePhoto');
-            const btnClosePreview = document.getElementById('btnClosePreview');
-            const btnCloseGallery = document.getElementById('btnCloseGallery');
-            const btnClearGallery = document.getElementById('btnClearGallery');
+            const galleryBadge = document.getElementById('galleryBadge');
+            const galleryClearBtn = document.getElementById('galleryClearBtn');
+            const galleryDownloadAllBtn = document.getElementById('galleryDownloadAllBtn');
+            const stitchCountSelector = document.getElementById('stitchCountSelector');
+            const frameSelector = document.getElementById('frameSelector');
+            const countdownSelector = document.getElementById('countdownSelector');
+            const resultModal = document.getElementById('resultModal');
+            const resultImage = document.getElementById('resultImage');
+            const btnDownloadResult = document.getElementById('btnDownloadResult');
+            const btnNewSession = document.getElementById('btnNewSession');
+            const btnCloseModal = document.getElementById('btnCloseModal');
+            const toast = document.getElementById('toast');
+            const bottomNav = document.getElementById('bottomNav');
+            const allTabContents = document.querySelectorAll('.tab-content');
+            const allNavItems = document.querySelectorAll('.nav-item');
 
-            // ==================== STATE ====================
-            let stream = null;
-            let facingMode = 'user'; // 'user' = camera trước, 'environment' = camera sau
-            let mirrorEnabled = true; // lật gương cho camera trước
-            let currentFilter = 'none'; // none, vintage, sepia, grayscale, warm, cool, blur
-            let timerSeconds = 0; // 0 = tắt, 3, 5, 10
-            let borderStyle = 'pink'; // none, white, pink, purple, gold, black
-            let photoCount = 1; // số ảnh cần chụp để ghép (1-6)
-            let capturedPhotos = []; // mảng lưu ảnh base64 đã chụp
-            let galleryPhotos = []; // thư viện ảnh đã lưu
-            let isCountingDown = false;
-            let countdownTimerId = null;
-            let currentPreviewDataUrl = null;
+            // ============================================================
+            // APPLICATION STATE
+            // ============================================================
+            const state = {
+                currentTab: 'camera',
+                facingMode: 'user', // 'user' = camera trước, 'environment' = camera sau
+                stream: null,
+                capturedPhotos: [], // Mảng lưu ảnh đã chụp (base64 data URLs)
+                stitchCount: 4, // Số ảnh ghép dọc (2-6)
+                activeFilter: 'none',
+                activeFrame: 'none',
+                countdownDelay: 0, // giây đếm ngược
+                galleryImages: [], // Mảng lưu ảnh trong thư viện (base64)
+                isCapturing: false,
+                maxGalleryItems: 30,
+            };
 
-            // ==================== SPARKLES ====================
-            const sparkleEmojis = ['✨', '🌸', '💖', '🌟', '💫', '🎀', '💕', '🦋', '⭐', '🌷', '💝', '🎪', '💗', '🍬', '🧸'];
-
-            function createSparkle() {
-                const sparkle = document.createElement('span');
-                sparkle.className = 'sparkle';
-                sparkle.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
-                sparkle.style.left = Math.random() * 95 + '%';
-                sparkle.style.fontSize = (14 + Math.random() * 30) + 'px';
-                sparkle.style.animationDuration = (6 + Math.random() * 14) + 's';
-                sparkle.style.animationDelay = Math.random() * 8 + 's';
-                sparklesContainer.appendChild(sparkle);
-
-                // Remove after animation
-                const duration = parseFloat(sparkle.style.animationDuration) + parseFloat(sparkle.style
-                .animationDelay);
-                setTimeout(() => {
-                    if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
-                }, duration * 1000 + 2000);
-            }
-
-            function initSparkles() {
-                for (let i = 0; i < 25; i++) {
-                    setTimeout(createSparkle, i * 300);
-                }
-                setInterval(() => {
-                    if (sparklesContainer.children.length < 30) {
-                        createSparkle();
-                    }
-                }, 2000);
-            }
-
-            // ==================== TOAST ====================
-            let toastTimeout;
-
-            function showToast(msg) {
-                clearTimeout(toastTimeout);
-                toastMsg.textContent = msg;
-                toastMsg.classList.add('show');
-                toastTimeout = setTimeout(() => {
-                    toastMsg.classList.remove('show');
-                }, 2200);
-            }
-
-            // ==================== CAMERA ====================
-            async function startCamera() {
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    stream = null;
-                }
+            // ============================================================
+            // LOCAL STORAGE FOR GALLERY
+            // ============================================================
+            function loadGalleryFromStorage() {
                 try {
-                    const constraints = {
-                        video: {
-                            facingMode: facingMode,
-                            width: { ideal: 720 },
-                            height: { ideal: 1280 },
-                            aspectRatio: { ideal: 3 / 4 }
-                        },
-                        audio: false
-                    };
-                    stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    videoFeed.srcObject = stream;
-                    await videoFeed.play();
-                    updateMirrorMode();
-                    updateFilterDisplay();
-                    console.log('📷 Camera started:', facingMode);
-                } catch (err) {
-                    console.error('Camera error:', err);
-                    showToast('⚠️ Không thể truy cập camera! Hãy cấp quyền.');
-                    // Fallback: hiển thị placeholder
-                    videoFeed.style.display = 'none';
-                    const placeholder = document.createElement('div');
-                    placeholder.style.cssText =
-                        'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#fce4ec;color:#c94b8c;font-size:3em;';
-                    placeholder.textContent = '📷';
-                    placeholder.id = 'cameraPlaceholder';
-                    if (!document.getElementById('cameraPlaceholder')) {
-                        cameraWrapper.appendChild(placeholder);
+                    const stored = localStorage.getItem('pinkbooth_gallery');
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed)) {
+                            state.galleryImages = parsed.slice(0, state.maxGalleryItems);
+                        }
                     }
+                } catch (e) {
+                    state.galleryImages = [];
                 }
             }
 
-            function updateMirrorMode() {
-                if (mirrorEnabled && facingMode === 'user') {
-                    videoFeed.classList.add('mirror-mode');
+            function saveGalleryToStorage() {
+                try {
+                    const toSave = state.galleryImages.slice(0, state.maxGalleryItems);
+                    localStorage.setItem('pinkbooth_gallery', JSON.stringify(toSave));
+                } catch (e) {
+                    showToast('⚠️ Bộ nhớ đầy, hãy xóa bớt ảnh cũ');
+                }
+            }
+
+            function addToGallery(imageDataUrl) {
+                state.galleryImages.unshift(imageDataUrl);
+                if (state.galleryImages.length > state.maxGalleryItems) {
+                    state.galleryImages = state.galleryImages.slice(0, state.maxGalleryItems);
+                }
+                saveGalleryToStorage();
+                renderGallery();
+                updateGalleryBadge();
+            }
+
+            // function clearGallery() {
+            //     if (confirm('Xóa tất cả ảnh trong thư viện?')) {
+            //         state.galleryImages = [];
+            //         saveGalleryToStorage();
+            //         renderGallery();
+            //         updateGalleryBadge();
+            //         showToast('🗑️ Đã xóa thư viện');
+            //     }
+            // }
+            function clearGallery() {
+  showCustomConfirm(
+    'Xóa tất cả ảnh trong thư viện?',
+    function() {
+      // Người dùng chọn Đồng ý
+      state.galleryImages = [];
+      saveGalleryToStorage();
+      renderGallery();
+      updateGalleryBadge();
+      showToast('🗑️ Đã xóa thư viện');
+    },
+    function() {
+      // Người dùng chọn Hủy (không làm gì)
+      // Có thể thêm thông báo nếu muốn
+    }
+  );
+}
+            function showCustomConfirm(message, onConfirm, onCancel) {
+  const overlay = document.getElementById('customConfirm');
+  const msgEl = document.getElementById('confirmMessage');
+  const yesBtn = document.getElementById('confirmYes');
+  const noBtn = document.getElementById('confirmNo');
+
+  // Gán nội dung thông báo
+  msgEl.textContent = message;
+
+  // Hiển thị popup
+  overlay.style.display = 'flex';
+
+  // Xóa các sự kiện cũ để tránh trùng lặp
+  const newYes = yesBtn.cloneNode(true);
+  const newNo = noBtn.cloneNode(true);
+  yesBtn.parentNode.replaceChild(newYes, yesBtn);
+  noBtn.parentNode.replaceChild(newNo, noBtn);
+
+  // Gán sự kiện cho nút
+  newYes.addEventListener('click', function() {
+    overlay.style.display = 'none';
+    if (typeof onConfirm === 'function') onConfirm();
+  });
+
+  newNo.addEventListener('click', function() {
+    overlay.style.display = 'none';
+    if (typeof onCancel === 'function') onCancel();
+  });
+
+  // (Tùy chọn) Bấm ra ngoài overlay cũng coi như hủy
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      overlay.style.display = 'none';
+      if (typeof onCancel === 'function') onCancel();
+    }
+  });
+}
+
+            function removeGalleryItem(index) {
+                state.galleryImages.splice(index, 1);
+                saveGalleryToStorage();
+                renderGallery();
+                updateGalleryBadge();
+                showToast('Đã xóa ảnh');
+            }
+
+            function updateGalleryBadge() {
+                const count = state.galleryImages.length;
+                if (count > 0) {
+                    galleryBadge.style.display = 'flex';
+                    galleryBadge.textContent = count > 99 ? '99+' : count;
                 } else {
-                    videoFeed.classList.remove('mirror-mode');
+                    galleryBadge.style.display = 'none';
                 }
             }
 
-            function updateFilterDisplay() {
-                // Remove all filter classes
-                filterOverlay.className = 'filter-overlay';
-                videoFeed.style.filter = 'none';
+            function renderGallery() {
+                if (state.galleryImages.length === 0) {
+                    galleryGrid.innerHTML =
+                        '<div class="gallery-empty">🌸 Chưa có ảnh nào. Hãy chụp ảnh đầu tiên nhé!</div>';
+                    galleryDownloadAllBtn.style.display = 'none';
+                } else {
+                    let html = '';
+                    state.galleryImages.forEach((imgSrc, index) => {
+                        html += `
+                                <div class="gallery-item" data-index="${index}">
+                                    <img src="${imgSrc}" alt="Ảnh ${index + 1}" loading="lazy">
+                                    <button class="delete-btn" data-index="${index}" title="Xóa">🗑️</button>
+                                </div>`;
+                    });
+                    galleryGrid.innerHTML = html;
+                    galleryDownloadAllBtn.style.display = 'block';
 
-                switch (currentFilter) {
-                    case 'vintage':
-                        filterOverlay.classList.add('filter-vintage');
-                        videoFeed.style.filter = 'contrast(0.9) brightness(0.95) saturate(0.8)';
-                        break;
-                    case 'sepia':
-                        filterOverlay.classList.add('filter-sepia');
-                        videoFeed.style.filter = 'sepia(0.7) contrast(0.9)';
-                        break;
-                    case 'grayscale':
-                        videoFeed.style.filter = 'grayscale(1) contrast(1.05)';
-                        break;
-                    case 'warm':
-                        filterOverlay.classList.add('filter-warm');
-                        videoFeed.style.filter = 'saturate(1.3) brightness(1.05)';
-                        break;
-                    case 'cool':
-                        filterOverlay.classList.add('filter-cool');
-                        videoFeed.style.filter = 'saturate(0.8) brightness(1.02) hue-rotate(-20deg)';
-                        break;
-                    case 'blur':
-                        videoFeed.style.filter = 'blur(2px) brightness(1.05)';
-                        break;
-                    default:
-                        videoFeed.style.filter = 'none';
-                        filterOverlay.className = 'filter-overlay';
+                    // Gán sự kiện click cho ảnh (xem to)
+                    galleryGrid.querySelectorAll('.gallery-item img').forEach(img => {
+                        img.addEventListener('click', function(e) {
+                            const idx = parseInt(this.closest('.gallery-item').dataset
+                                .index);
+                            if (!isNaN(idx) && state.galleryImages[idx]) {
+                                openResultModal(state.galleryImages[idx], true);
+                            }
+                        });
+                    });
+                    // Gán sự kiện cho nút xóa
+                    galleryGrid.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const idx = parseInt(this.dataset.index);
+                            if (!isNaN(idx)) {
+                                removeGalleryItem(idx);
+                            }
+                        });
+                    });
                 }
             }
 
-            function updateBorderStyle() {
-                // Remove all border classes
-                const borderClasses = ['border-style-none', 'border-style-white', 'border-style-pink',
-                    'border-style-purple', 'border-style-gold', 'border-style-black'
-                ];
-                borderClasses.forEach(cls => cameraWrapper.classList.remove(cls));
-                if (borderStyle !== 'none') {
-                    cameraWrapper.classList.add('border-style-' + borderStyle);
+            function downloadAllGallery() {
+                if (state.galleryImages.length === 0) {
+                    showToast('🌸 Chưa có ảnh để tải');
+                    return;
                 }
-            }
-
-            // ==================== PHOTO SLOTS ====================
-            function updatePhotoSlots() {
-                photoSlots.innerHTML = '';
-                for (let i = 0; i < photoCount; i++) {
-                    const dot = document.createElement('span');
-                    dot.className = 'slot-dot';
-                    dot.textContent = i + 1;
-                    dot.dataset.slot = i + 1;
-                    if (i < capturedPhotos.length) {
-                        dot.classList.add('filled');
-                        dot.textContent = '✓';
-                    }
-                    if (i === capturedPhotos.length && !isCountingDown) {
-                        dot.classList.add('current');
-                    }
-                    photoSlots.appendChild(dot);
-                }
-            }
-
-            // ==================== COUNT SELECTOR ====================
-            function updateCountSelector() {
-                const options = countSelector.querySelectorAll('.count-option');
-                options.forEach(opt => {
-                    const cnt = parseInt(opt.dataset.count);
-                    if (cnt === photoCount) {
-                        opt.classList.add('active-count');
-                    } else {
-                        opt.classList.remove('active-count');
-                    }
+                showToast('📥 Đang tải ' + state.galleryImages.length + ' ảnh...');
+                state.galleryImages.forEach((imgSrc, i) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = imgSrc;
+                        link.download = `pinkbooth_gallery_${i + 1}.png`;
+                        link.click();
+                    }, i * 300);
                 });
             }
 
-            // ==================== CAPTURE PHOTO ====================
-            function captureSingleFrame() {
-                const videoWidth = videoFeed.videoWidth || 720;
-                const videoHeight = videoFeed.videoHeight || 1280;
+            // ============================================================
+            // TOAST NOTIFICATION
+            // ============================================================
+            let toastTimeout;
 
-                const canvas = document.createElement('canvas');
-                canvas.width = videoWidth;
-                canvas.height = videoHeight;
-                const ctx = canvas.getContext('2d');
-
-                // Nếu là camera trước và mirror đang bật, flip ảnh để khớp với giao diện soi gương
-                if (mirrorEnabled && facingMode === 'user') {
-                    ctx.translate(canvas.width, 0);
-                    ctx.scale(-1, 1);
-                }
-
-                // Vẽ video frame lên canvas
-                ctx.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
-
-                // Áp dụng filter lên canvas nếu có
-                applyCanvasFilter(ctx, canvas);
-
-                return canvas.toDataURL('image/jpeg', 0.92);
+            function showToast(message, duration = 2200) {
+                clearTimeout(toastTimeout);
+                toast.textContent = message;
+                toast.classList.add('show');
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
             }
 
-            function applyCanvasFilter(ctx, canvas) {
-                // Lấy image data và áp dụng filter
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            // ============================================================
+            // TAB NAVIGATION
+            // ============================================================
+            function switchTab(tabName) {
+                if (state.currentTab === tabName) return;
+                state.currentTab = tabName;
+
+                // Update tab content visibility
+                allTabContents.forEach(tc => tc.classList.remove('active'));
+                const targetTab = document.getElementById('tab-' + tabName);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                }
+
+                // Update nav items
+                allNavItems.forEach(ni => ni.classList.remove('active'));
+                const targetNav = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
+                if (targetNav) {
+                    targetNav.classList.add('active');
+                }
+
+                // Handle camera stream
+                if (tabName === 'camera') {
+                    startCamera();
+                    shutterBtnWrapper.style.display = 'flex';
+                    filterQuickBar.style.display = 'flex';
+                } else {
+                    stopCamera();
+                    shutterBtnWrapper.style.display = 'none';
+                    filterQuickBar.style.display = 'none';
+                }
+
+                // Refresh gallery when switching to gallery tab
+                if (tabName === 'gallery') {
+                    renderGallery();
+                    updateGalleryBadge();
+                }
+
+                // Scroll to top of tab content
+                const activeTab = document.querySelector('.tab-content.active');
+                if (activeTab) {
+                    activeTab.scrollTop = 0;
+                }
+            }
+
+            // Nav item click handlers
+            allNavItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    if (tabName) switchTab(tabName);
+                });
+            });
+
+            // ============================================================
+            // CAMERA FUNCTIONS
+            // ============================================================
+            async function startCamera() {
+                try {
+                    if (state.stream) {
+                        // Already have stream, just check if video is playing
+                        if (cameraVideo.srcObject && cameraVideo.readyState >= 2) {
+                            updateMirrorState();
+                            return;
+                        }
+                    }
+                    // Stop any existing stream
+                    stopCamera();
+
+                    const constraints = {
+                        video: {
+                            facingMode: state.facingMode,
+                            width: { ideal: 1080 },
+                            height: { ideal: 1440 },
+                            aspectRatio: { ideal: 3 / 4 },
+                        },
+                        audio: false,
+                    };
+
+                    state.stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    cameraVideo.srcObject = state.stream;
+                    await cameraVideo.play();
+                    updateMirrorState();
+                    updatePhotoCounter();
+                } catch (err) {
+                    console.error('Camera error:', err);
+                    showToast('⚠️ Không thể truy cập camera. Hãy cấp quyền và dùng HTTPS');
+                    // Fallback: hiển thị thông báo trong viewport
+                    cameraVideo.style.display = 'none';
+                    const fallbackMsg = document.createElement('div');
+                    fallbackMsg.id = 'cameraFallback';
+                    fallbackMsg.style.cssText = `
+                            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+                            text-align:center;color:var(--pink-600);font-weight:700;font-size:14px;
+                            padding:20px;z-index:5;width:90%;
+                        `;
+                    fallbackMsg.textContent =
+                        '📷 Vui lòng cấp quyền camera và sử dụng kết nối HTTPS hoặc localhost để chụp ảnh.';
+                    // Remove old fallback if exists
+                    const oldFallback = cameraViewport.querySelector('#cameraFallback');
+                    if (oldFallback) oldFallback.remove();
+                    cameraViewport.appendChild(fallbackMsg);
+                }
+            }
+
+            function stopCamera() {
+                if (state.stream) {
+                    state.stream.getTracks().forEach(track => track.stop());
+                    state.stream = null;
+                }
+                cameraVideo.srcObject = null;
+                // Remove fallback message
+                const fallback = cameraViewport.querySelector('#cameraFallback');
+                if (fallback) fallback.remove();
+                cameraVideo.style.display = 'block';
+            }
+
+            function updateMirrorState() {
+                if (state.facingMode === 'user') {
+                    cameraViewport.classList.add('mirror');
+                } else {
+                    cameraViewport.classList.remove('mirror');
+                }
+            }
+
+            async function switchCamera() {
+                state.facingMode = state.facingMode === 'user' ? 'environment' : 'user';
+                // Xóa ảnh đã chụp khi đổi camera
+                state.capturedPhotos = [];
+                updatePhotoCounter();
+                await startCamera();
+                showToast(state.facingMode === 'user' ? '🪞 Camera trước (Mirror)' : '📷 Camera sau');
+            }
+
+            cameraSwitchBtn.addEventListener('click', switchCamera);
+
+            function updatePhotoCounter() {
+                const count = state.capturedPhotos.length;
+                const total = state.stitchCount;
+                photoCounter.textContent = `📷 ${count}/${total}`;
+                if (count >= total) {
+                    photoCounter.style.background = 'rgba(255,92,138,0.9)';
+                    photoCounter.style.color = 'white';
+                } else if (count > 0) {
+                    photoCounter.style.background = 'rgba(255,255,255,0.85)';
+                    photoCounter.style.color = 'var(--pink-700)';
+                } else {
+                    photoCounter.style.background = 'rgba(255,255,255,0.85)';
+                    photoCounter.style.color = 'var(--pink-700)';
+                }
+            }
+
+            // ============================================================
+            // PHOTO CAPTURE
+            // ============================================================
+            function triggerFlash() {
+                flashOverlay.classList.add('active');
+                setTimeout(() => {
+                    flashOverlay.classList.remove('active');
+                }, 120);
+            }
+
+            function capturePhoto() {
+                if (state.isCapturing) return;
+                if (!state.stream || !cameraVideo.srcObject || cameraVideo.readyState < 2) {
+                    showToast('⚠️ Camera chưa sẵn sàng');
+                    return;
+                }
+
+                state.isCapturing = true;
+
+                // Đếm ngược nếu có
+                const doCapture = () => {
+                    triggerFlash();
+
+                    // Tạo canvas để chụp
+                    const canvas = document.createElement('canvas');
+                    const videoWidth = cameraVideo.videoWidth || 640;
+                    const videoHeight = cameraVideo.videoHeight || 480;
+                    canvas.width = videoWidth;
+                    canvas.height = videoHeight;
+                    const ctx = canvas.getContext('2d');
+
+                    // Nếu là camera trước (mirror), flip ảnh để lưu đúng hướng
+                    if (state.facingMode === 'user') {
+                        ctx.translate(canvas.width, 0);
+                        ctx.scale(-1, 1);
+                    }
+
+                    // Vẽ video lên canvas
+                    ctx.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+
+                    // Áp dụng bộ lọc màu lên canvas
+                    applyFilterToCanvas(ctx, canvas.width, canvas.height, state.activeFilter);
+
+                    // Lấy data URL
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                    state.capturedPhotos.push(dataUrl);
+                    updatePhotoCounter();
+
+                    // Animation nhẹ cho counter
+                    photoCounter.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        photoCounter.style.transform = 'scale(1)';
+                    }, 200);
+
+                    state.isCapturing = false;
+
+                    // Kiểm tra nếu đã chụp đủ
+                    if (state.capturedPhotos.length >= state.stitchCount) {
+                        setTimeout(() => {
+                            stitchPhotos();
+                        }, 400);
+                    } else {
+                        showToast(`📸 Đã chụp ${state.capturedPhotos.length}/${state.stitchCount}`);
+                    }
+                };
+
+                if (state.countdownDelay > 0) {
+                    showToast(`⏱️ Đếm ngược ${state.countdownDelay}s...`);
+                    let remaining = state.countdownDelay;
+                    photoCounter.textContent = `⏱️ ${remaining}`;
+                    const countdownInterval = setInterval(() => {
+                        remaining--;
+                        if (remaining <= 0) {
+                            clearInterval(countdownInterval);
+                            updatePhotoCounter();
+                            doCapture();
+                        } else {
+                            photoCounter.textContent = `⏱️ ${remaining}`;
+                            photoCounter.style.animation = 'none';
+                            photoCounter.offsetHeight;
+                            photoCounter.style.animation = 'counterPulse 0.5s ease-in-out';
+                        }
+                    }, 1000);
+                } else {
+                    doCapture();
+                }
+            }
+
+            function applyFilterToCanvas(ctx, width, height, filter) {
+                if (filter === 'none') return;
+                const imageData = ctx.getImageData(0, 0, width, height);
                 const data = imageData.data;
 
-                switch (currentFilter) {
+                switch (filter) {
+                    case 'sepia':
+                        for (let i = 0; i < data.length; i += 4) {
+                            const r = data[i],
+                                g = data[i + 1],
+                                b = data[i + 2];
+                            data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+                            data[i + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+                            data[i + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+                        }
+                        break;
                     case 'grayscale':
                         for (let i = 0; i < data.length; i += 4) {
-                            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                            const avg = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
                             data[i] = avg;
                             data[i + 1] = avg;
                             data[i + 2] = avg;
                         }
                         break;
-                    case 'sepia':
-                        for (let i = 0; i < data.length; i += 4) {
-                            const r = data[i];
-                            const g = data[i + 1];
-                            const b = data[i + 2];
-                            data[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189));
-                            data[i + 1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168));
-                            data[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131));
-                        }
-                        break;
                     case 'vintage':
                         for (let i = 0; i < data.length; i += 4) {
-                            data[i] = Math.min(255, data[i] * 1.05);
+                            data[i] = Math.min(255, data[i] * 1.1 + 10);
                             data[i + 1] = Math.min(255, data[i + 1] * 0.9);
-                            data[i + 2] = Math.min(255, data[i + 2] * 0.8);
+                            data[i + 2] = Math.min(255, data[i + 2] * 0.7);
+                        }
+                        break;
+                    case 'pink-tint':
+                        for (let i = 0; i < data.length; i += 4) {
+                            data[i] = Math.min(255, data[i] * 1.15);
+                            data[i + 1] = Math.min(255, data[i + 1] * 0.85);
+                            data[i + 2] = Math.min(255, data[i + 2] * 0.9 + 15);
                         }
                         break;
                     case 'warm':
                         for (let i = 0; i < data.length; i += 4) {
                             data[i] = Math.min(255, data[i] * 1.2);
                             data[i + 1] = Math.min(255, data[i + 1] * 1.05);
-                            data[i + 2] = Math.min(255, data[i + 2] * 0.85);
+                            data[i + 2] = Math.min(255, data[i + 2] * 0.8);
                         }
                         break;
                     case 'cool':
                         for (let i = 0; i < data.length; i += 4) {
                             data[i] = Math.min(255, data[i] * 0.85);
-                            data[i + 1] = Math.min(255, data[i + 1] * 1.0);
+                            data[i + 1] = Math.min(255, data[i + 1] * 1.05);
                             data[i + 2] = Math.min(255, data[i + 2] * 1.2);
                         }
                         break;
-                    case 'blur':
-                        // Đơn giản hoá: giảm contrast nhẹ
-                        for (let i = 0; i < data.length; i += 4) {
-                            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                            data[i] = data[i] * 0.7 + avg * 0.3;
-                            data[i + 1] = data[i + 1] * 0.7 + avg * 0.3;
-                            data[i + 2] = data[i + 2] * 0.7 + avg * 0.3;
-                        }
+                    default:
                         break;
                 }
                 ctx.putImageData(imageData, 0, 0);
             }
 
-            async function triggerCapture() {
-                if (isCountingDown) return;
-                if (!stream) {
-                    showToast('⚠️ Camera chưa sẵn sàng!');
+            // Shutter button click
+            shutterBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (state.currentTab === 'camera') {
+                    capturePhoto();
+                }
+            });
+
+            // ============================================================
+            // PHOTO STITCHING (GHÉP ẢNH DỌC)
+            // ============================================================
+            function stitchPhotos() {
+                if (state.capturedPhotos.length < 2) {
+                    showToast('⚠️ Cần ít nhất 2 ảnh để ghép');
                     return;
                 }
-                if (capturedPhotos.length >= photoCount) {
-                    showToast('✨ Đã đủ ảnh! Nhấn "Ghép ảnh" để xem kết quả.');
-                    return;
-                }
 
-                // Nếu có hẹn giờ
-                if (timerSeconds > 0 && capturedPhotos.length < photoCount) {
-                    await startCountdown(timerSeconds);
-                }
+                const photos = [...state.capturedPhotos];
+                const frameStyle = state.activeFrame;
 
-                // Chụp ảnh
-                const photoDataUrl = captureSingleFrame();
-                capturedPhotos.push(photoDataUrl);
-                updatePhotoSlots();
-
-                // Flash effect
-                cameraWrapper.classList.add('flash-effect');
-                setTimeout(() => cameraWrapper.classList.remove('flash-effect'), 500);
-
-                // Rung nhẹ
-                if (navigator.vibrate) {
-                    navigator.vibrate(40);
-                }
-
-                showToast(`📸 Đã chụp ${capturedPhotos.length}/${photoCount} ảnh!`);
-
-                // Nếu đã chụp đủ, tự động hiện preview ghép ảnh
-                if (capturedPhotos.length >= photoCount) {
-                    setTimeout(() => {
-                        showPreviewModal();
-                    }, 600);
-                }
-            }
-
-            function startCountdown(seconds) {
-                return new Promise((resolve) => {
-                    isCountingDown = true;
-                    let remaining = seconds;
-                    countdownOverlay.classList.add('active');
-                    countdownNumber.textContent = remaining;
-                    countdownNumber.style.animation = 'none';
-                    void countdownNumber.offsetWidth;
-                    countdownNumber.style.animation = 'countPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-
-                    updatePhotoSlots();
-
-                    function tick() {
-                        if (remaining <= 0) {
-                            countdownOverlay.classList.remove('active');
-                            countdownNumber.textContent = '';
-                            isCountingDown = false;
-                            updatePhotoSlots();
-                            resolve();
-                            return;
-                        }
-                        countdownNumber.textContent = remaining;
-                        countdownNumber.style.animation = 'none';
-                        void countdownNumber.offsetWidth;
-                        countdownNumber.style.animation =
-                            'countPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                        if (navigator.vibrate) navigator.vibrate(25);
-                        remaining--;
-                        countdownTimerId = setTimeout(tick, 1000);
-                    }
-                    tick();
-                });
-            }
-
-            // ==================== MERGE PHOTOS (Ghép dọc) ====================
-            function mergePhotosVertical(photoDataUrls) {
-                if (photoDataUrls.length === 0) return null;
-                if (photoDataUrls.length === 1) return photoDataUrls[0];
-
-                // Load tất cả ảnh thành Image objects
-                const images = photoDataUrls.map(url => {
-                    const img = new Image();
-                    img.src = url;
-                    return img;
+                // Load tất cả ảnh vào Image objects
+                const imagePromises = photos.map(src => {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.onerror = () => reject(new Error('Không thể tải ảnh'));
+                        img.src = src;
+                    });
                 });
 
-                // Đợi tất cả ảnh load
-                return Promise.all(images.map(img => new Promise((resolve, reject) => {
-                    img.onload = () => resolve(img);
-                    img.onerror = () => reject(new Error('Failed to load image'));
-                }))).then(loadedImages => {
-                    // Tìm chiều rộng lớn nhất
-                    const maxWidth = Math.max(...loadedImages.map(img => img.naturalWidth));
-                    // Tổng chiều cao
-                    const totalHeight = loadedImages.reduce((sum, img) => sum + img.naturalHeight, 0);
+                Promise.all(imagePromises).then(images => {
+                    // Tính toán kích thước
+                    // Giữ chiều rộng đồng nhất = chiều rộng nhỏ nhất trong các ảnh
+                    const minWidth = Math.min(...images.map(img => img.width));
+                    // Tỉ lệ scale cho từng ảnh để có cùng chiều rộng
+                    const scaledHeights = images.map(img => {
+                        const ratio = minWidth / img.width;
+                        return Math.round(img.height * ratio);
+                    });
 
+                    const totalHeight = scaledHeights.reduce((sum, h) => sum + h, 0);
+                    const stitchWidth = minWidth;
+                    const stitchHeight = totalHeight;
+
+                    // Tạo canvas ghép ảnh
                     const canvas = document.createElement('canvas');
-                    canvas.width = maxWidth;
-                    canvas.height = totalHeight;
+                    // Thêm padding cho frame nếu cần
+                    let framePadding = 0;
+                    let frameColor = 'transparent';
+                    switch (frameStyle) {
+                        case 'white':
+                            framePadding = 20;
+                            frameColor = '#ffffff';
+                            break;
+                        case 'pink':
+                            framePadding = 18;
+                            frameColor = '#ffc2d9';
+                            break;
+                        case 'polaroid':
+                            framePadding = 24;
+                            frameColor = '#fafafa';
+                            break;
+                        case 'heart':
+                            framePadding = 22;
+                            frameColor = '#ffe0ec';
+                            break;
+                        default:
+                            framePadding = 0;
+                            break;
+                    }
+
+                    const totalCanvasWidth = stitchWidth + framePadding * 2;
+                    const totalCanvasHeight = stitchHeight + framePadding * (images.length + 1) + framePadding;
+                    // Đối với polaroid, thêm extra padding đáy
+                    const extraBottomPad = frameStyle === 'polaroid' ? 30 : 0;
+
+                    canvas.width = totalCanvasWidth;
+                    canvas.height = totalCanvasHeight + extraBottomPad;
                     const ctx = canvas.getContext('2d');
 
-                    // Vẽ nền trắng
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    // Vẽ nền frame
+                    if (framePadding > 0) {
+                        ctx.fillStyle = frameColor;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    // Vẽ từng ảnh, căn giữa theo chiều ngang
-                    let currentY = 0;
-                    loadedImages.forEach(img => {
-                        const xOffset = Math.floor((maxWidth - img.naturalWidth) / 2);
-                        ctx.drawImage(img, xOffset, currentY, img.naturalWidth, img.naturalHeight);
-                        currentY += img.naturalHeight;
-                    });
-
-                    return canvas.toDataURL('image/jpeg', 0.94);
-                });
-            }
-
-            // ==================== PREVIEW MODAL ====================
-            async function showPreviewModal() {
-                if (capturedPhotos.length === 0) {
-                    showToast('📸 Chưa có ảnh nào để ghép!');
-                    return;
-                }
-
-                try {
-                    const mergedDataUrl = await mergePhotosVertical(capturedPhotos);
-                    currentPreviewDataUrl = mergedDataUrl;
-                    previewImage.src = mergedDataUrl;
-                    previewInfo.textContent =
-                        `✨ Ảnh ghép từ ${capturedPhotos.length} ảnh - Kích thước giữ nguyên từng ảnh gốc`;
-                    previewModal.classList.remove('hidden');
-
-                    // Animation cho modal image
-                    previewImage.style.animation = 'none';
-                    void previewImage.offsetWidth;
-                    previewImage.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                } catch (err) {
-                    console.error('Merge error:', err);
-                    showToast('⚠️ Lỗi khi ghép ảnh!');
-                }
-            }
-
-            function hidePreviewModal() {
-                previewModal.classList.add('hidden');
-                currentPreviewDataUrl = null;
-            }
-
-            function saveToGallery(dataUrl) {
-                galleryPhotos.push({
-                    id: Date.now(),
-                    dataUrl: dataUrl,
-                    date: new Date().toLocaleString('vi-VN'),
-                    count: capturedPhotos.length
-                });
-                updateGalleryBadge();
-                showToast('💾 Đã lưu vào thư viện! 🎉');
-                // Reset captured photos
-                capturedPhotos = [];
-                updatePhotoSlots();
-                hidePreviewModal();
-            }
-
-            function downloadPhoto(dataUrl) {
-                const link = document.createElement('a');
-                link.download = 'photobooth-cute-' + Date.now() + '.jpg';
-                link.href = dataUrl;
-                link.click();
-                showToast('📥 Đang tải ảnh về...');
-            }
-
-            function deleteCapturedPhotos() {
-                capturedPhotos = [];
-                updatePhotoSlots();
-                hidePreviewModal();
-                showToast('🗑️ Đã xoá ảnh vừa chụp.');
-            }
-
-            // ==================== GALLERY ====================
-            function updateGalleryBadge() {
-                galleryBadge.textContent = '📚 ' + galleryPhotos.length + ' ảnh';
-            }
-
-            function renderGallery() {
-                galleryGrid.innerHTML = '';
-                if (galleryPhotos.length === 0) {
-                    galleryGrid.innerHTML =
-                        '<p style="text-align:center;color:#aaa;grid-column:1/-1;padding:40px;">📭 Thư viện trống<br>Hãy chụp và lưu ảnh nhé! 🌸</p>';
-                } else {
-                    galleryPhotos.forEach((photo, index) => {
-                        const item = document.createElement('div');
-                        item.className = 'gallery-item';
-                        const img = document.createElement('img');
-                        img.src = photo.dataUrl;
-                        img.alt = 'Ảnh ' + (index + 1);
-                        img.loading = 'lazy';
-                        const delBtn = document.createElement('button');
-                        delBtn.className = 'delete-gallery-btn';
-                        delBtn.textContent = '✕';
-                        delBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            deleteGalleryPhoto(index);
-                        });
-                        item.appendChild(img);
-                        item.appendChild(delBtn);
-                        item.addEventListener('click', () => {
-                            // Xem ảnh lớn
-                            previewImage.src = photo.dataUrl;
-                            previewInfo.textContent = '📅 ' + photo.date + ' | Ghép ' + photo.count +
-                                ' ảnh';
-                            currentPreviewDataUrl = photo.dataUrl;
-                            previewModal.classList.remove('hidden');
-                        });
-                        galleryGrid.appendChild(item);
-                    });
-                }
-            }
-
-            function deleteGalleryPhoto(index) {
-                if (confirm('Xoá ảnh này khỏi thư viện?')) {
-                    galleryPhotos.splice(index, 1);
-                    updateGalleryBadge();
-                    renderGallery();
-                    showToast('🗑️ Đã xoá ảnh.');
-                }
-            }
-
-            function clearAllGallery() {
-                if (galleryPhotos.length === 0) return;
-                if (confirm('Xoá TẤT CẢ ảnh trong thư viện? Hành động này không thể hoàn tác!')) {
-                    galleryPhotos = [];
-                    updateGalleryBadge();
-                    renderGallery();
-                    showToast('🗑️ Đã xoá toàn bộ thư viện.');
-                }
-            }
-
-            function showGalleryModal() {
-                renderGallery();
-                galleryModal.classList.remove('hidden');
-            }
-
-            function hideGalleryModal() {
-                galleryModal.classList.add('hidden');
-            }
-
-            // ==================== BUTTON HANDLERS ====================
-            btnShutter.addEventListener('click', () => {
-                if (capturedPhotos.length >= photoCount) {
-                    // Nếu đã đủ ảnh, hiện preview
-                    showPreviewModal();
-                } else {
-                    triggerCapture();
-                }
-            });
-
-            // Double-tap shutter để reset
-            btnShutter.addEventListener('dblclick', () => {
-                if (capturedPhotos.length > 0 && capturedPhotos.length < photoCount) {
-                    if (confirm('Huỷ bỏ các ảnh đã chụp và bắt đầu lại?')) {
-                        capturedPhotos = [];
-                        updatePhotoSlots();
-                        showToast('🔄 Đã reset, chụp lại từ đầu nhé!');
+                        // Vẽ viền ngoài mỏng
+                        ctx.strokeStyle = 'rgba(200,160,170,0.5)';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+                    } else {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
                     }
-                }
-            });
 
-            btnFilter.addEventListener('click', () => {
-                const filters = ['none', 'vintage', 'sepia', 'grayscale', 'warm', 'cool', 'blur'];
-                const filterNames = ['✨ Thường', '📜 Vintage', '🟤 Sepia', '⬛ Trắng đen', '🔆 Ấm áp', '❄️ Mát lạnh',
-                    '🌫️ Làm mờ'
-                ];
-                const currentIndex = filters.indexOf(currentFilter);
-                const nextIndex = (currentIndex + 1) % filters.length;
-                currentFilter = filters[nextIndex];
-                updateFilterDisplay();
-                if (currentFilter === 'none') {
-                    btnFilter.classList.remove('active-ctrl');
-                } else {
-                    btnFilter.classList.add('active-ctrl');
-                }
-                showToast('🎨 Bộ lọc: ' + filterNames[nextIndex]);
-            });
+                    // Vẽ từng ảnh theo chiều dọc
+                    let yOffset = framePadding;
+                    images.forEach((img, index) => {
+                        const scaledH = scaledHeights[index];
+                        const xOffset = framePadding;
 
-            btnTimer.addEventListener('click', () => {
-                const timers = [0, 3, 5, 10];
-                const timerLabels = ['Tắt', '3 giây', '5 giây', '10 giây'];
-                const currentIndex = timers.indexOf(timerSeconds);
-                const nextIndex = (currentIndex + 1) % timers.length;
-                timerSeconds = timers[nextIndex];
-                if (timerSeconds === 0) {
-                    btnTimer.classList.remove('active-ctrl');
-                } else {
-                    btnTimer.classList.add('active-ctrl');
-                }
-                showToast('⏱️ Hẹn giờ: ' + timerLabels[nextIndex]);
-            });
+                        // Vẽ ảnh với kích thước đã scale
+                        ctx.drawImage(img, xOffset, yOffset, stitchWidth, scaledH);
 
-            btnBorder.addEventListener('click', () => {
-                const borders = ['none', 'white', 'pink', 'purple', 'gold', 'black'];
-                const borderLabels = ['🚫 Không viền', '⬜ Trắng', '💗 Hồng', '💜 Tím', '💛 Vàng', '⬛ Đen'];
-                const currentIndex = borders.indexOf(borderStyle);
-                const nextIndex = (currentIndex + 1) % borders.length;
-                borderStyle = borders[nextIndex];
-                updateBorderStyle();
-                showToast('🖼️ Viền: ' + borderLabels[nextIndex]);
-            });
-
-            btnFlip.addEventListener('click', async () => {
-                facingMode = facingMode === 'user' ? 'environment' : 'user';
-                await startCamera();
-                showToast('🔄 Đã chuyển camera ' + (facingMode === 'user' ? 'trước 🤳' : 'sau 🌍'));
-            });
-
-            btnMirror.addEventListener('click', () => {
-                mirrorEnabled = !mirrorEnabled;
-                updateMirrorMode();
-                if (mirrorEnabled) {
-                    btnMirror.classList.add('active-ctrl');
-                } else {
-                    btnMirror.classList.remove('active-ctrl');
-                }
-                showToast(mirrorEnabled ? '🪞 Chế độ soi gương: BẬT' : '🔲 Chế độ soi gương: TẮT');
-            });
-            // Khởi tạo trạng thái mirror
-            if (mirrorEnabled) btnMirror.classList.add('active-ctrl');
-
-            btnGallery.addEventListener('click', () => {
-                showGalleryModal();
-            });
-
-            // Count selector
-            countSelector.addEventListener('click', (e) => {
-                if (e.target.classList.contains('count-option')) {
-                    const newCount = parseInt(e.target.dataset.count);
-                    if (newCount !== photoCount) {
-                        if (capturedPhotos.length > 0) {
-                            if (!confirm(
-                                    'Thay đổi số lượng sẽ xoá các ảnh đã chụp. Tiếp tục?')) {
-                                return;
-                            }
+                        // Vẽ đường phân cách nhẹ giữa các ảnh (nếu không có frame)
+                        if (framePadding === 0 && index < images.length - 1) {
+                            ctx.strokeStyle = 'rgba(255,180,200,0.3)';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(0, yOffset + scaledH);
+                            ctx.lineTo(stitchWidth, yOffset + scaledH);
+                            ctx.stroke();
                         }
-                        photoCount = newCount;
-                        capturedPhotos = [];
-                        updateCountSelector();
-                        updatePhotoSlots();
-                        showToast('📷 Chế độ: ' + photoCount + ' ảnh/khung');
+
+                        yOffset += scaledH;
+                        if (framePadding > 0 && index < images.length - 1) {
+                            yOffset += 4; // gap nhỏ giữa các ảnh trong frame
+                        }
+                    });
+
+                    // Vẽ heart decorations nếu là frame heart
+                    if (frameStyle === 'heart') {
+                        ctx.fillStyle = 'rgba(255,92,138,0.25)';
+                        ctx.font = '20px sans-serif';
+                        for (let i = 0; i < 8; i++) {
+                            const hx = Math.random() * canvas.width;
+                            const hy = Math.random() * canvas.height;
+                            ctx.fillText('💖', hx, hy);
+                        }
                     }
-                }
-            });
 
-            // Preview modal buttons
-            btnSavePhoto.addEventListener('click', () => {
-                if (currentPreviewDataUrl) {
-                    saveToGallery(currentPreviewDataUrl);
-                }
-            });
-            btnDownloadPhoto.addEventListener('click', () => {
-                if (currentPreviewDataUrl) {
-                    downloadPhoto(currentPreviewDataUrl);
-                }
-            });
-            btnDeletePhoto.addEventListener('click', () => {
-                deleteCapturedPhotos();
-            });
-            btnClosePreview.addEventListener('click', () => {
-                hidePreviewModal();
-                // Không reset captured photos để người dùng có thể xem lại
-            });
+                    const stitchedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-            // Gallery modal buttons
-            btnCloseGallery.addEventListener('click', hideGalleryModal);
-            btnClearGallery.addEventListener('click', clearAllGallery);
+                    // Thêm vào gallery
+                    addToGallery(stitchedDataUrl);
 
-            // Close modals on overlay click
-            previewModal.addEventListener('click', (e) => {
-                if (e.target === previewModal) hidePreviewModal();
-            });
-            galleryModal.addEventListener('click', (e) => {
-                if (e.target === galleryModal) hideGalleryModal();
-            });
+                    // Hiển thị modal kết quả
+                    openResultModal(stitchedDataUrl, false);
 
-            // ==================== KEYBOARD SHORTCUTS ====================
-            document.addEventListener('keydown', (e) => {
-                if (e.key === ' ' || e.code === 'Space') {
-                    e.preventDefault();
-                    if (!previewModal.classList.contains('hidden') || !galleryModal.classList.contains(
-                            'hidden')) return;
-                    btnShutter.click();
-                }
-                if (e.key === 'Escape') {
-                    hidePreviewModal();
-                    hideGalleryModal();
-                }
-                if (e.key === 'f' || e.key === 'F') {
-                    btnFlip.click();
-                }
-            });
-
-            // ==================== INIT ====================
-            function init() {
-                updatePhotoSlots();
-                updateCountSelector();
-                updateBorderStyle();
-                updateGalleryBadge();
-                initSparkles();
-                startCamera().then(() => {
-                    console.log('✅ PhotoBooth sẵn sàng!');
+                    // Reset session
+                    state.capturedPhotos = [];
+                    updatePhotoCounter();
+                    showToast('🎉 Đã ghép ' + images.length + ' ảnh!');
                 }).catch(err => {
-                    console.warn('Camera init warning:', err);
-                    showToast('📷 Vui lòng cấp quyền camera để sử dụng!');
+                    console.error('Stitch error:', err);
+                    showToast('⚠️ Lỗi khi ghép ảnh');
+                    state.capturedPhotos = [];
+                    updatePhotoCounter();
                 });
+            }
 
-                // Load gallery from localStorage
-                try {
-                    const saved = localStorage.getItem('photobooth_cute_gallery');
-                    if (saved) {
-                        galleryPhotos = JSON.parse(saved);
-                        updateGalleryBadge();
-                    }
-                } catch (e) {
-                    console.warn('Could not load gallery from localStorage');
+            function openResultModal(imageDataUrl, isFromGallery = false) {
+                resultImage.src = imageDataUrl;
+                resultModal.style.display = 'flex';
+
+                // Cuộn modal card lên đầu
+                const modalCard = document.getElementById('resultModalCard');
+                if (modalCard) modalCard.scrollTop = 0;
+
+                // Cập nhật nút
+                btnNewSession.style.display = isFromGallery ? 'none' : 'inline-block';
+                btnDownloadResult.onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = imageDataUrl;
+                    link.download = 'pinkbooth_stitch_' + Date.now() + '.jpg';
+                    link.click();
+                    showToast('📥 Đã tải ảnh về');
+                };
+                btnNewSession.onclick = () => {
+                    closeModal();
+                    state.capturedPhotos = [];
+                    updatePhotoCounter();
+                    switchTab('camera');
+                };
+            }
+
+            function closeModal() {
+                resultModal.style.display = 'none';
+            }
+
+            btnCloseModal.addEventListener('click', closeModal);
+            resultModal.addEventListener('click', function(e) {
+                if (e.target === resultModal) {
+                    closeModal();
                 }
+            });
 
-                // Save gallery on changes
-                setInterval(() => {
-                    try {
-                        localStorage.setItem('photobooth_cute_gallery', JSON.stringify(galleryPhotos));
-                    } catch (e) {
-                        // localStorage đầy
+            // ============================================================
+            // FILTER SELECTION
+            // ============================================================
+            filterQuickBar.addEventListener('click', function(e) {
+                const chip = e.target.closest('.filter-chip');
+                if (!chip) return;
+                const filter = chip.dataset.filter;
+                if (filter) {
+                    state.activeFilter = filter;
+                    // Update active state
+                    filterQuickBar.querySelectorAll('.filter-chip').forEach(c => c.classList.remove(
+                        'active'));
+                    chip.classList.add('active');
+                    // Áp dụng filter CSS lên video preview (chỉ để preview)
+                    applyVideoFilter(filter);
+                }
+            });
+
+            function applyVideoFilter(filter) {
+                // Xóa tất cả filter cũ
+                cameraVideo.style.filter = '';
+                cameraVideo.style.webkitFilter = '';
+
+                switch (filter) {
+                    case 'sepia':
+                        cameraVideo.style.filter = 'sepia(0.7)';
+                        break;
+                    case 'grayscale':
+                        cameraVideo.style.filter = 'grayscale(1)';
+                        break;
+                    case 'vintage':
+                        cameraVideo.style.filter = 'sepia(0.3) brightness(1.1) saturate(0.8)';
+                        break;
+                    case 'pink-tint':
+                        cameraVideo.style.filter = 'brightness(1.1) saturate(1.2) hue-rotate(-10deg)';
+                        break;
+                    case 'warm':
+                        cameraVideo.style.filter = 'brightness(1.15) saturate(1.1) hue-rotate(5deg)';
+                        break;
+                    case 'cool':
+                        cameraVideo.style.filter = 'brightness(1) saturate(0.9) hue-rotate(180deg)';
+                        break;
+                    default:
+                        cameraVideo.style.filter = '';
+                        break;
+                }
+            }
+
+            // ============================================================
+            // FRAME SELECTION (Settings tab)
+            // ============================================================
+            frameSelector.addEventListener('click', function(e) {
+                const option = e.target.closest('.frame-option');
+                if (!option) return;
+                const frame = option.dataset.frame;
+                if (frame) {
+                    state.activeFrame = frame;
+                    frameSelector.querySelectorAll('.frame-option').forEach(o => o.classList.remove(
+                        'active'));
+                    option.classList.add('active');
+                }
+            });
+
+            // ============================================================
+            // STITCH COUNT SELECTION (Settings tab)
+            // ============================================================
+            stitchCountSelector.addEventListener('click', function(e) {
+                const btn = e.target.closest('.stitch-count-btn');
+                if (!btn) return;
+                const count = parseInt(btn.dataset.count);
+                if (count && count >= 2 && count <= 6) {
+                    state.stitchCount = count;
+                    stitchCountSelector.querySelectorAll('.stitch-count-btn').forEach(b => b.classList
+                        .remove('active'));
+                    btn.classList.add('active');
+                    // Reset captured photos
+                    state.capturedPhotos = [];
+                    updatePhotoCounter();
+                    showToast(`📐 Ghép ${count} ảnh dọc`);
+                }
+            });
+
+            // ============================================================
+            // COUNTDOWN SELECTION (Settings tab)
+            // ============================================================
+            countdownSelector.addEventListener('click', function(e) {
+                const btn = e.target.closest('.stitch-count-btn');
+                if (!btn || !btn.dataset.delay) return;
+                const delay = parseInt(btn.dataset.delay);
+                if (!isNaN(delay)) {
+                    state.countdownDelay = delay;
+                    countdownSelector.querySelectorAll('.stitch-count-btn').forEach(b => b.classList
+                        .remove('active'));
+                    btn.classList.add('active');
+                    showToast(delay > 0 ? `⏱️ Đếm ngược ${delay}s` : '📸 Chụp ngay');
+                }
+            });
+
+            // ============================================================
+            // GALLERY BUTTONS
+            // ============================================================
+            galleryClearBtn.addEventListener('click', clearGallery);
+            galleryDownloadAllBtn.addEventListener('click', downloadAllGallery);
+
+            // ============================================================
+            // INITIALIZATION
+            // ============================================================
+            function initApp() {
+                loadGalleryFromStorage();
+                renderGallery();
+                updateGalleryBadge();
+                updatePhotoCounter();
+                // Đặt filter mặc định
+                applyVideoFilter('none');
+                // Đặt frame mặc định
+                state.activeFrame = 'none';
+                // Đặt stitch count mặc định từ UI
+                const activeStitchBtn = stitchCountSelector.querySelector('.stitch-count-btn.active');
+                if (activeStitchBtn) {
+                    state.stitchCount = parseInt(activeStitchBtn.dataset.count) || 4;
+                }
+                const activeCountdownBtn = countdownSelector.querySelector('.stitch-count-btn.active');
+                if (activeCountdownBtn && activeCountdownBtn.dataset.delay) {
+                    state.countdownDelay = parseInt(activeCountdownBtn.dataset.delay) || 0;
+                }
+                // Bắt đầu camera nếu đang ở tab camera
+                if (state.currentTab === 'camera') {
+                    startCamera();
+                    shutterBtnWrapper.style.display = 'flex';
+                    filterQuickBar.style.display = 'flex';
+                } else {
+                    shutterBtnWrapper.style.display = 'none';
+                    filterQuickBar.style.display = 'none';
+                }
+                updatePhotoCounter();
+            }
+
+            // ============================================================
+            // KEYBOARD SHORTCUT (Space để chụp)
+            // ============================================================
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space' && state.currentTab === 'camera' && !state.isCapturing) {
+                    e.preventDefault();
+                    if (resultModal.style.display === 'none') {
+                        capturePhoto();
                     }
-                }, 3000);
+                }
+                if (e.code === 'Escape') {
+                    closeModal();
+                }
+            });
 
-                // Touch ripple effect on shutter
-                btnShutter.addEventListener('touchstart', function(e) {
-                    const ripple = document.createElement('span');
-                    ripple.style.cssText = `
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(255,255,255,0.5);
-                width: 30px;
-                height: 30px;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) scale(0);
-                animation: rippleEffect 0.7s ease-out forwards;
-                pointer-events: none;
-                z-index: 0;
-              `;
-                    this.appendChild(ripple);
-                    setTimeout(() => ripple.remove(), 700);
-                });
+            // ============================================================
+            // PREVENT DOUBLE TAP ZOOM ON MOBILE
+            // ============================================================
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
 
-                console.log('🌸 PhotoBooth Cute initialized!');
-                console.log('  📸 Chụp ảnh ghép dọc 2-6 ảnh');
-                console.log('  🎨 Filter, ⏱️ Hẹn giờ, 🖼️ Viền');
-                console.log('  🔄 Camera trước/sau, 🪞 Soi gương');
-                console.log('  📚 Thư viện ảnh');
-                console.log('  💾 Lưu/Xoá/Tải về');
-                console.log('  Nhấn SPACE để chụp nhanh!');
-            }
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
 
-            // Add ripple keyframe
-            const rippleStyle = document.createElement('style');
-            rippleStyle.textContent = `
-            @keyframes rippleEffect {
-              0% { transform: translate(-50%, -50%) scale(0); opacity: 0.7; }
-              100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
-            }
-          `;
-            document.head.appendChild(rippleStyle);
-
-            // Start app
-            init();
-
-            // Handle page visibility change - restart camera when coming back
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    if (!stream || stream.getTracks().every(t => t.readyState === 'ended')) {
+            // ============================================================
+            // HANDLE VISIBILITY CHANGE (pause/resume camera)
+            // ============================================================
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    stopCamera();
+                } else {
+                    if (state.currentTab === 'camera') {
                         startCamera();
                     }
                 }
             });
 
-            // Handle resize
-            let resizeDebounce;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeDebounce);
-                resizeDebounce = setTimeout(() => {
-                    updatePhotoSlots();
-                }, 300);
-            });
+            // ============================================================
+            // START THE APP
+            // ============================================================
+            initApp();
+            console.log('🌸 PinkBooth Photobooth đã sẵn sàng!');
+            console.log('📸 Chụp ảnh mirror, ghép dọc ' + state.stitchCount + ' ảnh');
+            console.log('💡 Nhấn Space để chụp, Esc để đóng modal');
+            console.log('📱 Tối ưu cho mobile, chống zoom, giữ tỉ lệ ảnh gốc');
 
-            console.log('%c🌸 PhotoBooth Cute %cReady! %c✨',
-                'font-size:1.4em;color:#ec407a;',
-                'font-size:1em;color:#4a2c3e;',
-                'font-size:1.2em;');
-            console.log('%c👩‍💻 Tính năng: Ghép dọc 2-6 ảnh | Filter | Hẹn giờ | Viền | Soi gương | Thư viện',
-                'color:#888;');
+            // ============================================================
+            // SERVICE WORKER REGISTRATION NOTE
+            // ============================================================
+            // Để hoạt động offline và hỗ trợ camera tốt hơn, hãy deploy lên HTTPS.
+            // Camera yêu cầu secure context (HTTPS hoặc localhost).
+
         })();
     </script>
 </body>
