@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🌸 PhotoBooth Siêu Cute 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffe4ec;
+            --pink-light: #ffd1dc;
+            --pink: #ff9eb5;
+            --pink-mid: #ff6b8a;
+            --pink-dark: #e8507a;
+            --white: #fff5f7;
+            --text: #5c3d4a;
+            --text-light: #8b6b7a;
+            --shadow: 0 4px 20px rgba(255, 107, 138, 0.25);
+            --shadow-lg: 0 8px 35px rgba(255, 107, 138, 0.35);
+            --radius: 24px;
+            --radius-sm: 14px;
+            --radius-xs: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Baloo 2', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #ffe0ec 0%, #ffd1e0 25%, #ffe8f0 50%, #ffdce8 75%, #ffe0ec 100%);
+            background-size: 400% 400%;
+            animation: bgShift 12s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 8px;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        @keyframes bgShift {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            25% {
+                background-position: 100% 0%;
+            }
+            50% {
+                background-position: 100% 100%;
+            }
+            75% {
+                background-position: 0% 100%;
+            }
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            height: 95dvh;
+            max-height: 900px;
+            border: 3px solid rgba(255, 158, 181, 0.5);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        /* ============ DECORATIVE SPARKLES ============ */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+            animation: sparkleFloat 2.5s ease-in-out infinite;
+            opacity: 0;
+            font-size: 18px;
+        }
+        @keyframes sparkleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.3) rotate(0deg);
+            }
+            30% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(1.2) rotate(180deg);
+            }
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            text-align: center;
+            padding: 14px 16px 10px;
+            position: relative;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+        .header .title {
+            font-size: 1.7em;
+            font-weight: 800;
+            color: var(--pink-dark);
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px rgba(255, 158, 181, 0.4);
+            line-height: 1.2;
+        }
+        .header .subtitle {
+            font-size: 0.8em;
+            color: var(--text-light);
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+        .header .decorative-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .header .decorative-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pink);
+            display: inline-block;
+            animation: dotBounce 1.5s ease-in-out infinite;
+        }
+        .header .decorative-dots span:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .header .decorative-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+            background: #ffb3c6;
+        }
+        .header .decorative-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+            background: #ffc2d1;
+        }
+        @keyframes dotBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* ============ MAIN AREA ============ */
+        .main-area {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0 12px;
+            border-radius: var(--radius);
+            background: #1a1a1a;
+            box-shadow: inset 0 0 0 4px rgba(255, 158, 181, 0.5);
+            min-height: 280px;
+            border: 3px dashed rgba(255, 255, 255, 0.4);
+        }
+        .main-area video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            /* Mirror effect */
+            border-radius: calc(var(--radius) - 4px);
+            transition: filter var(--transition);
+        }
+        .main-area canvas {
+            display: none;
+        }
+        .no-camera-msg {
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            z-index: 2;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        .no-camera-msg .icon {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* ============ COUNTDOWN OVERLAY ============ */
+        .countdown-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .countdown-overlay.active {
+            opacity: 1;
+        }
+        .countdown-number {
+            font-size: 8em;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 60px rgba(255, 107, 138, 0.9), 0 0 120px rgba(255, 158, 181, 0.7), 0 8px 30px rgba(0, 0, 0, 0.5);
+            animation: countPop 0.7s ease-out;
+            line-height: 1;
+        }
+        @keyframes countPop {
+            0% {
+                transform: scale(2);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ============ SESSION INDICATOR ============ */
+        .session-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .session-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .session-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2.5px solid var(--pink);
+            background: transparent;
+            transition: all var(--transition);
+            position: relative;
+        }
+        .session-dot.filled {
+            background: var(--pink);
+            border-color: var(--pink-dark);
+            animation: dotFill 0.4s ease-out;
+        }
+        @keyframes dotFill {
+            0% {
+                transform: scale(1.6);
+                background: var(--pink-dark);
+            }
+            100% {
+                transform: scale(1);
+                background: var(--pink);
+            }
+        }
+        .session-label {
+            font-size: 0.78em;
+            color: var(--text-light);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .mini-thumbs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .mini-thumb {
+            width: 32px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 2px solid var(--pink-light);
+            cursor: pointer;
+            transition: var(--transition);
+            background: #f0f0f0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .mini-thumb:hover {
+            transform: scale(1.15);
+            border-color: var(--pink-mid);
+            box-shadow: 0 4px 12px rgba(255, 107, 138, 0.3);
+        }
+
+        /* ============ CONTROLS ROW ============ */
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 6px 10px;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 5;
+        }
+        .ctrl-btn {
+            background: var(--white);
+            border: 2px solid var(--pink-light);
+            border-radius: 50px;
+            padding: 7px 13px;
+            font-size: 0.72em;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ctrl-btn:active {
+            transform: scale(0.93);
+            background: var(--pink-light);
+            border-color: var(--pink);
+        }
+        .ctrl-btn.active {
+            background: var(--pink);
+            color: #fff;
+            border-color: var(--pink-dark);
+            box-shadow: 0 4px 15px rgba(255, 107, 138, 0.4);
+            animation: btnGlow 2s ease-in-out infinite;
+        }
+        @keyframes btnGlow {
+            0%,
+            100% {
+                box-shadow: 0 4px 15px rgba(255, 107, 138, 0.4);
+            }
+            50% {
+                box-shadow: 0 6px 25px rgba(255, 107, 138, 0.7);
+            }
+        }
+        .ctrl-btn .emoji {
+            font-size: 1.2em;
+        }
+        .ctrl-btn.timer-btn .timer-label {
+            font-weight: 800;
+            color: var(--pink-dark);
+            min-width: 18px;
+            text-align: center;
+        }
+        .ctrl-btn.timer-btn.active .timer-label {
+            color: #fff;
+        }
+
+        /* Grid selector inline */
+        .grid-selector {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+            background: var(--white);
+            border-radius: 50px;
+            padding: 3px 5px;
+            border: 2px solid var(--pink-light);
+        }
+        .grid-opt {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.75em;
+            color: var(--text-light);
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .grid-opt.active {
+            background: var(--pink);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(255, 107, 138, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* ============ CAPTURE BUTTON ============ */
+        .capture-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 8px 16px 14px;
+            flex-shrink: 0;
+            z-index: 5;
+        }
+        .capture-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ff9eb5, #ff6b8a);
+            border: 5px solid #fff;
+            box-shadow: 0 6px 25px rgba(255, 107, 138, 0.5), 0 0 0 8px rgba(255, 158, 181, 0.3);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 10;
+        }
+        .capture-btn::after {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 3px dashed rgba(255, 255, 255, 0.6);
+            animation: spinDashed 10s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes spinDashed {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .capture-btn:active {
+            transform: scale(0.88);
+            box-shadow: 0 2px 10px rgba(255, 107, 138, 0.4), 0 0 0 5px rgba(255, 158, 181, 0.5);
+            background: linear-gradient(145deg, #ff6b8a, #e8507a);
+        }
+        .capture-btn .inner-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .capture-btn.flash {
+            animation: flashBtn 0.3s ease-out;
+        }
+        @keyframes flashBtn {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 1), 0 6px 25px rgba(255, 107, 138, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 0 40px rgba(255, 255, 255, 0), 0 6px 25px rgba(255, 107, 138, 0.5);
+            }
+        }
+        .side-action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 2px solid var(--pink-light);
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            -webkit-tap-highlight-color: transparent;
+            font-family: inherit;
+            color: var(--text);
+        }
+        .side-action-btn:active {
+            transform: scale(0.9);
+            background: var(--pink-light);
+        }
+        .side-action-btn.merge-btn {
+            background: linear-gradient(135deg, #ffe0ec, #ffd1dc);
+            border-color: var(--pink);
+            font-weight: 700;
+            font-size: 0.7em;
+            width: auto;
+            padding: 0 12px;
+            border-radius: 50px;
+            gap: 3px;
+            letter-spacing: 0.5px;
+            animation: pulseMerge 2s ease-in-out infinite;
+        }
+        @keyframes pulseMerge {
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(255, 107, 138, 0.2);
+            }
+            50% {
+                box-shadow: 0 6px 20px rgba(255, 107, 138, 0.5);
+            }
+        }
+
+        /* ============ MODAL OVERLAY ============ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 28px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 3px solid var(--pink-light);
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(60px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-content h3 {
+            color: var(--pink-dark);
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .modal-image-wrap {
+            max-height: 55vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            background: #fafafa;
+            padding: 4px;
+            margin-bottom: 14px;
+            border: 2px dashed var(--pink-light);
+        }
+        .modal-image-wrap img {
+            width: 100%;
+            display: block;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .modal-btn.save-btn {
+            background: var(--pink);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 107, 138, 0.4);
+        }
+        .modal-btn.save-btn:active {
+            background: var(--pink-dark);
+            transform: scale(0.95);
+        }
+        .modal-btn.delete-btn {
+            background: #fff;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+        .modal-btn.delete-btn:active {
+            background: #fde8e8;
+            transform: scale(0.95);
+        }
+        .modal-btn.close-btn {
+            background: #f0f0f0;
+            color: #555;
+            border: 2px solid #ddd;
+        }
+        .modal-btn.close-btn:active {
+            background: #e0e0e0;
+            transform: scale(0.95);
+        }
+
+        /* ============ LIBRARY MODAL ============ */
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 4px;
+        }
+        .library-item {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid var(--pink-light);
+            transition: all var(--transition);
+            background: #fafafa;
+            aspect-ratio: 3/4;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        .library-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .library-item:hover {
+            transform: scale(1.03);
+            border-color: var(--pink);
+            box-shadow: 0 6px 20px rgba(255, 107, 138, 0.3);
+        }
+        .library-item .delete-lib-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(231, 76, 60, 0.9);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 5;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .library-item .delete-lib-btn:active {
+            transform: scale(1.3);
+            background: #c0392b;
+        }
+        .library-empty {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 1em;
+            grid-column: span 2;
+        }
+        .library-empty .icon {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85em;
+            z-index: 300;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+            font-family: inherit;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            background: #ff9eb5;
+            color: #fff;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 380px) {
+            .ctrl-btn {
+                padding: 5px 9px;
+                font-size: 0.65em;
+                gap: 2px;
+            }
+            .capture-btn {
+                width: 60px;
+                height: 60px;
+            }
+            .capture-btn .inner-dot {
+                width: 22px;
+                height: 22px;
+            }
+            .capture-btn::after {
+                inset: -10px;
+                border-width: 2px;
+            }
+            .header .title {
+                font-size: 1.4em;
+            }
+            .grid-opt {
+                width: 26px;
+                height: 26px;
+                font-size: 0.7em;
+            }
+        }
+        @media (min-width: 381px) and (max-width: 430px) {
+            .ctrl-btn {
+                padding: 6px 11px;
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="appContainer">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="title">📸 PhotoBooth</div>
+            <div class="subtitle">✨ Siêu Cute ✨</div>
+            <div class="decorative-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- MAIN AREA: Video + Countdown -->
+        <div class="main-area" id="mainArea">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="no-camera-msg" id="noCameraMsg" style="display:none;">
+                <span class="icon">📷</span>
+                Không tìm thấy camera<br>Vui lòng cấp quyền truy cập
+            </div>
+            <canvas id="captureCanvas" style="display:none;"></canvas>
+            <div class="countdown-overlay" id="countdownOverlay">
+                <span class="countdown-number" id="countdownNumber"></span>
+            </div>
+        </div>
+
+        <!-- SESSION INFO -->
+        <div class="session-info" id="sessionInfo">
+            <span class="session-label">Ảnh đã chụp:</span>
+            <div class="session-dots" id="sessionDots"></div>
+            <span class="session-label" id="sessionCountLabel">0/2</span>
+            <div class="mini-thumbs" id="miniThumbs"></div>
+        </div>
+
+        <!-- CONTROLS ROW 1: Filter, Timer, Border, Grid -->
+        <div class="controls-row" id="controlsRow1">
+            <button class="ctrl-btn" id="btnFilter" onclick="cycleFilter()" title="Đổi filter">
+                <span class="emoji">🎨</span> Phiu tơ: <span id="filterName">Tự nhiên</span>
+            </button>
+            <button class="ctrl-btn timer-btn" id="btnTimer" onclick="cycleTimer()" title="Hẹn giờ">
+                <span class="emoji">⏱️</span> <span class="timer-label" id="timerLabel">Tắt</span>
+            </button>
+            <button class="ctrl-btn" id="btnBorder" onclick="cycleBorder()" title="Đổi viền">
+                <span class="emoji">🖼️</span> Viền
+            </button>
+        </div>
+        <div class="controls-row" id="controlsRow2">
+            <span style="font-size:0.7em;color:var(--text-light);font-weight:600;">Số ảnh/khung:</span>
+            <div class="grid-selector" id="gridSelector">
+                <button class="grid-opt active" data-count="2">2</button>
+                <button class="grid-opt" data-count="3">3</button>
+                <button class="grid-opt" data-count="4">4</button>
+                <button class="grid-opt" data-count="5">5</button>
+                <button class="grid-opt" data-count="6">6</button>
+            </div>
+            <button class="ctrl-btn" id="btnLibrary" onclick="openLibrary()" title="Thư viện ảnh">
+                <span class="emoji">📚</span> Thư viện
+            </button>
+        </div>
+
+        <!-- CAPTURE SECTION -->
+        <div class="capture-section" id="captureSection">
+            <button class="side-action-btn" id="btnUndo" onclick="undoLastCapture()" title="Xóa ảnh cuối">↩️</button>
+            <button class="side-action-btn merge-btn" id="btnMerge" onclick="mergeNow()" title="Ghép ảnh ngay" style="display:none;">
+                ✂️ Ghép ngay
+            </button>
+            <button class="capture-btn" id="btnCapture" onclick="startCapture()" title="Chụp ảnh">
+                <span class="inner-dot"></span>
+            </button>
+            <button class="side-action-btn" id="btnReset" onclick="resetSession()" title="Hủy session">🗑️</button>
+            <button class="side-action-btn" id="btnFlipInfo" title="Ảnh đang lật gương" style="font-size:0.9em;">🪞</button>
+        </div>
+    </div>
+
+    <!-- PREVIEW MODAL (sau khi ghép) -->
+    <div class="modal-overlay" id="previewModal" style="display:none;">
+        <div class="modal-content">
+            <h3>🌟 Ảnh Ghép Của Bạn 🌟</h3>
+            <div class="modal-image-wrap" id="previewImageWrap">
+                <img id="previewImage" src="" alt="Ảnh ghép">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn save-btn" onclick="saveMergedImage()">💾 Lưu & Tải về</button>
+                <button class="modal-btn delete-btn" onclick="deleteMergedImage()">🗑️ Xóa</button>
+                <button class="modal-btn close-btn" onclick="closePreviewModal()">✖ Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIBRARY MODAL -->
+    <div class="modal-overlay" id="libraryModal" style="display:none;">
+        <div class="modal-content">
+            <h3>📚 Thư Viện Ảnh</h3>
+            <div class="library-grid" id="libraryGrid"></div>
+            <div class="modal-buttons" style="margin-top:12px;">
+                <button class="modal-btn close-btn" onclick="closeLibrary()">✖ Đóng</button>
+                <button class="modal-btn delete-btn" onclick="clearLibrary()" style="font-size:0.75em;">🗑️ Xóa tất cả</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- SPARKLE CONTAINER -->
+    <div id="sparkleContainer" style="position:fixed;inset:0;pointer-events:none;z-index:150;"></div>
+
+    <script>
+        (function() {
+            // ============ DOM ELEMENTS ============
+            const video = document.getElementById('video');
+            const captureCanvas = document.getElementById('captureCanvas');
+            const captureCtx = captureCanvas.getContext('2d');
+            const mainArea = document.getElementById('mainArea');
+            const noCameraMsg = document.getElementById('noCameraMsg');
+            const countdownOverlay = document.getElementById('countdownOverlay');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const sessionDots = document.getElementById('sessionDots');
+            const sessionCountLabel = document.getElementById('sessionCountLabel');
+            const miniThumbs = document.getElementById('miniThumbs');
+            const btnMerge = document.getElementById('btnMerge');
+            const btnCapture = document.getElementById('btnCapture');
+            const btnUndo = document.getElementById('btnUndo');
+            const btnReset = document.getElementById('btnReset');
+            const filterNameEl = document.getElementById('filterName');
+            const timerLabelEl = document.getElementById('timerLabel');
+            const btnTimer = document.getElementById('btnTimer');
+            const btnFilter = document.getElementById('btnFilter');
+            const btnBorder = document.getElementById('btnBorder');
+            const previewModal = document.getElementById('previewModal');
+            const previewImage = document.getElementById('previewImage');
+            const previewImageWrap = document.getElementById('previewImageWrap');
+            const libraryModal = document.getElementById('libraryModal');
+            const libraryGrid = document.getElementById('libraryGrid');
+            const toast = document.getElementById('toast');
+            const sparkleContainer = document.getElementById('sparkleContainer');
+            const gridSelector = document.getElementById('gridSelector');
+
+            // ============ STATE ============
+            let currentStream = null;
+            let gridCount = 2; // số ảnh / khung (2-6)
+            let capturedImages = []; // mảng dataURL các ảnh đã chụp trong session
+            let currentFilterIndex = 0;
+            let currentTimer = 0; // 0 = tắt, 3, 5, 10 giây
+            let currentBorderIndex = 0;
+            let isCapturing = false;
+            let mergedImageDataURL = null; // ảnh ghép hiện tại trong preview
+            let library = []; // mảng { dataURL, timestamp, id }
+
+            // ============ FILTER DEFINITIONS ============
+            const filters = [
+                { name: '🌸 Tự nhiên', css: 'none', ctx: 'none' },
+                { name: '🖤 Đen trắng', css: 'grayscale(100%)', ctx: 'grayscale(100%)' },
+                { name: '🤎 Sepia ấm', css: 'sepia(70%) saturate(80%)', ctx: 'sepia(70%) saturate(80%)' },
+                { name: '💙 Mát lạnh', css: 'hue-rotate(170deg) saturate(90%) brightness(1.1)',
+                    ctx: 'hue-rotate(170deg) saturate(90%) brightness(1.1)' },
+                { name: '💗 Hồng ngọt', css: 'hue-rotate(-25deg) saturate(130%) brightness(1.08)',
+                    ctx: 'hue-rotate(-25deg) saturate(130%) brightness(1.08)' },
+                { name: '💜 Tím mộng', css: 'hue-rotate(55deg) saturate(110%) brightness(1.05)',
+                    ctx: 'hue-rotate(55deg) saturate(110%) brightness(1.05)' },
+                { name: '🌈 Rực rỡ', css: 'saturate(200%) contrast(115%)', ctx: 'saturate(200%) contrast(115%)' },
+                { name: '🌫️ Mờ ảo', css: 'blur(1.5px) brightness(1.08) saturate(90%)',
+                    ctx: 'blur(1.5px) brightness(1.08) saturate(90%)' },
+                { name: '✨ Lấp lánh', css: 'brightness(1.2) contrast(110%) saturate(120%)',
+                ctx: 'brightness(1.2) contrast(110%) saturate(120%)' },
+            ];
+
+            // ============ BORDER DEFINITIONS ============
+            const borders = [
+                { name: 'Không viền', type: 'none' },
+                { name: 'Viền trắng mỏng', type: 'white-thin' },
+                { name: 'Viền hồng dày', type: 'pink-thick' },
+                { name: 'Viền chấm bi', type: 'dotted' },
+                { name: 'Viền trái tim', type: 'hearts' },
+                { name: 'Viền ngôi sao', type: 'stars' },
+            ];
+
+            // ============ INITIALIZATION ============
+            function init() {
+                loadLibrary();
+                updateSessionUI();
+                updateFilterUI();
+                updateTimerUI();
+                updateBorderUI();
+                setupGridSelector();
+                startCamera();
+                createSparkles();
+            }
+
+            function setupGridSelector() {
+                const opts = gridSelector.querySelectorAll('.grid-opt');
+                opts.forEach(opt => {
+                    opt.addEventListener('click', function() {
+                        const count = parseInt(this.getAttribute('data-count'));
+                        if (capturedImages.length > 0 && count < capturedImages.length) {
+                            showToast('⚠️ Vui lòng hủy session trước khi giảm số ảnh', '');
+                            return;
+                        }
+                        gridCount = count;
+                        opts.forEach(o => o.classList.remove('active'));
+                        this.classList.add('active');
+                        updateSessionUI();
+                    });
+                });
+                // Set initial active
+                opts.forEach(o => {
+                    if (parseInt(o.getAttribute('data-count')) === gridCount) o.classList.add('active');
+                });
+            }
+
+            // ============ CAMERA ============
+            async function startCamera() {
+                try {
+                    if (currentStream) {
+                        currentStream.getTracks().forEach(t => t.stop());
+                    }
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 480 },
+                            height: { ideal: 640 },
+                        },
+                        audio: false,
+                    });
+                    currentStream = stream;
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    noCameraMsg.style.display = 'none';
+                    await video.play();
+                    // Set canvas size based on video
+                    video.addEventListener('loadedmetadata', () => {
+                        const vw = video.videoWidth || 480;
+                        const vh = video.videoHeight || 640;
+                        const aspect = vw / vh;
+                        const captureWidth = 400;
+                        const captureHeight = Math.round(captureWidth / aspect);
+                        captureCanvas.width = captureWidth;
+                        captureCanvas.height = Math.min(captureHeight, 600);
+                    });
+                } catch (err) {
+                    console.error('Camera error:', err);
+                    video.style.display = 'none';
+                    noCameraMsg.style.display = 'block';
+                    showToast('⚠️ Không thể truy cập camera', '');
+                }
+            }
+
+            function stopCamera() {
+                if (currentStream) {
+                    currentStream.getTracks().forEach(t => t.stop());
+                    currentStream = null;
+                }
+                video.srcObject = null;
+            }
+
+            // ============ CAPTURE LOGIC ============
+            function startCapture() {
+                if (isCapturing) return;
+                if (capturedImages.length >= gridCount) {
+                    showToast('✅ Đã đủ ' + gridCount + ' ảnh! Nhấn "Ghép ngay"', 'success');
+                    return;
+                }
+                if (!currentStream || !video.videoWidth) {
+                    showToast('⚠️ Camera chưa sẵn sàng', '');
+                    return;
+                }
+                if (currentTimer > 0) {
+                    startCountdown();
+                } else {
+                    captureNow();
+                }
+            }
+
+            function startCountdown() {
+                isCapturing = true;
+                let count = currentTimer;
+                countdownOverlay.classList.add('active');
+                countdownNumber.textContent = count;
+                countdownNumber.style.animation = 'none';
+                void countdownNumber.offsetWidth;
+                countdownNumber.style.animation = 'countPop 0.7s ease-out';
+
+                const interval = setInterval(() => {
+                    count--;
+                    if (count <= 0) {
+                        clearInterval(interval);
+                        countdownNumber.textContent = '📸';
+                        countdownNumber.style.animation = 'none';
+                        void countdownNumber.offsetWidth;
+                        countdownNumber.style.animation = 'countPop 0.5s ease-out';
+                        setTimeout(() => {
+                            countdownOverlay.classList.remove('active');
+                            captureNow();
+                            isCapturing = false;
+                        }, 350);
+                    } else {
+                        countdownNumber.textContent = count;
+                        countdownNumber.style.animation = 'none';
+                        void countdownNumber.offsetWidth;
+                        countdownNumber.style.animation = 'countPop 0.7s ease-out';
+                    }
+                }, 1000);
+            }
+
+            function captureNow() {
+                if (!video.videoWidth) return;
+                isCapturing = true;
+
+                // Flash button
+                btnCapture.classList.add('flash');
+                setTimeout(() => btnCapture.classList.remove('flash'), 300);
+
+                // Draw mirrored video to canvas with filter
+                const cw = captureCanvas.width;
+                const ch = captureCanvas.height;
+                captureCtx.save();
+                captureCtx.clearRect(0, 0, cw, ch);
+                // Mirror
+                captureCtx.scale(-1, 1);
+                // Apply filter
+                const filterCtx = filters[currentFilterIndex].ctx;
+                if (filterCtx !== 'none') {
+                    captureCtx.filter = filterCtx;
+                }
+                captureCtx.drawImage(video, -cw, 0, cw, ch);
+                captureCtx.filter = 'none';
+                captureCtx.restore();
+
+                const dataURL = captureCanvas.toDataURL('image/jpeg', 0.92);
+                capturedImages.push(dataURL);
+                updateSessionUI();
+                spawnCaptureSparkles();
+
+                // Auto merge if enough
+                if (capturedImages.length >= gridCount) {
+                    setTimeout(() => {
+                        mergeAndPreview();
+                    }, 400);
+                }
+                isCapturing = false;
+            }
+
+            function undoLastCapture() {
+                if (capturedImages.length === 0) return;
+                capturedImages.pop();
+                mergedImageDataURL = null;
+                updateSessionUI();
+                showToast('↩️ Đã xóa ảnh cuối', '');
+            }
+
+            function resetSession() {
+                if (capturedImages.length === 0 && !mergedImageDataURL) return;
+                capturedImages = [];
+                mergedImageDataURL = null;
+                updateSessionUI();
+                closePreviewModal();
+                showToast('🗑️ Đã hủy session', '');
+            }
+
+            function mergeNow() {
+                if (capturedImages.length < 2) {
+                    showToast('⚠️ Cần ít nhất 2 ảnh để ghép', '');
+                    return;
+                }
+                mergeAndPreview();
+            }
+
+            function mergeAndPreview() {
+                if (capturedImages.length === 0) return;
+                const imgsToMerge = capturedImages.length >= gridCount ?
+                    capturedImages.slice(0, gridCount) :
+                    [...capturedImages];
+
+                // Create merge canvas
+                const mergeCanvas = document.createElement('canvas');
+                const singleWidth = captureCanvas.width;
+                const singleHeight = captureCanvas.height;
+                mergeCanvas.width = singleWidth;
+                mergeCanvas.height = singleHeight * imgsToMerge.length;
+                const mergeCtx = mergeCanvas.getContext('2d');
+
+                // Fill white background
+                mergeCtx.fillStyle = '#FFFFFF';
+                mergeCtx.fillRect(0, 0, mergeCanvas.width, mergeCanvas.height);
+
+                // Draw each image
+                const loadPromises = imgsToMerge.map((dataURL, index) => {
+                    return new Promise((resolve) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            mergeCtx.drawImage(img, 0, index * singleHeight, singleWidth,
+                                singleHeight);
+                            resolve();
+                        };
+                        img.onerror = () => resolve();
+                        img.src = dataURL;
+                    });
+                });
+
+                Promise.all(loadPromises).then(() => {
+                    // Apply border
+                    applyBorderToCanvas(mergeCtx, mergeCanvas.width, mergeCanvas.height);
+
+                    mergedImageDataURL = mergeCanvas.toDataURL('image/jpeg', 0.9);
+                    previewImage.src = mergedImageDataURL;
+                    previewModal.style.display = 'flex';
+                    // Scroll to top of preview
+                    previewImageWrap.scrollTop = 0;
+                });
+            }
+
+            function applyBorderToCanvas(ctx, w, h) {
+                const borderType = borders[currentBorderIndex].type;
+                ctx.save();
+                switch (borderType) {
+                    case 'none':
+                        break;
+                    case 'white-thin':
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 8;
+                        ctx.strokeRect(4, 4, w - 8, h - 8);
+                        break;
+                    case 'pink-thick':
+                        ctx.strokeStyle = '#ff9eb5';
+                        ctx.lineWidth = 16;
+                        ctx.strokeRect(8, 8, w - 16, h - 16);
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 4;
+                        ctx.strokeRect(4, 4, w - 8, h - 8);
+                        break;
+                    case 'dotted':
+                        ctx.strokeStyle = '#ff9eb5';
+                        ctx.lineWidth = 5;
+                        ctx.setLineDash([12, 10]);
+                        ctx.strokeRect(6, 6, w - 12, h - 12);
+                        ctx.setLineDash([]);
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([6, 8]);
+                        ctx.strokeRect(10, 10, w - 20, h - 20);
+                        ctx.setLineDash([]);
+                        break;
+                    case 'hearts':
+                        drawCornerDecorations(ctx, w, h, '❤️');
+                        ctx.strokeStyle = '#ff9eb5';
+                        ctx.lineWidth = 3;
+                        ctx.setLineDash([8, 6]);
+                        ctx.strokeRect(8, 8, w - 16, h - 16);
+                        ctx.setLineDash([]);
+                        break;
+                    case 'stars':
+                        drawCornerDecorations(ctx, w, h, '⭐');
+                        ctx.strokeStyle = '#ffd700';
+                        ctx.lineWidth = 3;
+                        ctx.setLineDash([6, 8]);
+                        ctx.strokeRect(8, 8, w - 16, h - 16);
+                        ctx.setLineDash([]);
+                        break;
+                }
+                ctx.restore();
+            }
+
+            function drawCornerDecorations(ctx, w, h, emoji) {
+                // Vẽ emoji ở 4 góc và dọc cạnh
+                const size = 28;
+                const positions = [
+                    { x: size / 2, y: size / 2 },
+                    { x: w - size / 2, y: size / 2 },
+                    { x: size / 2, y: h - size / 2 },
+                    { x: w - size / 2, y: h - size / 2 },
+                    // thêm vài vị trí dọc cạnh
+                    { x: w / 2, y: size / 2 },
+                    { x: w / 2, y: h - size / 2 },
+                    { x: size / 2, y: h / 2 },
+                    { x: w - size / 2, y: h / 2 },
+                ];
+                ctx.font = `${size}px serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                positions.forEach(pos => {
+                    ctx.fillText(emoji, pos.x, pos.y);
+                });
+            }
+
+            // ============ PREVIEW MODAL ============
+            function saveMergedImage() {
+                if (!mergedImageDataURL) return;
+                // Add to library
+                const item = {
+                    dataURL: mergedImageDataURL,
+                    timestamp: Date.now(),
+                    id: 'lib_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                };
+                library.unshift(item);
+                saveLibrary();
+                // Download
+                downloadImage(mergedImageDataURL, 'photobooth_ghép_' + new Date().toISOString().slice(0, 19).replace(
+                    /:/g, '-') + '.jpg');
+                // Reset session
+                capturedImages = [];
+                mergedImageDataURL = null;
+                updateSessionUI();
+                closePreviewModal();
+                showToast('💾 Đã lưu vào thư viện & tải về!', 'success');
+                spawnSparkles(8);
+            }
+
+            function deleteMergedImage() {
+                mergedImageDataURL = null;
+                capturedImages = [];
+                updateSessionUI();
+                closePreviewModal();
+                showToast('🗑️ Đã xóa ảnh ghép', '');
+            }
+
+            function closePreviewModal() {
+                previewModal.style.display = 'none';
+                // Không reset session, cho phép người dùng tiếp tục chỉnh sửa
+            }
+
+            function downloadImage(dataURL, filename) {
+                const link = document.createElement('a');
+                link.href = dataURL;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            // ============ LIBRARY ============
+            function openLibrary() {
+                renderLibrary();
+                libraryModal.style.display = 'flex';
+                // Tạm dừng camera để tiết kiệm pin
+                stopCamera();
+            }
+
+            function closeLibrary() {
+                libraryModal.style.display = 'none';
+                startCamera();
+            }
+
+            function renderLibrary() {
+                libraryGrid.innerHTML = '';
+                if (library.length === 0) {
+                    libraryGrid.innerHTML = `
+                <div class="library-empty">
+                  <span class="icon">📭</span>
+                  Thư viện trống<br>Hãy chụp và ghép ảnh nhé!
+                </div>`;
+                    return;
+                }
+                library.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'library-item';
+                    div.innerHTML = `
+                <img src="${item.dataURL}" alt="Ảnh ${index + 1}" loading="lazy">
+                <button class="delete-lib-btn" data-id="${item.id}" title="Xóa">✕</button>
+              `;
+                    div.querySelector('img').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // Xem ảnh full trong preview modal
+                        mergedImageDataURL = item.dataURL;
+                        previewImage.src = item.dataURL;
+                        previewModal.style.display = 'flex';
+                        previewImageWrap.scrollTop = 0;
+                        // Tạm thời, nút lưu trong preview sẽ lưu lại (download)
+                        // Ẩn nút xóa session trong preview khi xem từ library
+                    });
+                    div.querySelector('.delete-lib-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteLibraryItem(item.id);
+                    });
+                    libraryGrid.appendChild(div);
+                });
+            }
+
+            function deleteLibraryItem(id) {
+                library = library.filter(item => item.id !== id);
+                saveLibrary();
+                renderLibrary();
+                showToast('🗑️ Đã xóa ảnh khỏi thư viện', '');
+            }
+
+            function clearLibrary() {
+                if (library.length === 0) return;
+                if (confirm('Xóa tất cả ảnh trong thư viện?')) {
+                    library = [];
+                    saveLibrary();
+                    renderLibrary();
+                    showToast('🗑️ Đã xóa toàn bộ thư viện', '');
+                }
+            }
+
+            function loadLibrary() {
+                try {
+                    const data = localStorage.getItem('photobooth_library');
+                    if (data) {
+                        library = JSON.parse(data);
+                    }
+                } catch (e) {
+                    library = [];
+                }
+                // Giới hạn 30 ảnh
+                if (library.length > 30) {
+                    library = library.slice(0, 30);
+                    saveLibrary();
+                }
+            }
+
+            function saveLibrary() {
+                try {
+                    localStorage.setItem('photobooth_library', JSON.stringify(library));
+                } catch (e) {
+                    // Nếu vượt quota, xóa bớt ảnh cũ
+                    if (library.length > 10) {
+                        library = library.slice(0, 10);
+                        try {
+                            localStorage.setItem('photobooth_library', JSON.stringify(library));
+                        } catch (e2) {
+                            library = [];
+                            localStorage.setItem('photobooth_library', '[]');
+                        }
+                    }
+                    showToast('⚠️ Bộ nhớ đầy, đã xóa bớt ảnh cũ', '');
+                }
+            }
+
+            // ============ UI UPDATES ============
+            function updateSessionUI() {
+                // Dots
+                sessionDots.innerHTML = '';
+                for (let i = 0; i < gridCount; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'session-dot' + (i < capturedImages.length ? ' filled' : '');
+                    sessionDots.appendChild(dot);
+                }
+                sessionCountLabel.textContent = capturedImages.length + '/' + gridCount;
+
+                // Mini thumbs
+                miniThumbs.innerHTML = '';
+                capturedImages.forEach((dataURL, i) => {
+                    const thumb = document.createElement('img');
+                    thumb.className = 'mini-thumb';
+                    thumb.src = dataURL;
+                    thumb.title = 'Ảnh ' + (i + 1);
+                    thumb.addEventListener('click', () => {
+                        // Xem ảnh riêng lẻ
+                        mergedImageDataURL = dataURL;
+                        previewImage.src = dataURL;
+                        previewModal.style.display = 'flex';
+                        previewImageWrap.scrollTop = 0;
+                    });
+                    miniThumbs.appendChild(thumb);
+                });
+
+                // Show/hide merge button
+                if (capturedImages.length >= 2 && capturedImages.length < gridCount) {
+                    btnMerge.style.display = 'flex';
+                } else if (capturedImages.length >= gridCount) {
+                    btnMerge.style.display = 'flex';
+                    btnMerge.textContent = '✅ Ghép ngay';
+                } else {
+                    btnMerge.style.display = 'none';
+                }
+                if (capturedImages.length < 2) {
+                    btnMerge.style.display = 'none';
+                }
+                if (capturedImages.length >= 2) {
+                    btnMerge.textContent = '✂️ Ghép ngay (' + capturedImages.length + ')';
+                }
+            }
+
+            function updateFilterUI() {
+                filterNameEl.textContent = filters[currentFilterIndex].name;
+                const cssFilter = filters[currentFilterIndex].css;
+                video.style.filter = cssFilter;
+                // Highlight button
+                if (currentFilterIndex > 0) {
+                    btnFilter.classList.add('active');
+                } else {
+                    btnFilter.classList.remove('active');
+                }
+            }
+
+            function updateTimerUI() {
+                if (currentTimer === 0) {
+                    timerLabelEl.textContent = 'Tắt';
+                    btnTimer.classList.remove('active');
+                } else {
+                    timerLabelEl.textContent = currentTimer + 's';
+                    btnTimer.classList.add('active');
+                }
+            }
+
+            function updateBorderUI() {
+                if (currentBorderIndex > 0) {
+                    btnBorder.classList.add('active');
+                } else {
+                    btnBorder.classList.remove('active');
+                }
+                btnBorder.title = 'Viền: ' + borders[currentBorderIndex].name;
+            }
+
+            // ============ CYCLING FUNCTIONS ============
+            function cycleFilter() {
+                currentFilterIndex = (currentFilterIndex + 1) % filters.length;
+                updateFilterUI();
+                showToast('🎨 ' + filters[currentFilterIndex].name, '');
+            }
+
+            function cycleTimer() {
+                const timers = [0, 3, 5, 10];
+                const currentIdx = timers.indexOf(currentTimer);
+                const nextIdx = (currentIdx + 1) % timers.length;
+                currentTimer = timers[nextIdx];
+                updateTimerUI();
+                if (currentTimer > 0) {
+                    showToast('⏱️ Hẹn giờ: ' + currentTimer + ' giây', '');
+                } else {
+                    showToast('⏱️ Hẹn giờ: Tắt', '');
+                }
+            }
+
+            function cycleBorder() {
+                currentBorderIndex = (currentBorderIndex + 1) % borders.length;
+                updateBorderUI();
+                showToast('🖼️ ' + borders[currentBorderIndex].name, '');
+                // Nếu đã có ảnh ghép, tự động ghép lại với viền mới
+                if (capturedImages.length >= 2) {
+                    mergeAndPreview();
+                }
+            }
+
+            // ============ TOAST ============
+            let toastTimeout;
+
+            function showToast(msg, type) {
+                clearTimeout(toastTimeout);
+                toast.textContent = msg;
+                toast.className = 'toast ' + (type || '');
+                toast.classList.add('show');
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+
+            // ============ SPARKLES ============
+            function spawnSparkles(count = 5) {
+                const emojis = ['✨', '💖', '🌸', '💕', '⭐', '💗', '🎀', '💝'];
+                for (let i = 0; i < count; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('span');
+                        sparkle.className = 'sparkle';
+                        sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                        sparkle.style.left = (20 + Math.random() * 60) + '%';
+                        sparkle.style.top = (30 + Math.random() * 40) + '%';
+                        sparkle.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+                        sparkle.style.fontSize = (14 + Math.random() * 22) + 'px';
+                        sparkleContainer.appendChild(sparkle);
+                        setTimeout(() => {
+                            if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
+                        }, 2500);
+                    }, i * 60);
+                }
+            }
+
+            function spawnCaptureSparkles() {
+                spawnSparkles(6);
+            }
+
+            function createSparkles() {
+                // Tạo vài sparkle ngẫu nhiên trong nền
+                setInterval(() => {
+                    if (document.hidden) return;
+                    const sparkle = document.createElement('span');
+                    sparkle.className = 'sparkle';
+                    const emojis = ['✨', '💖', '🌸', '💕', '⭐', '💗', '🎀', '💝', '🦋', '🌷'];
+                    sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    sparkle.style.left = (5 + Math.random() * 90) + '%';
+                    sparkle.style.top = (60 + Math.random() * 35) + '%';
+                    sparkle.style.animationDuration = (2 + Math.random() * 3) + 's';
+                    sparkle.style.fontSize = (10 + Math.random() * 16) + 'px';
+                    sparkleContainer.appendChild(sparkle);
+                    setTimeout(() => {
+                        if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
+                    }, 3000);
+                }, 4000);
+            }
+
+            // ============ EVENT LISTENERS ============
+            // Close modals on overlay click
+            previewModal.addEventListener('click', function(e) {
+                if (e.target === previewModal) {
+                    closePreviewModal();
+                }
+            });
+            libraryModal.addEventListener('click', function(e) {
+                if (e.target === libraryModal) {
+                    closeLibrary();
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.code === 'Space') {
+                    e.preventDefault();
+                    if (previewModal.style.display === 'flex' || libraryModal.style.display ===
+                        'flex') return;
+                    startCapture();
+                }
+                if (e.key === 'Escape') {
+                    if (previewModal.style.display === 'flex') closePreviewModal();
+                    if (libraryModal.style.display === 'flex') closeLibrary();
+                }
+                if (e.key === 'f' && !e.ctrlKey && !e.metaKey) {
+                    if (previewModal.style.display === 'flex' || libraryModal.style.display ===
+                        'flex') return;
+                    cycleFilter();
+                }
+                if (e.key === 't' && !e.ctrlKey && !e.metaKey) {
+                    if (previewModal.style.display === 'flex' || libraryModal.style.display ===
+                        'flex') return;
+                    cycleTimer();
+                }
+                if (e.key === 'b' && !e.ctrlKey && !e.metaKey) {
+                    if (previewModal.style.display === 'flex' || libraryModal.style.display ===
+                        'flex') return;
+                    cycleBorder();
+                }
+            });
+
+            // Handle page visibility
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    stopCamera();
+                } else {
+                    if (libraryModal.style.display !== 'flex') {
+                        startCamera();
+                    }
+                }
+            });
+
+            // Handle before unload
+            window.addEventListener('beforeunload', () => {
+                stopCamera();
+            });
+
+            // ============ START ============
+            init();
+            console.log('🌸 PhotoBooth Siêu Cute đã sẵn sàng! 🌸');
+            console.log('📸 Tính năng:');
+            console.log('  - Chụp ảnh với filter (phiu tơ)');
+            console.log('  - Hẹn giờ chụp (3s, 5s, 10s)');
+            console.log('  - Ghép ảnh dọc 2-6 ảnh, giữ nguyên kích thước');
+            console.log('  - Tùy chọn viền khung ảnh');
+            console.log('  - Ảnh lật gương (soi gương)');
+            console.log('  - Thư viện ảnh đã lưu');
+            console.log('  - Nút chụp ở giữa, giao diện mobile');
+            console.log('  - Phím tắt: Space=Chụp, F=Filter, T=Timer, B=Viền, Esc=Đóng');
+            console.log('💖 Chúc bạn có những bức ảnh thật đẹp! 💖');
+        })();
+    </script>
+</body>
+</html>
