@@ -1,1 +1,1058 @@
-abc
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📸 Photobooth Pro - Nâng cấp cực chất</title>
+  <!-- Google Fonts dễ nhìn -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Nunito', 'Quicksand', sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #fce4ec, #fce1e9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .container {
+      max-width: 880px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(14px);
+      border-radius: 56px;
+      padding: 28px 26px 34px;
+      box-shadow: 0 25px 70px rgba(255, 80, 130, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #d6336c;
+      text-shadow: 3px 3px 0 #f8b4c8;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .sub {
+      font-weight: 600;
+      color: #b3415a;
+      margin-top: -6px;
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+    .camera-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: #1e1e2a;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 4px #fff, 0 14px 40px rgba(180, 0, 60, 0.2);
+      margin: 8px 0 14px;
+    }
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scaleX(-1);
+    }
+    /* Vòng tròn đếm ngược */
+    #countdown-circle {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #countdown-circle.show {
+      opacity: 1;
+    }
+    #countdown-circle svg {
+      width: 200px;
+      height: 200px;
+      transform: rotate(-90deg);
+    }
+    #countdown-circle .bg-circle {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.25);
+      stroke-width: 10;
+    }
+    #countdown-circle .progress-circle {
+      fill: none;
+      stroke: #ff4d6d;
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 502; /* 2*pi*80 ≈ 502 */
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.3s ease;
+    }
+    #countdown-number {
+      position: absolute;
+      font-size: 5rem;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 0 30px rgba(255, 0, 80, 0.8), 0 0 15px black;
+    }
+    #flash {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+      transition: opacity 0.1s;
+    }
+    #flash.active { opacity: 0.9; }
+
+    /* Điều khiển chính */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: 6px 0 10px;
+    }
+    .btn {
+      border: none;
+      padding: 10px 22px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      background: white;
+      color: #d6336c;
+      box-shadow: 0 4px 0 #f0b0c4;
+      cursor: pointer;
+      transition: 0.07s ease;
+      border: 2px solid #f0b0c4;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Nunito', sans-serif;
+    }
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 #f0b0c4;
+    }
+    .btn-primary {
+      background: #d6336c;
+      color: white;
+      box-shadow: 0 4px 0 #8f1f44;
+      border-color: #d6336c;
+    }
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      box-shadow: 0 4px 0 #7a1a2a;
+      border-color: #dc3545;
+    }
+    .btn-sm {
+      padding: 6px 16px;
+      font-size: 0.85rem;
+    }
+    select, input[type="number"], input[type="range"] {
+      padding: 6px 14px;
+      border-radius: 40px;
+      border: 2px solid #f0b0c4;
+      background: white;
+      font-weight: 600;
+      color: #333;
+      outline: none;
+      font-family: 'Nunito', sans-serif;
+    }
+    input[type="range"] {
+      width: 120px;
+      padding: 0;
+    }
+    .timer-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 4px 14px 4px 10px;
+      border-radius: 60px;
+      backdrop-filter: blur(4px);
+      border: 2px solid #f0b0c4;
+    }
+    .timer-group label {
+      font-weight: 600;
+      color: #b3415a;
+      font-size: 0.9rem;
+    }
+
+    /* Sticker chọn */
+    .sticker-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 6px 2px 10px;
+      flex-wrap: nowrap;
+      max-width: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: #f0b0c4 #ffeef2;
+    }
+    .sticker-scroll::-webkit-scrollbar { height: 6px; }
+    .sticker-scroll::-webkit-scrollbar-thumb { background: #f0b0c4; border-radius: 20px; }
+    .sticker-btn {
+      flex: 0 0 auto;
+      padding: 6px 14px;
+      border-radius: 40px;
+      border: 3px solid transparent;
+      background: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      line-height: 1.2;
+    }
+    .sticker-btn.active {
+      border-color: #d6336c;
+      background: #fff0f3;
+      transform: scale(1.08);
+    }
+    .sticker-btn:hover { transform: scale(1.12); }
+
+    /* Filter */
+    .filter-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 6px 2px 10px;
+      flex-wrap: nowrap;
+      max-width: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: #f0b0c4 #ffeef2;
+    }
+    .filter-scroll::-webkit-scrollbar { height: 6px; }
+    .filter-scroll::-webkit-scrollbar-thumb { background: #f0b0c4; border-radius: 20px; }
+    .filter-btn {
+      flex: 0 0 auto;
+      padding: 5px 14px;
+      border-radius: 40px;
+      border: 3px solid transparent;
+      background: white;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      font-size: 0.82rem;
+      white-space: nowrap;
+      font-family: 'Nunito', sans-serif;
+    }
+    .filter-btn.active {
+      border-color: #d6336c;
+      background: #fff0f3;
+      transform: scale(1.02);
+    }
+    .filter-btn:hover { transform: scale(1.05); }
+
+    .status {
+      margin-top: 6px;
+      color: #b3415a;
+      font-weight: 700;
+      background: rgba(255, 240, 242, 0.7);
+      padding: 5px 20px;
+      border-radius: 60px;
+      display: inline-block;
+      font-size: 0.95rem;
+    }
+
+    .gallery-area {
+      margin-top: 22px;
+      border-top: 2px dashed #f0b0c4;
+      padding-top: 16px;
+    }
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .gallery-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #b3415a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gallery-actions {
+      display: flex;
+      gap: 8px;
+    }
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      min-height: 80px;
+      padding: 14px 6px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 32px;
+      margin-top: 8px;
+      border: 2px dashed #f0b0c4;
+    }
+    .photo-item {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 4px solid white;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      cursor: default;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+    .photo-item:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 25px rgba(214, 51, 108, 0.2);
+    }
+    .photo-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .photo-item .delete-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(220, 53, 69, 0.85);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .photo-item .delete-btn:hover {
+      background: #dc3545;
+      transform: scale(1.2);
+    }
+    .photo-item .download-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #f0b0c4;
+      color: #d6336c;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .photo-item .download-badge:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    #canvas-hidden { display: none; }
+
+    @media (max-width: 600px) {
+      .container { padding: 16px; }
+      h1 { font-size: 1.8rem; }
+      .btn { font-size: 0.85rem; padding: 8px 14px; }
+      .filter-btn { font-size: 0.7rem; padding: 4px 10px; }
+      .sticker-btn { font-size: 1.2rem; padding: 4px 10px; }
+      .photo-item { width: 70px; height: 70px; }
+      #countdown-circle svg { width: 140px; height: 140px; }
+      #countdown-number { font-size: 3.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1><span>📸</span> Photobooth <span>✨</span></h1>
+  <div class="sub">🌸 Cực chất · Ghép ảnh · Filter ảo diệu</div>
+
+  <div class="camera-box">
+    <video id="video" autoplay playsinline></video>
+    <!-- Vòng tròn đếm ngược -->
+    <div id="countdown-circle">
+      <svg viewBox="0 0 180 180">
+        <circle class="bg-circle" cx="90" cy="90" r="80" />
+        <circle class="progress-circle" id="progressCircle" cx="90" cy="90" r="80" stroke-dashoffset="502" />
+      </svg>
+      <div id="countdown-number">3</div>
+    </div>
+    <div id="flash"></div>
+  </div>
+
+  <!-- Hàng điều khiển chính -->
+  <div class="controls">
+    <button class="btn btn-primary" id="captureBtn">📸 Chụp</button>
+
+    <select id="modeSelect">
+      <option value="single">📷 Một ảnh</option>
+      <option value="2">🟥 Ghép 2</option>
+      <option value="4" selected>🟩 Ghép 4</option>
+      <option value="6">🟦 Ghép 6</option>
+      <option value="9">🟨 Ghép 9</option>
+    </select>
+
+    <span id="progressDisplay" style="font-weight:700; color:#b3415a; background:#fff0f3; padding:4px 16px; border-radius:60px; font-size:0.9rem;">📌 0/4</span>
+    <button class="btn btn-sm" id="resetCollageBtn" title="Reset tiến trình ghép">🔄 Reset</button>
+
+    <div class="timer-group">
+      <label>⏱️</label>
+      <select id="timerSelect" style="border: none; background: transparent; font-weight:700; color:#d6336c; padding:0;">
+        <option value="0">Tắt</option>
+        <option value="3">3s</option>
+        <option value="5" selected>5s</option>
+        <option value="10">10s</option>
+      </select>
+      <label style="font-size:0.8rem;">lần</label>
+      <input type="number" id="repeatCount" value="1" min="1" max="20" style="width:50px; text-align:center; border: none; background:transparent; font-weight:700; color:#d6336c;" />
+    </div>
+  </div>
+
+  <!-- Sticker chọn -->
+  <div style="margin:6px 0 2px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;">
+    <span style="font-weight:700; color:#b3415a;">🏷️ Sticker:</span>
+    <div class="sticker-scroll" id="stickerScroll">
+      <button class="sticker-btn active" data-sticker="🌸">🌸</button>
+      <button class="sticker-btn" data-sticker="🐶">🐶</button>
+      <button class="sticker-btn" data-sticker="🌈">🌈</button>
+      <button class="sticker-btn" data-sticker="💖">💖</button>
+      <button class="sticker-btn" data-sticker="👑">👑</button>
+      <button class="sticker-btn" data-sticker="🦄">🦄</button>
+      <button class="sticker-btn" data-sticker="🍭">🍭</button>
+      <button class="sticker-btn" data-sticker="✨">✨</button>
+      <button class="sticker-btn" data-sticker="🎀">🎀</button>
+      <button class="sticker-btn" data-sticker="🐼">🐼</button>
+      <button class="sticker-btn" data-sticker="🧁">🧁</button>
+      <button class="sticker-btn" data-sticker="🎈">🎈</button>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div style="margin:2px 0 4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;">
+    <span style="font-weight:700; color:#b3415a;">🎨 Filter:</span>
+    <div class="filter-scroll" id="filterScroll">
+      <button class="filter-btn active" data-filter="none">◻️ Tự nhiên</button>
+      <button class="filter-btn" data-filter="pink">🌸 Hồng</button>
+      <button class="filter-btn" data-filter="mint">🌿 Mint</button>
+      <button class="filter-btn" data-filter="warm">☀️ Ấm</button>
+      <button class="filter-btn" data-filter="bw">⚫ Đen trắng</button>
+      <button class="filter-btn" data-filter="sepia">🟫 Sepia</button>
+      <button class="filter-btn" data-filter="vintage">📻 Vintage</button>
+      <button class="filter-btn" data-filter="neon">💜 Neon</button>
+      <button class="filter-btn" data-filter="cool">❄️ Xanh lạnh</button>
+      <button class="filter-btn" data-filter="dramatic">🎭 Tương phản</button>
+      <button class="filter-btn" data-filter="film">🎞️ Phim cũ</button>
+      <button class="filter-btn" data-filter="watercolor">🖌️ Màu nước</button>
+    </div>
+  </div>
+  <div style="display:flex; align-items:center; gap:14px; justify-content:center; margin:2px 0 6px;">
+    <span style="font-weight:600; color:#b3415a;">Độ mạnh:</span>
+    <input type="range" id="intensitySlider" min="0" max="200" value="100" style="width:140px;" />
+    <span id="intensityLabel" style="font-weight:700; color:#d6336c; min-width:44px;">100%</span>
+  </div>
+
+  <div class="status" id="status">📷 Sẵn sàng</div>
+
+  <div class="gallery-area">
+    <div class="gallery-header">
+      <div class="gallery-title"><span>🖼️</span> Bộ sưu tập</div>
+      <div class="gallery-actions">
+        <button class="btn btn-sm btn-danger" id="clearGalleryBtn" title="Xóa tất cả ảnh">🗑️ Xóa tất cả</button>
+      </div>
+    </div>
+    <div id="gallery">
+      <div style="width:100%; color:#b3415a; opacity:0.5; padding:18px;">Chưa có ảnh nào 🌈</div>
+    </div>
+  </div>
+
+  <canvas id="canvas-hidden"></canvas>
+</div>
+
+<script>
+  (function() {
+    // --- DOM refs ---
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas-hidden');
+    const ctx = canvas.getContext('2d');
+    const gallery = document.getElementById('gallery');
+    const countdownCircle = document.getElementById('countdown-circle');
+    const countdownNumber = document.getElementById('countdown-number');
+    const progressCircle = document.getElementById('progressCircle');
+    const flashEl = document.getElementById('flash');
+    const status = document.getElementById('status');
+    const captureBtn = document.getElementById('captureBtn');
+    const modeSelect = document.getElementById('modeSelect');
+    const progressDisplay = document.getElementById('progressDisplay');
+    const resetCollageBtn = document.getElementById('resetCollageBtn');
+    const timerSelect = document.getElementById('timerSelect');
+    const repeatCountInput = document.getElementById('repeatCount');
+    const intensitySlider = document.getElementById('intensitySlider');
+    const intensityLabel = document.getElementById('intensityLabel');
+    const clearGalleryBtn = document.getElementById('clearGalleryBtn');
+    const stickerBtns = document.querySelectorAll('.sticker-btn');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+
+    // --- State ---
+    let currentFilter = 'none';
+    let currentSticker = '🌸';
+    let intensity = 100;
+    let isProcessing = false;
+    let collageMode = '4'; // mặc định ghép 4
+    let collageFrames = [];
+    let maxFrames = 4;
+    let timerInterval = null;
+    let timerActive = false;
+    let autoCaptureCount = 0;
+    let autoRepeatTotal = 1;
+
+    // --- Camera ---
+    async function initCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = stream;
+        await video.play();
+        status.textContent = '✅ Camera sẵn sàng!';
+      } catch (err) {
+        status.textContent = '❌ Lỗi camera: ' + err.message;
+        alert('Vui lòng cho phép camera hoặc dùng trình duyệt mới (Chrome/Edge).');
+      }
+    }
+
+    // --- Reset collage ---
+    function resetCollage() {
+      collageFrames = [];
+      updateProgress();
+      status.textContent = `🔄 Đã reset, chụp lại từ đầu (${collageMode} ảnh)`;
+    }
+
+    function updateProgress() {
+      const current = collageFrames.length;
+      const total = (collageMode === 'single') ? 1 : parseInt(collageMode);
+      progressDisplay.textContent = `📌 ${current}/${total}`;
+      progressDisplay.style.background = (collageMode !== 'single' && current === total) ? '#b3e0c0' : '#fff0f3';
+    }
+
+    // --- Filter nâng cao --- (giữ nguyên hàm applyAdvancedFilter từ phiên bản trước)
+    function applyAdvancedFilter(imageData, filter, intensity) {
+      const data = imageData.data;
+      const w = imageData.width, h = imageData.height;
+      const factor = intensity / 100;
+      switch(filter) {
+        case 'none': break;
+        case 'pink': {
+          for (let i=0; i<data.length; i+=4) {
+            data[i] = data[i]*(1-0.25*factor) + 200*0.25*factor;
+            data[i+1] = data[i+1]*(1-0.2*factor);
+            data[i+2] = data[i+2]*(1-0.2*factor) + 180*0.2*factor;
+          } break;
+        }
+        case 'mint': {
+          for (let i=0; i<data.length; i+=4) {
+            data[i] = data[i]*(1-0.2*factor);
+            data[i+1] = data[i+1]*(1-0.1*factor) + 200*0.1*factor;
+            data[i+2] = data[i+2]*(1-0.15*factor) + 190*0.15*factor;
+          } break;
+        }
+        case 'warm': {
+          for (let i=0; i<data.length; i+=4) {
+            data[i] = data[i]*(1-0.1*factor) + 200*0.1*factor;
+            data[i+1] = data[i+1]*(1-0.1*factor) + 180*0.1*factor;
+            data[i+2] = data[i+2]*(1-0.25*factor);
+          } break;
+        }
+        case 'bw': {
+          for (let i=0; i<data.length; i+=4) {
+            const gray = 0.34*data[i] + 0.5*data[i+1] + 0.16*data[i+2];
+            data[i] = data[i] + (gray-data[i])*factor;
+            data[i+1] = data[i+1] + (gray-data[i+1])*factor;
+            data[i+2] = data[i+2] + (gray-data[i+2])*factor;
+          } break;
+        }
+        case 'sepia': {
+          for (let i=0; i<data.length; i+=4) {
+            const r=data[i], g=data[i+1], b=data[i+2];
+            const tr=0.393*r+0.769*g+0.189*b;
+            const tg=0.349*r+0.686*g+0.168*b;
+            const tb=0.272*r+0.534*g+0.131*b;
+            data[i] = data[i] + (tr-data[i])*factor;
+            data[i+1] = data[i+1] + (tg-data[i+1])*factor;
+            data[i+2] = data[i+2] + (tb-data[i+2])*factor;
+          } break;
+        }
+        case 'vintage': {
+          for (let i=0; i<data.length; i+=4) {
+            let r=data[i], g=data[i+1], b=data[i+2];
+            r = r*(1+0.15*factor);
+            g = g*(1-0.05*factor);
+            b = b*(1-0.15*factor);
+            const gray = 0.34*r + 0.5*g + 0.16*b;
+            r = r + (gray-r)*0.3*factor;
+            g = g + (gray-g)*0.3*factor;
+            b = b + (gray-b)*0.3*factor;
+            data[i]=Math.min(255,Math.max(0,r));
+            data[i+1]=Math.min(255,Math.max(0,g));
+            data[i+2]=Math.min(255,Math.max(0,b));
+          } break;
+        }
+        case 'neon': {
+          for (let i=0; i<data.length; i+=4) {
+            let r=data[i], g=data[i+1], b=data[i+2];
+            const gray = 0.34*r + 0.5*g + 0.16*b;
+            r = r + (r-gray)*0.8*factor;
+            g = g + (g-gray)*0.8*factor;
+            b = b + (b-gray)*0.8*factor;
+            const nr = r*0.7 + b*0.3;
+            const nb = b*0.5 + r*0.5;
+            data[i]=Math.min(255,Math.max(0,nr));
+            data[i+1]=Math.min(255,Math.max(0,g*0.7));
+            data[i+2]=Math.min(255,Math.max(0,nb));
+          } break;
+        }
+        case 'cool': {
+          for (let i=0; i<data.length; i+=4) {
+            data[i] = data[i]*(1-0.2*factor);
+            data[i+1] = data[i+1]*(1-0.1*factor) + 180*0.1*factor;
+            data[i+2] = data[i+2]*(1-0.1*factor) + 220*0.1*factor;
+          } break;
+        }
+        case 'dramatic': {
+          for (let i=0; i<data.length; i+=4) {
+            let r=data[i], g=data[i+1], b=data[i+2];
+            const contrast = 1.4*factor;
+            const bright = -20*factor;
+            r = (r-128)*contrast + 128 + bright;
+            g = (g-128)*contrast + 128 + bright;
+            b = (b-128)*contrast + 128 + bright;
+            data[i]=Math.min(255,Math.max(0,r));
+            data[i+1]=Math.min(255,Math.max(0,g));
+            data[i+2]=Math.min(255,Math.max(0,b));
+          } break;
+        }
+        case 'film': {
+          for (let i=0; i<data.length; i+=4) {
+            let r=data[i], g=data[i+1], b=data[i+2];
+            const noise = (Math.random()-0.5)*30*factor;
+            r+=noise; g+=noise; b+=noise;
+            r*=1.1; g*=1.0; b*=0.8;
+            data[i]=Math.min(255,Math.max(0,r));
+            data[i+1]=Math.min(255,Math.max(0,g));
+            data[i+2]=Math.min(255,Math.max(0,b));
+          } break;
+        }
+        case 'watercolor': {
+          for (let i=0; i<data.length; i+=4) {
+            let r=data[i], g=data[i+1], b=data[i+2];
+            const avg = (r+g+b)/3;
+            r = r + (avg-r)*0.3*factor;
+            g = g + (avg-g)*0.3*factor;
+            b = b + (avg-b)*0.3*factor;
+            r += 20*factor; g += 20*factor; b += 20*factor;
+            data[i]=Math.min(255,Math.max(0,r));
+            data[i+1]=Math.min(255,Math.max(0,g));
+            data[i+2]=Math.min(255,Math.max(0,b));
+          } break;
+        }
+        default: break;
+      }
+      return imageData;
+    }
+
+    // --- Hàm chụp ảnh (có countdown với vòng tròn) ---
+    function doCapture() {
+      if (isProcessing) return;
+      if (!video.srcObject) {
+        status.textContent = '⚠️ Camera chưa sẵn sàng!';
+        return;
+      }
+
+      // Kiểm tra chế độ ghép
+      const mode = modeSelect.value;
+      let targetTotal = (mode === 'single') ? 1 : parseInt(mode);
+      if (targetTotal > 1 && collageFrames.length >= targetTotal) {
+        status.textContent = '⚠️ Đã đủ số ảnh, bấm Reset để chụp lại.';
+        return;
+      }
+
+      // Bắt đầu đếm ngược
+      isProcessing = true;
+      captureBtn.disabled = true;
+      let count = 3;
+      const totalFrames = 30; // 30 bước cho 3s (0.1s mỗi bước)
+      let step = 0;
+      const circumference = 502; // 2*pi*80
+
+      countdownNumber.textContent = count;
+      progressCircle.style.strokeDashoffset = circumference;
+      countdownCircle.classList.add('show');
+
+      // Cập nhật vòng tròn mỗi 100ms
+      const interval = setInterval(() => {
+        step++;
+        const progress = step / totalFrames; // 0..1
+        const offset = circumference * (1 - progress);
+        progressCircle.style.strokeDashoffset = offset;
+
+        // Cập nhật số giây
+        const remaining = Math.ceil(3 - progress * 3);
+        if (remaining >= 0) countdownNumber.textContent = remaining;
+
+        if (step >= totalFrames) {
+          clearInterval(interval);
+          countdownCircle.classList.remove('show');
+          // Chụp thực tế
+          performCapture(targetTotal);
+        }
+      }, 100);
+    }
+
+    function performCapture(targetTotal) {
+      // Flash
+      flashEl.classList.add('active');
+      setTimeout(() => flashEl.classList.remove('active'), 200);
+
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      canvas.width = w;
+      canvas.height = h;
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, -w, 0, w, h);
+      ctx.restore();
+
+      // Áp dụng filter
+      let imageData = ctx.getImageData(0, 0, w, h);
+      if (currentFilter !== 'none') {
+        imageData = applyAdvancedFilter(imageData, currentFilter, intensity);
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      // Vẽ sticker (chọn từ thanh sticker)
+      ctx.shadowColor = 'rgba(255,0,80,0.4)';
+      ctx.shadowBlur = 25;
+      ctx.font = `${Math.min(w,h)*0.22}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+      ctx.fillText(currentSticker, w*0.72, h*0.2);
+      ctx.shadowBlur = 0;
+
+      // Khung viền
+      ctx.strokeStyle = '#ff4d6d';
+      ctx.lineWidth = 16;
+      ctx.shadowColor = '#ffb3c6';
+      ctx.shadowBlur = 18;
+      ctx.strokeRect(10, 10, w-20, h-20);
+      ctx.shadowBlur = 0;
+
+      // Chữ ký
+      ctx.font = `bold ${Math.min(w,h)*0.05}px 'Nunito', 'Quicksand', sans-serif`;
+      ctx.fillStyle = 'white';
+      ctx.shadowColor = 'rgba(0,0,0,0.7)';
+      ctx.shadowBlur = 10;
+      ctx.fillText('📸 Photobooth Pro', 25, h-35);
+      ctx.shadowBlur = 0;
+
+      const dataURL = canvas.toDataURL('image/png');
+
+      // Xử lý theo chế độ
+      const mode = modeSelect.value;
+      if (mode === 'single') {
+        addPhotoToGallery(dataURL);
+        status.textContent = '🎉 Chụp thành công! Click ⬇️ để tải.';
+        // Nếu timer đang chạy, tăng biến đếm
+        if (timerActive) {
+          autoCaptureCount++;
+          if (autoCaptureCount < autoRepeatTotal) {
+            // Chờ khoảng thời gian timer rồi chụp tiếp
+            const delay = parseInt(timerSelect.value) * 1000;
+            status.textContent = `⏳ Chụp tự động (${autoCaptureCount+1}/${autoRepeatTotal}) sau ${delay/1000}s...`;
+            setTimeout(() => { doCapture(); }, delay);
+          } else {
+            timerActive = false;
+            status.textContent = '✅ Đã hoàn thành chụp tự động.';
+          }
+        }
+      } else {
+        // Ghép ảnh
+        collageFrames.push(dataURL);
+        updateProgress();
+        addPhotoToGallery(dataURL);
+        status.textContent = `📸 Đã chụp ${collageFrames.length}/${parseInt(mode)}`;
+
+        if (collageFrames.length === parseInt(mode)) {
+          createCollage(collageFrames, parseInt(mode));
+          // Không reset tự động, để user reset thủ công
+          status.textContent = `🎉 Đã ghép ${collageFrames.length} ảnh thành công! Bấm Reset để làm mới.`;
+          // Nếu timer đang chạy (chế độ ghép tự động) ta dừng lại vì đã đủ ảnh
+          if (timerActive) {
+            timerActive = false;
+            status.textContent += ' (Dừng hẹn giờ)';
+          }
+        } else {
+          // Nếu timer đang chạy và chưa đủ ảnh, chụp tiếp
+          if (timerActive) {
+            const delay = parseInt(timerSelect.value) * 1000;
+            status.textContent = `⏳ Chụp tự động (${collageFrames.length+1}/${parseInt(mode)}) sau ${delay/1000}s...`;
+            setTimeout(() => { doCapture(); }, delay);
+          }
+        }
+      }
+
+      isProcessing = false;
+      captureBtn.disabled = false;
+    }
+
+    // --- Ghép ảnh (collage) ---
+    function createCollage(frames, count) {
+      const cols = count===2 ? 2 : (count===4 ? 2 : (count===6 ? 3 : 3));
+      const rows = count===2 ? 1 : (count===4 ? 2 : (count===6 ? 2 : 3));
+      const tileW = 400, tileH = 300, gap = 10;
+      const cw = cols*tileW + (cols+1)*gap;
+      const ch = rows*tileH + (rows+1)*gap;
+      const cCanvas = document.createElement('canvas');
+      cCanvas.width = cw; cCanvas.height = ch;
+      const cCtx = cCanvas.getContext('2d');
+      cCtx.fillStyle = '#fff0f2';
+      cCtx.fillRect(0, 0, cw, ch);
+
+      let idx = 0;
+      for (let r=0; r<rows; r++) {
+        for (let c=0; c<cols; c++) {
+          if (idx >= frames.length) break;
+          const img = new Image();
+          img.src = frames[idx];
+          const x = gap + c*(tileW+gap);
+          const y = gap + r*(tileH+gap);
+          cCtx.drawImage(img, x, y, tileW, tileH);
+          idx++;
+        }
+      }
+
+      cCtx.strokeStyle = '#d6336c';
+      cCtx.lineWidth = 14;
+      cCtx.shadowColor = '#ffb3c6';
+      cCtx.shadowBlur = 24;
+      cCtx.strokeRect(6, 6, cw-12, ch-12);
+      cCtx.shadowBlur = 0;
+
+      cCtx.font = `bold 28px 'Nunito', 'Quicksand', sans-serif`;
+      cCtx.fillStyle = 'white';
+      cCtx.shadowColor = 'rgba(0,0,0,0.6)';
+      cCtx.shadowBlur = 12;
+      cCtx.fillText('📸 Photobooth Pro', 20, ch-20);
+      cCtx.shadowBlur = 0;
+
+      const collageDataURL = cCanvas.toDataURL('image/png');
+      addPhotoToGallery(collageDataURL);
+      status.textContent = `🖼️ Ảnh ghép đã sẵn sàng! Click ⬇️ để tải.`;
+    }
+
+    // --- Thêm ảnh vào gallery (có nút xóa và tải) ---
+    function addPhotoToGallery(dataURL) {
+      const emptyMsg = gallery.querySelector('div[style]');
+      if (emptyMsg && gallery.children.length === 1) {
+        gallery.innerHTML = '';
+      }
+      const item = document.createElement('div');
+      item.className = 'photo-item';
+
+      const img = document.createElement('img');
+      img.src = dataURL;
+
+      // Nút xóa
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.textContent = '×';
+      deleteBtn.title = 'Xóa ảnh này';
+      deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (confirm('Xóa ảnh này khỏi bộ sưu tập?')) {
+          item.remove();
+          if (gallery.children.length === 0) {
+            gallery.innerHTML = '<div style="width:100%; color:#b3415a; opacity:0.5; padding:18px;">Chưa có ảnh nào 🌈</div>';
+          }
+          status.textContent = '🗑️ Đã xóa một ảnh.';
+        }
+      });
+
+      // Nút tải (badge)
+      const downloadBadge = document.createElement('span');
+      downloadBadge.className = 'download-badge';
+      downloadBadge.textContent = '⬇️';
+      downloadBadge.title = 'Tải ảnh xuống máy';
+      downloadBadge.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = `photobooth-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        status.textContent = '⬇️ Đã tải ảnh!';
+      });
+
+      item.appendChild(img);
+      item.appendChild(deleteBtn);
+      item.appendChild(downloadBadge);
+      gallery.prepend(item);
+    }
+
+    // --- Xóa tất cả ảnh ---
+    function clearGallery() {
+      if (gallery.children.length === 0) return;
+      if (confirm('Xóa toàn bộ ảnh trong bộ sưu tập?')) {
+        gallery.innerHTML = '<div style="width:100%; color:#b3415a; opacity:0.5; padding:18px;">Chưa có ảnh nào 🌈</div>';
+        status.textContent = '🗑️ Đã xóa tất cả ảnh.';
+        // Reset collage frames để tránh lỗi
+        collageFrames = [];
+        updateProgress();
+      }
+    }
+
+    // --- Sự kiện ---
+    // Sticker
+    stickerBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        stickerBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentSticker = this.dataset.sticker;
+        status.textContent = `🏷️ Sticker: ${currentSticker}`;
+      });
+    });
+
+    // Filter
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        status.textContent = `🎨 Filter: ${currentFilter.toUpperCase()}`;
+      });
+    });
+
+    // Intensity
+    intensitySlider.addEventListener('input', function() {
+      intensity = parseInt(this.value);
+      intensityLabel.textContent = intensity + '%';
+    });
+
+    // Mode
+    modeSelect.addEventListener('change', function() {
+      const val = this.value;
+      collageMode = val;
+      maxFrames = (val === 'single') ? 1 : parseInt(val);
+      resetCollage();
+      // Nếu timer đang chạy thì dừng
+      if (timerActive) {
+        timerActive = false;
+        clearTimeout(timerInterval);
+        status.textContent = '⏹️ Đã dừng hẹn giờ do thay đổi chế độ.';
+      }
+      updateProgress();
+    });
+
+    resetCollageBtn.addEventListener('click', function() {
+      resetCollage();
+      if (timerActive) {
+        timerActive = false;
+        clearTimeout(timerInterval);
+        status.textContent = '⏹️ Đã dừng hẹn giờ.';
+      }
+    });
+
+    clearGalleryBtn.addEventListener('click', clearGallery);
+
+    // Nút chụp
+    captureBtn.addEventListener('click', function() {
+      // Nếu timer đang chạy, tắt nó đi
+      if (timerActive) {
+        timerActive = false;
+        clearTimeout(timerInterval);
+        status.textContent = '⏹️ Đã dừng hẹn giờ, chụp thủ công.';
+      }
+      doCapture();
+    });
+
+    // Click vào video cũng chụp (tắt timer nếu đang chạy)
+    video.addEventListener('click', function() {
+      if (timerActive) {
+        timerActive = false;
+        clearTimeout(timerInterval);
+        status.textContent = '⏹️ Đã dừng hẹn giờ.';
+      }
+      doCapture();
+    });
+
+    // Timer tự động
+    timerSelect.addEventListener('change', function() {
+      const val = parseInt(this.value);
+      if (val > 0) {
+        // Nếu đang chạy thì reset
+        if (timerActive) {
+          timerActive = false;
+          clearTimeout(timerInterval);
+        }
+        // Bắt đầu hẹn giờ
+        autoRepeatTotal = parseInt(repeatCountInput.value) || 1;
+        autoCaptureCount = 0;
+        timerActive = true;
+        status.textContent = `⏳ Hẹn giờ ${val}s, lặp ${autoRepeatTotal} lần. Bấm Chụp để bắt đầu.`;
+      } else {
+        timerActive = false;
+        clearTimeout(timerInterval);
+        status.textContent = '⏹️ Đã tắt hẹn giờ.';
+      }
+    });
+
+    repeatCountInput.addEventListener('change', function() {
+      if (timerActive) {
+        autoRepeatTotal = parseInt(this.value) || 1;
+        status.textContent = `⏳ Cập nhật: ${autoRepeatTotal} lần.`;
+      }
+    });
+
+    // Khi bấm nút chụp trong chế độ hẹn giờ, nó sẽ tự động gọi doCapture() và sẽ lặp lại nếu còn số lần.
+
+    // Khởi động
+    initCamera();
+    // Set mặc định
+    modeSelect.value = '4';
+    collageMode = '4';
+    maxFrames = 4;
+    resetCollage();
+    updateProgress();
+
+    console.log('🚀 Photobooth Pro Ultimate đã sẵn sàng!');
+  })();
+</script>
+</body>
+</html>
