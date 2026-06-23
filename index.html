@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>📸 Photobooth Siêu Cute - Ghép Ảnh Dọc</title>
+    <style>
+        :root {
+            --pink: #ff6b9d;
+            --pink-light: #ffb3cc;
+            --pink-pale: #ffe0ec;
+            --purple: #c77dff;
+            --purple-light: #e0b3ff;
+            --white: #fff;
+            --bg: #fff5f9;
+            --text: #5a3e4b;
+            --shadow: 0 8px 32px rgba(255, 107, 157, 0.25);
+            --shadow-lg: 0 20px 60px rgba(255, 107, 157, 0.35);
+            --border-radius: 28px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ffe0ec 0%, #fff5f9 30%, #f8e6ff 60%, #ffe0f0 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Floating background decorations */
+        .bg-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatAround 20s infinite linear;
+            opacity: 0.6;
+            font-size: 3rem;
+        }
+        .bg-decoration:nth-child(1) {
+            top: 5%;
+            left: 5%;
+            animation-delay: 0s;
+            font-size: 4rem;
+        }
+        .bg-decoration:nth-child(2) {
+            top: 15%;
+            right: 8%;
+            animation-delay: -5s;
+            font-size: 3.5rem;
+        }
+        .bg-decoration:nth-child(3) {
+            bottom: 20%;
+            left: 3%;
+            animation-delay: -10s;
+            font-size: 2.8rem;
+        }
+        .bg-decoration:nth-child(4) {
+            bottom: 10%;
+            right: 5%;
+            animation-delay: -15s;
+            font-size: 4.2rem;
+        }
+        .bg-decoration:nth-child(5) {
+            top: 45%;
+            left: 2%;
+            animation-delay: -7s;
+            font-size: 3rem;
+        }
+        .bg-decoration:nth-child(6) {
+            top: 35%;
+            right: 3%;
+            animation-delay: -18s;
+            font-size: 3.3rem;
+        }
+
+        @keyframes floatAround {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            15% {
+                transform: translate(25px, -30px) rotate(8deg) scale(1.1);
+            }
+            30% {
+                transform: translate(-15px, -50px) rotate(-5deg) scale(0.9);
+            }
+            45% {
+                transform: translate(-30px, -10px) rotate(12deg) scale(1.05);
+            }
+            60% {
+                transform: translate(20px, 25px) rotate(-8deg) scale(1.15);
+            }
+            75% {
+                transform: translate(-20px, 40px) rotate(3deg) scale(0.95);
+            }
+            90% {
+                transform: translate(15px, -20px) rotate(-10deg) scale(1.08);
+            }
+        }
+
+        /* Main container */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+            padding: 12px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100vh;
+            height: 100dvh;
+            max-height: 900px;
+        }
+
+        /* Header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            flex-shrink: 0;
+        }
+        .app-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .app-title .icon {
+            font-size: 2rem;
+            animation: bounceIcon 1.5s infinite;
+        }
+        @keyframes bounceIcon {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-12px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            70% {
+                transform: translateY(-6px);
+            }
+            85% {
+                transform: translateY(0);
+            }
+        }
+        .mirror-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 8px 14px;
+            cursor: pointer;
+            border: 2px solid #ffb3cc;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+        }
+        .mirror-toggle:active {
+            transform: scale(0.94);
+            background: #ffe0ec;
+        }
+        .mirror-toggle .toggle-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff6b9d;
+            transition: var(--transition);
+            box-shadow: 0 0 12px rgba(255, 107, 157, 0.5);
+        }
+        .mirror-toggle.off .toggle-dot {
+            background: #ccc;
+            box-shadow: none;
+        }
+        .mirror-toggle.off {
+            border-color: #ddd;
+            opacity: 0.7;
+        }
+
+        /* Camera section */
+        .camera-section {
+            position: relative;
+            flex: 1;
+            min-height: 280px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: #1a1a2e;
+            box-shadow: var(--shadow-lg);
+            border: 4px solid #fff;
+            transition: border-color var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .camera-section.with-border-pink {
+            border-color: #ffb3cc;
+        }
+        .camera-section.with-border-purple {
+            border-color: #c77dff;
+        }
+        .camera-section.with-border-white-thick {
+            border: 8px solid #fff;
+        }
+        .camera-section.with-border-rainbow {
+            border: 5px solid transparent;
+            background-clip: padding-box;
+            animation: rainbowBorder 3s linear infinite;
+            box-shadow: 0 0 0 5px transparent;
+        }
+        @keyframes rainbowBorder {
+            0% {
+                border-color: #ff6b9d;
+            }
+            20% {
+                border-color: #ffb347;
+            }
+            40% {
+                border-color: #87ceeb;
+            }
+            60% {
+                border-color: #c77dff;
+            }
+            80% {
+                border-color: #ff6b9d;
+            }
+            100% {
+                border-color: #ff6b9d;
+            }
+        }
+        .camera-section.with-border-dotted {
+            border: 5px dotted #ff6b9d;
+        }
+        .camera-section.with-border-heart {
+            border: 4px solid #ff6b9d;
+            box-shadow: 0 0 0 6px #ffb3cc, 0 0 0 10px #ffe0ec;
+        }
+
+        #cameraVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s;
+        }
+        #cameraVideo.mirrored {
+            transform: scaleX(-1);
+        }
+        #cameraCanvas {
+            display: none;
+        }
+        #stitchCanvas {
+            display: none;
+        }
+
+        /* Countdown overlay */
+        .countdown-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .countdown-overlay.active {
+            opacity: 1;
+        }
+        .countdown-number {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 80px rgba(255, 107, 157, 0.9), 0 0 160px rgba(255, 107, 157, 0.6), 0 0 240px rgba(200, 100, 255, 0.5);
+            animation: countPop 0.5s var(--bounce);
+            letter-spacing: -4px;
+        }
+        @keyframes countPop {
+            0% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(0.85);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Flash effect */
+        .flash-effect {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.05s;
+        }
+        .flash-effect.fire {
+            opacity: 1;
+            transition: opacity 0s;
+            animation: flashOut 0.4s forwards;
+        }
+        @keyframes flashOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Thumbnail strip */
+        .thumbnail-strip {
+            display: flex;
+            gap: 8px;
+            padding: 4px 0;
+            overflow-x: auto;
+            flex-shrink: 0;
+            min-height: 52px;
+            align-items: center;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .thumbnail-strip::-webkit-scrollbar {
+            display: none;
+        }
+        .thumbnail-item {
+            width: 40px;
+            height: 52px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            animation: slideInThumb 0.4s var(--bounce);
+        }
+        @keyframes slideInThumb {
+            from {
+                transform: translateY(30px) scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .thumbnail-item:active {
+            transform: scale(0.9);
+            border-color: #ff6b9d;
+        }
+        .thumbnail-item .delete-thumb {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: #ff4757;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4);
+            transition: var(--transition);
+        }
+        .thumbnail-item .delete-thumb:active {
+            transform: scale(1.2);
+        }
+        .thumbnail-placeholder {
+            width: 40px;
+            height: 52px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            border: 2px dashed #ffb3cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #ffb3cc;
+            animation: pulsePlaceholder 2s infinite;
+        }
+        @keyframes pulsePlaceholder {
+            0%,
+            100% {
+                border-color: #ffb3cc;
+                opacity: 0.6;
+            }
+            50% {
+                border-color: #ff6b9d;
+                opacity: 1;
+            }
+        }
+
+        /* Controls panel */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .control-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        .control-chip {
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid #e8d5e0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: var(--text);
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .control-chip:active {
+            transform: scale(0.93);
+            background: #ffe0ec;
+        }
+        .control-chip.active {
+            background: #ff6b9d;
+            color: #fff;
+            border-color: #ff6b9d;
+            box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+            animation: pulseActive 2s infinite;
+        }
+        @keyframes pulseActive {
+            0%,
+            100% {
+                box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 28px rgba(255, 107, 157, 0.7);
+            }
+        }
+        .control-chip.filter-chip.active {
+            background: #c77dff;
+            border-color: #c77dff;
+            box-shadow: 0 4px 16px rgba(199, 125, 255, 0.5);
+        }
+
+        /* Bottom action area */
+        .action-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 8px 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .btn-round {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            flex-shrink: 0;
+        }
+        .btn-round:active {
+            transform: scale(0.88);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-round.gallery-btn {
+            background: linear-gradient(135deg, #fff, #ffe0ec);
+            border: 2px solid #ffb3cc;
+            font-size: 1.3rem;
+        }
+        .btn-round.reset-btn {
+            background: linear-gradient(135deg, #fff, #f0e0ff);
+            border: 2px solid #d4b3ff;
+            font-size: 1.2rem;
+        }
+        .btn-round.stitch-btn-float {
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+            color: #fff;
+            border: none;
+            font-size: 1.6rem;
+            width: 56px;
+            height: 56px;
+            box-shadow: 0 8px 28px rgba(255, 107, 157, 0.5);
+            animation: glowPulse 2s infinite;
+        }
+        @keyframes glowPulse {
+            0%,
+            100% {
+                box-shadow: 0 8px 28px rgba(255, 107, 157, 0.5);
+            }
+            50% {
+                box-shadow: 0 8px 40px rgba(255, 107, 157, 0.85), 0 0 60px rgba(199, 125, 255, 0.4);
+            }
+        }
+        .btn-capture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff6b9d, #ff4077);
+            box-shadow: 0 10px 35px rgba(255, 107, 157, 0.5), 0 0 0 8px rgba(255, 107, 157, 0.15);
+            transition: all 0.2s var(--bounce);
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-capture::after {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 3px dashed rgba(255, 107, 157, 0.35);
+            animation: rotateDash 8s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes rotateDash {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .btn-capture:active {
+            transform: scale(0.82);
+            box-shadow: 0 4px 16px rgba(255, 107, 157, 0.5), 0 0 0 4px rgba(255, 107, 157, 0.3);
+            border-width: 8px;
+        }
+        .btn-capture .capture-icon {
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-capture:active .capture-icon {
+            width: 22px;
+            height: 22px;
+        }
+        .btn-capture.stitch-mode {
+            background: linear-gradient(135deg, #c77dff, #9b59b6);
+            box-shadow: 0 10px 35px rgba(199, 125, 255, 0.5), 0 0 0 8px rgba(199, 125, 255, 0.15);
+        }
+        .btn-capture.stitch-mode::after {
+            border-color: rgba(199, 125, 255, 0.4);
+        }
+        .btn-capture.stitch-mode .capture-icon {
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        /* Badge */
+        .photo-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 8px rgba(255, 71, 87, 0.4);
+            z-index: 5;
+            animation: popIn 0.4s var(--bounce);
+        }
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 24px;
+            padding: 20px;
+            max-width: 92vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(30px) scale(0.92);
+            transition: transform 0.35s var(--bounce);
+            position: relative;
+            width: 400px;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #f5f5f5;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 5;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:active {
+            background: #ff4757;
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .modal-image {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 16px;
+            animation: fadeInUp 0.5s var(--bounce);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-modal {
+            padding: 12px 22px;
+            border-radius: 25px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        }
+        .btn-modal:active {
+            transform: scale(0.93);
+        }
+        .btn-save {
+            background: linear-gradient(135deg, #ff6b9d, #ff4077);
+            color: #fff;
+        }
+        .btn-delete {
+            background: #fff;
+            color: #ff4757;
+            border: 2px solid #ff4757;
+        }
+        .btn-close-modal {
+            background: #f5f5f5;
+            color: #666;
+        }
+        .btn-download {
+            background: linear-gradient(135deg, #c77dff, #9b59b6);
+            color: #fff;
+        }
+
+        /* Gallery grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .gallery-item {
+            aspect-ratio: 3/4;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+            position: relative;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-item:active {
+            transform: scale(0.94);
+            border-color: #ff6b9d;
+        }
+        .gallery-empty {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 40px;
+            color: #bbb;
+            font-size: 1rem;
+        }
+        .gallery-item .gallery-delete {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            background: rgba(255, 71, 87, 0.9);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 3;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .gallery-item:hover .gallery-delete,
+        .gallery-item:active .gallery-delete {
+            opacity: 1;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.35s var(--bounce);
+            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.success {
+            background: #27ae60;
+        }
+        .toast.error {
+            background: #ff4757;
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 150;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            animation: confettiFall 2.5s forwards;
+        }
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-120px) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(720deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        /* Fullscreen image viewer */
+        .fullscreen-viewer {
+            position: fixed;
+            inset: 0;
+            z-index: 180;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            flex-direction: column;
+        }
+        .fullscreen-viewer.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .fullscreen-viewer img {
+            max-width: 95vw;
+            max-height: 75vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.4s var(--bounce);
+        }
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .fullscreen-nav {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .fullscreen-nav button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+        }
+        .fullscreen-nav button:active {
+            background: #fff;
+            color: #333;
+        }
+        .fullscreen-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+            z-index: 5;
+        }
+        .fullscreen-close:active {
+            background: #ff4757;
+            border-color: #ff4757;
+        }
+
+        /* Sparkle particles */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 30;
+            font-size: 1.5rem;
+            animation: sparkleUp 0.8s forwards;
+        }
+        @keyframes sparkleUp {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(-50px) scale(1.4);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .app-container {
+                padding: 8px 10px 14px;
+                gap: 6px;
+            }
+            .btn-capture {
+                width: 68px;
+                height: 68px;
+                border-width: 5px;
+            }
+            .btn-capture::after {
+                inset: -10px;
+                border-width: 2px;
+            }
+            .btn-round {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+            .control-chip {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+            .app-title {
+                font-size: 1.3rem;
+            }
+            .countdown-number {
+                font-size: 5rem;
+            }
+        }
+        @media (min-width: 420px) and (max-width: 500px) {
+            .btn-capture {
+                width: 84px;
+                height: 84px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating background decorations -->
+    <span class="bg-decoration">🌸</span>
+    <span class="bg-decoration">✨</span>
+    <span class="bg-decoration">💖</span>
+    <span class="bg-decoration">🦋</span>
+    <span class="bg-decoration">🌟</span>
+    <span class="bg-decoration">🎀</span>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="app-title">
+                <span class="icon">📸</span> PhotoBooth
+            </div>
+            <div class="mirror-toggle" id="mirrorToggle" title="Chế độ soi gương (lật ảnh)">
+                <span>🪞</span> Gương
+                <span class="toggle-dot"></span>
+            </div>
+        </div>
+
+        <!-- Camera Section -->
+        <div class="camera-section with-border-pink" id="cameraSection">
+            <video id="cameraVideo" class="mirrored" autoplay playsinline muted></video>
+            <canvas id="cameraCanvas"></canvas>
+            <canvas id="stitchCanvas"></canvas>
+            <div class="countdown-overlay" id="countdownOverlay">
+                <span class="countdown-number" id="countdownNumber"></span>
+            </div>
+            <div class="flash-effect" id="flashEffect"></div>
+        </div>
+
+        <!-- Thumbnail Strip -->
+        <div class="thumbnail-strip" id="thumbnailStrip">
+            <span class="thumbnail-placeholder" id="thumbnailPlaceholder">📷</span>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <!-- Photo count selector -->
+            <div class="control-row">
+                <span style="font-size:0.75rem;font-weight:600;color:#888;">Số ảnh ghép:</span>
+                <span class="control-chip active" data-count="2" onclick="setPhotoCount(2, this)">2️⃣ Ảnh</span>
+                <span class="control-chip" data-count="3" onclick="setPhotoCount(3, this)">3️⃣ Ảnh</span>
+                <span class="control-chip" data-count="4" onclick="setPhotoCount(4, this)">4️⃣ Ảnh</span>
+                <span class="control-chip" data-count="5" onclick="setPhotoCount(5, this)">5️⃣ Ảnh</span>
+                <span class="control-chip" data-count="6" onclick="setPhotoCount(6, this)">6️⃣ Ảnh</span>
+            </div>
+            <!-- Timer selector -->
+            <div class="control-row">
+                <span style="font-size:0.75rem;font-weight:600;color:#888;">⏱ Hẹn giờ:</span>
+                <span class="control-chip active" data-timer="0" onclick="setTimer(0, this)">Tắt</span>
+                <span class="control-chip" data-timer="3" onclick="setTimer(3, this)">3s</span>
+                <span class="control-chip" data-timer="5" onclick="setTimer(5, this)">5s</span>
+                <span class="control-chip" data-timer="10" onclick="setTimer(10, this)">10s</span>
+            </div>
+            <!-- Border selector -->
+            <div class="control-row">
+                <span style="font-size:0.75rem;font-weight:600;color:#888;">🖼 Viền:</span>
+                <span class="control-chip active" data-border="pink" onclick="setBorder('pink', this)">💗 Hồng</span>
+                <span class="control-chip" data-border="purple" onclick="setBorder('purple', this)">💜 Tím</span>
+                <span class="control-chip" data-border="white-thick" onclick="setBorder('white-thick', this)">🤍 Dày</span>
+                <span class="control-chip" data-border="rainbow" onclick="setBorder('rainbow', this)">🌈 Cầu vồng</span>
+                <span class="control-chip" data-border="dotted" onclick="setBorder('dotted', this)">🔹 Chấm</span>
+                <span class="control-chip" data-border="heart" onclick="setBorder('heart', this)">💕 Tim</span>
+            </div>
+            <!-- Filter selector -->
+            <div class="control-row">
+                <span style="font-size:0.75rem;font-weight:600;color:#888;">🎨 Filter:</span>
+                <span class="control-chip filter-chip active" data-filter="none" onclick="setFilter('none', this)">📷 Thường</span>
+                <span class="control-chip filter-chip" data-filter="warm" onclick="setFilter('warm', this)">☀️ Ấm</span>
+                <span class="control-chip filter-chip" data-filter="cool" onclick="setFilter('cool', this)">❄️ Mát</span>
+                <span class="control-chip filter-chip" data-filter="vintage" onclick="setFilter('vintage', this)">📻 Cổ</span>
+                <span class="control-chip filter-chip" data-filter="bw" onclick="setFilter('bw', this)">🖤 Trắng đen</span>
+                <span class="control-chip filter-chip" data-filter="pinkglow" onclick="setFilter('pinkglow', this)">💖 Hồng</span>
+                <span class="control-chip filter-chip" data-filter="soft" onclick="setFilter('soft', this)">🫧 Mềm</span>
+            </div>
+        </div>
+
+        <!-- Action Area -->
+        <div class="action-area" id="actionArea">
+            <button class="btn-round gallery-btn" id="galleryBtn" title="Thư viện ảnh đã lưu" onclick="openGallery()">
+                🖼️
+            </button>
+            <button class="btn-round reset-btn" id="resetBtn" title="Chụp lại từ đầu" onclick="resetPhotos()">
+                🔄
+            </button>
+            <div style="position:relative;flex-shrink:0;">
+                <button class="btn-capture" id="btnCapture" title="Chụp ảnh" onclick="triggerCapture()">
+                    <span class="capture-icon"></span>
+                </button>
+                <span class="photo-badge" id="photoBadge" style="display:none;">0</span>
+            </div>
+            <button class="btn-round stitch-btn-float" id="stitchBtnFloat" title="Ghép ảnh ngay" style="display:none;"
+            onclick="stitchAndPreview()">
+            ✨
+        </button>
+        <button class="btn-round" id="undoBtn" title="Xóa ảnh cuối" style="display:none;" onclick="undoLastPhoto()">
+            ↩️
+        </button>
+    </div>
+</div>
+
+<!-- Preview Modal (after stitching) -->
+<div class="modal-overlay" id="previewModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closePreviewModal()">✖️</button>
+        <div class="modal-title">✨ Ảnh Ghép Của Bạn ✨</div>
+        <img class="modal-image" id="previewModalImage" src="" alt="Ảnh ghép">
+        <div class="modal-buttons">
+            <button class="btn-modal btn-save" onclick="saveStitchedImage()">💾 Lưu vào thư viện</button>
+            <button class="btn-modal btn-download" onclick="downloadStitchedImage()">📥 Tải xuống</button>
+            <button class="btn-modal btn-delete" onclick="deleteAndReset()">🗑️ Xóa & Chụp lại</button>
+            <button class="btn-modal btn-close-modal" onclick="closePreviewModal()">✖️ Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Modal -->
+<div class="modal-overlay" id="galleryModal">
+    <div class="modal-content" style="max-height:80vh;">
+        <button class="modal-close" onclick="closeGallery()">✖️</button>
+        <div class="modal-title">🖼️ Thư Viện Ảnh</div>
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="gallery-empty">Chưa có ảnh nào được lưu 📷<br>Hãy chụp và ghép ảnh nhé!</div>
+        </div>
+        <div style="text-align:center;margin-top:10px;">
+            <button class="btn-modal btn-close-modal" onclick="clearAllGallery()" style="font-size:0.75rem;">
+                🗑️ Xóa tất cả ảnh trong thư viện
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Fullscreen Image Viewer -->
+<div class="fullscreen-viewer" id="fullscreenViewer">
+    <button class="fullscreen-close" onclick="closeFullscreenViewer()">✖️</button>
+    <img id="fullscreenImage" src="" alt="Xem ảnh">
+    <div class="fullscreen-nav">
+        <button onclick="navigateFullscreen(-1)">◀️</button>
+        <button onclick="navigateFullscreen(1)">▶️</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Confetti Container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+    (function() {
+        // ============ DOM ELEMENTS ============
+        const cameraVideo = document.getElementById('cameraVideo');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const stitchCanvas = document.getElementById('stitchCanvas');
+        const cameraSection = document.getElementById('cameraSection');
+        const countdownOverlay = document.getElementById('countdownOverlay');
+        const countdownNumber = document.getElementById('countdownNumber');
+        const flashEffect = document.getElementById('flashEffect');
+        const thumbnailStrip = document.getElementById('thumbnailStrip');
+        const thumbnailPlaceholder = document.getElementById('thumbnailPlaceholder');
+        const btnCapture = document.getElementById('btnCapture');
+        const photoBadge = document.getElementById('photoBadge');
+        const stitchBtnFloat = document.getElementById('stitchBtnFloat');
+        const undoBtn = document.getElementById('undoBtn');
+        const mirrorToggle = document.getElementById('mirrorToggle');
+        const previewModal = document.getElementById('previewModal');
+        const previewModalImage = document.getElementById('previewModalImage');
+        const galleryModal = document.getElementById('galleryModal');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const fullscreenViewer = document.getElementById('fullscreenViewer');
+        const fullscreenImage = document.getElementById('fullscreenImage');
+        const toast = document.getElementById('toast');
+        const confettiContainer = document.getElementById('confettiContainer');
+
+        // ============ STATE ============
+        let photoCount = 2; // Số ảnh cần ghép (2-6)
+        let timerDuration = 0; // Thời gian hẹn giờ (0=tắt, 3,5,10)
+        let borderStyle = 'pink'; // Kiểu viền
+        let currentFilter = 'none'; // Filter hiện tại
+        let mirrorMode = true; // Chế độ soi gương
+        let capturedPhotos = []; // Mảng dataURL các ảnh đã chụp
+        let galleryImages = []; // Mảng dataURL các ảnh đã lưu vào thư viện
+        let stitchedImageDataURL = null; // Ảnh ghép hiện tại (dataURL)
+        let isCountingDown = false;
+        let countdownTimerId = null;
+        let fullscreenIndex = -1;
+        let stream = null;
+
+        // Load gallery from localStorage
+        try {
+            const saved = localStorage.getItem('photobooth_gallery');
+            if (saved) {
+                galleryImages = JSON.parse(saved);
+                if (!Array.isArray(galleryImages)) galleryImages = [];
+            }
+        } catch (e) {
+            galleryImages = [];
+        }
+
+        function saveGalleryToStorage() {
+            try {
+                // Limit to 20 images to avoid storage overflow
+                const toSave = galleryImages.slice(-20);
+                localStorage.setItem('photobooth_gallery', JSON.stringify(toSave));
+            } catch (e) {
+                showToast('⚠️ Bộ nhớ đầy, không thể lưu thêm ảnh', 'error');
+            }
+        }
+
+        // ============ CAMERA INIT ============
+        async function initCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 480 },
+                        height: { ideal: 640 },
+                        aspectRatio: { ideal: 3 / 4 }
+                    },
+                    audio: false
+                });
+                cameraVideo.srcObject = stream;
+                cameraVideo.onloadedmetadata = () => {
+                    cameraVideo.play();
+                    updateVideoMirror();
+                };
+            } catch (err) {
+                console.error('Camera error:', err);
+                showToast('⚠️ Không thể truy cập camera. Vui lòng cấp quyền.', 'error');
+                // Fallback: hiển thị placeholder
+                cameraVideo.poster = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" fill="%23ffe0ec"><rect width="400" height="500" fill="%23ffe0ec"/><text x="200" y="250" text-anchor="middle" fill="%23ff6b9d" font-size="24">📷 Camera không khả dụng</text></svg>';
+            }
+        }
+
+        function updateVideoMirror() {
+            if (mirrorMode) {
+                cameraVideo.classList.add('mirrored');
+                mirrorToggle.classList.remove('off');
+            } else {
+                cameraVideo.classList.remove('mirrored');
+                mirrorToggle.classList.add('off');
+            }
+        }
+
+        mirrorToggle.addEventListener('click', () => {
+            mirrorMode = !mirrorMode;
+            updateVideoMirror();
+            showToast(mirrorMode ? '🪞 Chế độ soi gương: BẬT' : '🪞 Chế độ soi gương: TẮT', 'success');
+        });
+
+        // ============ FILTER APPLICATION ============
+        const filterMap = {
+            'none': '',
+            'warm': 'saturate(1.3) hue-rotate(-10deg) brightness(1.1)',
+            'cool': 'saturate(1.1) hue-rotate(10deg) brightness(1.05)',
+            'vintage': 'sepia(0.5) saturate(0.7) contrast(1.1) brightness(0.9)',
+            'bw': 'grayscale(1) contrast(1.15)',
+            'pinkglow': 'saturate(1.4) hue-rotate(-30deg) brightness(1.15) contrast(1.05)',
+            'soft': 'saturate(0.8) brightness(1.1) blur(0.5px) contrast(0.95)',
+        };
+
+        function applyFilterToVideo() {
+            cameraVideo.style.filter = filterMap[currentFilter] || '';
+        }
+
+        function setFilter(filterName, chipEl) {
+            currentFilter = filterName;
+            applyFilterToVideo();
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            if (chipEl) chipEl.classList.add('active');
+        }
+
+        // ============ BORDER STYLE ============
+        function setBorder(style, chipEl) {
+            borderStyle = style;
+            // Remove all border classes
+            cameraSection.classList.remove('with-border-pink', 'with-border-purple', 'with-border-white-thick',
+                'with-border-rainbow', 'with-border-dotted', 'with-border-heart');
+            if (style !== 'none') {
+                cameraSection.classList.add('with-border-' + style);
+            }
+            document.querySelectorAll('[data-border]').forEach(c => c.classList.remove('active'));
+            if (chipEl) chipEl.classList.add('active');
+        }
+
+        // ============ PHOTO COUNT ============
+        function setPhotoCount(count, chipEl) {
+            photoCount = count;
+            document.querySelectorAll('[data-count]').forEach(c => c.classList.remove('active'));
+            if (chipEl) chipEl.classList.add('active');
+            resetPhotos();
+            updateUI();
+        }
+
+        // ============ TIMER ============
+        function setTimer(duration, chipEl) {
+            timerDuration = parseInt(duration);
+            document.querySelectorAll('[data-timer]').forEach(c => c.classList.remove('active'));
+            if (chipEl) chipEl.classList.add('active');
+        }
+
+        // ============ CAPTURE LOGIC ============
+        function triggerCapture() {
+            if (isCountingDown) return;
+            if (capturedPhotos.length >= photoCount) {
+                // Đã đủ ảnh, tự động ghép
+                stitchAndPreview();
+                return;
+            }
+            if (timerDuration > 0) {
+                startCountdown(timerDuration);
+            } else {
+                capturePhoto();
+            }
+        }
+
+        function startCountdown(seconds) {
+            if (isCountingDown) return;
+            isCountingDown = true;
+            let remaining = seconds;
+            countdownOverlay.classList.add('active');
+            countdownNumber.textContent = remaining;
+            countdownNumber.style.animation = 'none';
+            void countdownNumber.offsetWidth;
+            countdownNumber.style.animation = 'countPop 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+
+            function tick() {
+                if (remaining <= 0) {
+                    countdownOverlay.classList.remove('active');
+                    isCountingDown = false;
+                    capturePhoto();
+                    return;
+                }
+                countdownNumber.textContent = remaining;
+                countdownNumber.style.animation = 'none';
+                void countdownNumber.offsetWidth;
+                countdownNumber.style.animation = 'countPop 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+                remaining--;
+                countdownTimerId = setTimeout(tick, 900);
+            }
+            countdownTimerId = setTimeout(tick, 100);
+        }
+
+        function capturePhoto() {
+            if (!stream || !cameraVideo.videoWidth) {
+                showToast('⚠️ Camera chưa sẵn sàng', 'error');
+                return;
+            }
+            const videoWidth = cameraVideo.videoWidth;
+            const videoHeight = cameraVideo.videoHeight;
+
+            // Set canvas size to match video
+            cameraCanvas.width = videoWidth;
+            cameraCanvas.height = videoHeight;
+            const ctx = cameraCanvas.getContext('2d');
+
+            // Apply filter to canvas context
+            ctx.filter = filterMap[currentFilter] || 'none';
+
+            // Draw video frame
+            if (mirrorMode) {
+                // Flip horizontally for mirror effect
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.drawImage(cameraVideo, -videoWidth, 0, videoWidth, videoHeight);
+                ctx.restore();
+            } else {
+                ctx.drawImage(cameraVideo, 0, 0, videoWidth, videoHeight);
+            }
+
+            // Reset filter
+            ctx.filter = 'none';
+
+            // Get data URL
+            const dataURL = cameraCanvas.toDataURL('image/jpeg', 0.92);
+            capturedPhotos.push(dataURL);
+
+            // Flash effect
+            flashEffect.classList.add('fire');
+            setTimeout(() => flashEffect.classList.remove('fire'), 400);
+
+            // Sparkle particles
+            spawnSparkles();
+
+            // Update UI
+            updateThumbnails();
+            updateUI();
+            showToast(`📸 Đã chụp ${capturedPhotos.length}/${photoCount} ảnh`, 'success');
+
+            // Auto-stitch if we just reached the target
+            if (capturedPhotos.length >= photoCount) {
+                setTimeout(() => {
+                    stitchAndPreview();
+                }, 600);
+            }
+        }
+
+        function undoLastPhoto() {
+            if (capturedPhotos.length === 0) return;
+            capturedPhotos.pop();
+            stitchedImageDataURL = null;
+            updateThumbnails();
+            updateUI();
+            showToast('↩️ Đã xóa ảnh cuối', 'success');
+        }
+
+        function resetPhotos() {
+            capturedPhotos = [];
+            stitchedImageDataURL = null;
+            updateThumbnails();
+            updateUI();
+            closePreviewModal();
+        }
+
+        function updateThumbnails() {
+            // Clear existing thumbnails (keep placeholder)
+            const existingThumbs = thumbnailStrip.querySelectorAll('.thumbnail-item');
+            existingThumbs.forEach(t => t.remove());
+
+            if (capturedPhotos.length === 0) {
+                thumbnailPlaceholder.style.display = 'flex';
+            } else {
+                thumbnailPlaceholder.style.display = 'none';
+                capturedPhotos.forEach((dataURL, index) => {
+                    const thumbDiv = document.createElement('div');
+                    thumbDiv.className = 'thumbnail-item';
+                    thumbDiv.innerHTML = `
+                            <img src="${dataURL}" alt="Ảnh ${index + 1}">
+                            <span class="delete-thumb" data-index="${index}">×</span>
+                        `;
+                    thumbDiv.querySelector('.delete-thumb').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        capturedPhotos.splice(index, 1);
+                        stitchedImageDataURL = null;
+                        updateThumbnails();
+                        updateUI();
+                        showToast('🗑️ Đã xóa ảnh', 'success');
+                    });
+                    thumbDiv.addEventListener('click', () => {
+                        // View single photo in fullscreen
+                        viewFullscreenImage(dataURL);
+                    });
+                    thumbnailStrip.appendChild(thumbDiv);
+                });
+            }
+
+            // Add placeholder for remaining slots
+            for (let i = capturedPhotos.length; i < photoCount; i++) {
+                const placeholder = document.createElement('span');
+                placeholder.className = 'thumbnail-placeholder';
+                placeholder.textContent = '📷';
+                placeholder.style.animationDelay = (i * 0.2) + 's';
+                thumbnailStrip.appendChild(placeholder);
+            }
+        }
+
+        function updateUI() {
+            // Update badge
+            if (capturedPhotos.length > 0) {
+                photoBadge.style.display = 'flex';
+                photoBadge.textContent = capturedPhotos.length;
+                photoBadge.style.animation = 'none';
+                void photoBadge.offsetWidth;
+                photoBadge.style.animation = 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+            } else {
+                photoBadge.style.display = 'none';
+            }
+
+            // Update stitch button
+            if (capturedPhotos.length >= 2) {
+                stitchBtnFloat.style.display = 'flex';
+                stitchBtnFloat.style.animation = 'none';
+                void stitchBtnFloat.offsetWidth;
+                stitchBtnFloat.style.animation = 'glowPulse 2s infinite';
+            } else {
+                stitchBtnFloat.style.display = 'none';
+            }
+
+            // Update undo button
+            if (capturedPhotos.length > 0) {
+                undoBtn.style.display = 'flex';
+            } else {
+                undoBtn.style.display = 'none';
+            }
+
+            // Update capture button appearance
+            if (capturedPhotos.length >= photoCount) {
+                btnCapture.classList.add('stitch-mode');
+                btnCapture.querySelector('.capture-icon').style.borderRadius = '6px';
+                btnCapture.title = 'Ghép ảnh';
+            } else {
+                btnCapture.classList.remove('stitch-mode');
+                btnCapture.querySelector('.capture-icon').style.borderRadius = '50%';
+                btnCapture.title = 'Chụp ảnh';
+            }
+        }
+
+        // ============ STITCHING ============
+        function stitchAndPreview() {
+            if (capturedPhotos.length < 2) {
+                showToast('⚠️ Cần ít nhất 2 ảnh để ghép', 'error');
+                return;
+            }
+
+            // Use all captured photos (up to photoCount)
+            const photosToStitch = capturedPhotos.slice(0, photoCount);
+            const targetWidth = 400; // Chiều rộng cố định cho ảnh ghép
+
+            // Load all images
+            const loadPromises = photosToStitch.map(dataURL => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = dataURL;
+                });
+            });
+
+            Promise.all(loadPromises).then(images => {
+                // Calculate dimensions
+                let totalHeight = 0;
+                const scaledHeights = [];
+                const gap = 4; // Khoảng cách giữa các ảnh (px)
+                const borderPadding = 0; // Padding cho border
+
+                images.forEach(img => {
+                    const aspectRatio = img.height / img.width;
+                    const scaledHeight = Math.round(targetWidth * aspectRatio);
+                    scaledHeights.push(scaledHeight);
+                    totalHeight += scaledHeight;
+                });
+                totalHeight += gap * (images.length - 1);
+                totalHeight += borderPadding * 2;
+
+                // Set stitch canvas size
+                stitchCanvas.width = targetWidth;
+                stitchCanvas.height = totalHeight;
+                const ctx = stitchCanvas.getContext('2d');
+
+                // Fill background
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, targetWidth, totalHeight);
+
+                // Draw each image
+                let yOffset = 0;
+                images.forEach((img, i) => {
+                    ctx.drawImage(img, 0, yOffset, targetWidth, scaledHeights[i]);
+                    yOffset += scaledHeights[i] + gap;
+                });
+
+                // Get stitched data URL
+                stitchedImageDataURL = stitchCanvas.toDataURL('image/jpeg', 0.9);
+
+                // Show preview modal
+                previewModalImage.src = stitchedImageDataURL;
+                previewModal.classList.add('active');
+                spawnConfetti();
+                showToast('✨ Ảnh ghép đã sẵn sàng!', 'success');
+            }).catch(err => {
+                console.error('Stitch error:', err);
+                showToast('⚠️ Lỗi khi ghép ảnh', 'error');
+            });
+        }
+
+        // ============ PREVIEW MODAL ============
+        function closePreviewModal() {
+            previewModal.classList.remove('active');
+        }
+
+        function saveStitchedImage() {
+            if (!stitchedImageDataURL) return;
+            galleryImages.push(stitchedImageDataURL);
+            saveGalleryToStorage();
+            updateGalleryGrid();
+            closePreviewModal();
+            resetPhotos();
+            showToast('💾 Đã lưu vào thư viện!', 'success');
+            spawnConfetti();
+        }
+
+        function downloadStitchedImage() {
+            if (!stitchedImageDataURL) return;
+            const link = document.createElement('a');
+            link.href = stitchedImageDataURL;
+            link.download = 'photobooth-stitched-' + Date.now() + '.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('📥 Đang tải xuống...', 'success');
+        }
+
+        function deleteAndReset() {
+            stitchedImageDataURL = null;
+            resetPhotos();
+            closePreviewModal();
+            showToast('🗑️ Đã xóa, hãy chụp lại!', 'success');
+        }
+
+        // ============ GALLERY ============
+        function openGallery() {
+            updateGalleryGrid();
+            galleryModal.classList.add('active');
+        }
+
+        function closeGallery() {
+            galleryModal.classList.remove('active');
+        }
+
+        function updateGalleryGrid() {
+            galleryGrid.innerHTML = '';
+            if (galleryImages.length === 0) {
+                galleryGrid.innerHTML =
+                    '<div class="gallery-empty">Chưa có ảnh nào được lưu 📷<br>Hãy chụp và ghép ảnh nhé!</div>';
+            } else {
+                galleryImages.forEach((dataURL, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                            <img src="${dataURL}" alt="Ảnh lưu ${index + 1}">
+                            <span class="gallery-delete" data-index="${index}">×</span>
+                        `;
+                    item.querySelector('img').addEventListener('click', () => {
+                        openFullscreenViewer(index);
+                    });
+                    item.querySelector('.gallery-delete').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteGalleryImage(index);
+                    });
+                    galleryGrid.appendChild(item);
+                });
+            }
+        }
+
+        function deleteGalleryImage(index) {
+            galleryImages.splice(index, 1);
+            saveGalleryToStorage();
+            updateGalleryGrid();
+            showToast('🗑️ Đã xóa ảnh khỏi thư viện', 'success');
+        }
+
+        function clearAllGallery() {
+            if (galleryImages.length === 0) {
+                showToast('📭 Thư viện đã trống', 'error');
+                return;
+            }
+            if (confirm('Bạn có chắc muốn xóa TẤT CẢ ảnh trong thư viện không?')) {
+                galleryImages = [];
+                saveGalleryToStorage();
+                updateGalleryGrid();
+                showToast('🗑️ Đã xóa tất cả ảnh', 'success');
+            }
+        }
+
+        // ============ FULLSCREEN VIEWER ============
+        function openFullscreenViewer(index) {
+            fullscreenIndex = index;
+            if (fullscreenIndex >= 0 && fullscreenIndex < galleryImages.length) {
+                fullscreenImage.src = galleryImages[fullscreenIndex];
+                fullscreenViewer.classList.add('active');
+            }
+        }
+
+        function viewFullscreenImage(dataURL) {
+            fullscreenImage.src = dataURL;
+            fullscreenIndex = -1; // Not from gallery
+            fullscreenViewer.classList.add('active');
+        }
+
+        function closeFullscreenViewer() {
+            fullscreenViewer.classList.remove('active');
+        }
+
+        function navigateFullscreen(direction) {
+            if (fullscreenIndex < 0 || galleryImages.length === 0) return;
+            fullscreenIndex += direction;
+            if (fullscreenIndex < 0) fullscreenIndex = galleryImages.length - 1;
+            if (fullscreenIndex >= galleryImages.length) fullscreenIndex = 0;
+            fullscreenImage.src = galleryImages[fullscreenIndex];
+            fullscreenImage.style.animation = 'none';
+            void fullscreenImage.offsetWidth;
+            fullscreenImage.style.animation = 'zoomIn 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+        }
+
+        // Keyboard navigation for fullscreen
+        document.addEventListener('keydown', (e) => {
+            if (fullscreenViewer.classList.contains('active')) {
+                if (e.key === 'ArrowLeft') navigateFullscreen(-1);
+                if (e.key === 'ArrowRight') navigateFullscreen(1);
+                if (e.key === 'Escape') closeFullscreenViewer();
+            }
+            if (previewModal.classList.contains('active') && e.key === 'Escape') {
+                closePreviewModal();
+            }
+            if (galleryModal.classList.contains('active') && e.key === 'Escape') {
+                closeGallery();
+            }
+        });
+
+        // Close modals on overlay click
+        previewModal.addEventListener('click', function(e) {
+            if (e.target === previewModal) closePreviewModal();
+        });
+        galleryModal.addEventListener('click', function(e) {
+            if (e.target === galleryModal) closeGallery();
+        });
+        fullscreenViewer.addEventListener('click', function(e) {
+            if (e.target === fullscreenViewer) closeFullscreenViewer();
+        });
+
+        // ============ TOAST ============
+        let toastTimeout;
+
+        function showToast(message, type = 'success') {
+            clearTimeout(toastTimeout);
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // ============ CONFETTI ============
+        function spawnConfetti() {
+            const colors = ['#ff6b9d', '#c77dff', '#ffb347', '#87ceeb', '#ff4077', '#ffd700', '#ff9ff3', '#54a0ff',
+                '#5f27cd', '#01a3a4'
+            ];
+            const shapes = ['●', '■', '▲', '★', '♦', '❤', '🌸', '✨'];
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.top = -(Math.random() * 80 + 20) + 'px';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.width = (Math.random() * 10 + 6) + 'px';
+                piece.style.height = (Math.random() * 10 + 6) + 'px';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                piece.style.animationDelay = Math.random() * 0.6 + 's';
+                piece.textContent = Math.random() > 0.7 ? shapes[Math.floor(Math.random() * shapes.length)] : '';
+                piece.style.fontSize = '10px';
+                piece.style.display = 'flex';
+                piece.style.alignItems = 'center';
+                piece.style.justifyContent = 'center';
+                piece.style.color = '#fff';
+                fragment.appendChild(piece);
+            }
+            confettiContainer.appendChild(fragment);
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';
+            }, 3500);
+        }
+
+        // ============ SPARKLES ============
+        function spawnSparkles() {
+            const sparkleEmojis = ['✨', '💖', '🌟', '💫', '⭐', '🎀', '💕', '🪩'];
+            const cameraRect = cameraSection.getBoundingClientRect();
+            const centerX = cameraRect.left + cameraRect.width / 2;
+            const centerY = cameraRect.top + cameraRect.height / 2;
+            for (let i = 0; i < 15; i++) {
+                const sparkle = document.createElement('span');
+                sparkle.className = 'sparkle';
+                sparkle.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+                sparkle.style.left = (centerX + (Math.random() - 0.5) * 200) + 'px';
+                sparkle.style.top = (centerY + (Math.random() - 0.5) * 200) + 'px';
+                sparkle.style.animationDuration = (Math.random() * 0.6 + 0.5) + 's';
+                sparkle.style.animationDelay = Math.random() * 0.2 + 's';
+                sparkle.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+        }
+
+        // ============ INITIALIZATION ============
+        function init() {
+            initCamera();
+            updateThumbnails();
+            updateUI();
+            applyFilterToVideo();
+            updateVideoMirror();
+            // Set default active chips
+            setBorder('pink', document.querySelector('[data-border="pink"]'));
+            setFilter('none', document.querySelector('[data-filter="none"]'));
+            setPhotoCount(2, document.querySelector('[data-count="2"]'));
+            setTimer(0, document.querySelector('[data-timer="0"]'));
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (countdownTimerId) clearTimeout(countdownTimerId);
+        });
+
+        // Handle visibility change to save battery
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && stream) {
+                // Optional: pause video when tab is hidden
+            }
+        });
+
+        // Initialize
+        init();
+
+        // Expose functions to global scope for onclick handlers
+        window.setPhotoCount = setPhotoCount;
+        window.setTimer = setTimer;
+        window.setBorder = setBorder;
+        window.setFilter = setFilter;
+        window.triggerCapture = triggerCapture;
+        window.stitchAndPreview = stitchAndPreview;
+        window.resetPhotos = resetPhotos;
+        window.undoLastPhoto = undoLastPhoto;
+        window.openGallery = openGallery;
+        window.closeGallery = closeGallery;
+        window.closePreviewModal = closePreviewModal;
+        window.saveStitchedImage = saveStitchedImage;
+        window.downloadStitchedImage = downloadStitchedImage;
+        window.deleteAndReset = deleteAndReset;
+        window.clearAllGallery = clearAllGallery;
+        window.closeFullscreenViewer = closeFullscreenViewer;
+        window.navigateFullscreen = navigateFullscreen;
+        window.viewFullscreenImage = viewFullscreenImage;
+
+        console.log('🌸✨ Photobooth Siêu Cute đã sẵn sàng! ✨🌸');
+        console.log('📸 Chụp ảnh ghép dọc 2-6 ảnh');
+        console.log('🪞 Chế độ soi gương:', mirrorMode ? 'BẬT' : 'TẮT');
+        console.log('🎨 Filter:', currentFilter);
+        console.log('🖼 Viền:', borderStyle);
+        console.log('⏱ Hẹn giờ:', timerDuration > 0 ? timerDuration + 's' : 'Tắt');
+        console.log('📷 Số ảnh ghép:', photoCount);
+        console.log('💾 Ảnh trong thư viện:', galleryImages.length);
+    })();
+</script>
+</body>
+</html>
