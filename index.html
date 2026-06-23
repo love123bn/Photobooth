@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>📸 Photobooth Cute - Chụp & Ghép Ảnh Dọc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #FFB5C2;
+            --pink-dark: #F08FA4;
+            --purple: #D4A5FF;
+            --purple-dark: #B87FE0;
+            --blue: #A5D8FF;
+            --blue-dark: #7AB8E8;
+            --mint: #B5E8D5;
+            --bg: #FFF5F7;
+            --card: #FFFFFF;
+            --text: #4A3F55;
+            --text-light: #7A6F85;
+            --shadow: 0 8px 32px rgba(180, 140, 160, 0.18);
+            --shadow-sm: 0 4px 16px rgba(180, 140, 160, 0.12);
+            --radius: 24px;
+            --radius-sm: 14px;
+            --radius-xs: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #fce4ec 0%, #f3e5f5 25%, #e8eaf6 50%, #e0f7fa 75%, #fff5f7 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #f8e8f0;
+        }
+
+        /* Header */
+        .header {
+            padding: 14px 20px 10px;
+            text-align: center;
+            background: linear-gradient(180deg, #fff5f9 0%, #fff 100%);
+            border-bottom: 1px solid #fce4ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .header .logo {
+            font-size: 28px;
+            animation: bounce-logo 2s ease-in-out infinite;
+        }
+        @keyframes bounce-logo {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-8px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            70% {
+                transform: translateY(-4px);
+            }
+        }
+        .header h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #e87890, #b87fe0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .badge {
+            font-size: 0.7rem;
+            background: #fce4ec;
+            color: #d4687c;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3/4;
+            max-height: 55vh;
+            background: #1a1a1a;
+            overflow: hidden;
+            border-bottom: 3px solid #fce4ec;
+        }
+        .camera-section video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+        .camera-section .flash-overlay {
+            position: absolute;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            transition: opacity 0.08s ease;
+        }
+        .camera-section .flash-overlay.active {
+            opacity: 1;
+            transition: opacity 0s;
+        }
+        .camera-section .timer-display {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .camera-section .timer-display.show {
+            opacity: 1;
+        }
+        .camera-section .timer-number {
+            font-size: 7rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 60px rgba(255, 180, 200, 0.9), 0 0 120px rgba(255, 150, 180, 0.6),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+            animation: pop-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop-in {
+            0% {
+                transform: scale(2);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .camera-section .no-camera {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            gap: 12px;
+            background: #2a2030;
+            text-align: center;
+            padding: 20px;
+        }
+        .no-camera .emoji-big {
+            font-size: 4rem;
+        }
+        .no-camera button {
+            padding: 12px 28px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #fff;
+            color: #4a3f55;
+            font-family: 'Nunito', sans-serif;
+            transition: var(--transition);
+        }
+        .no-camera button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Strip Preview */
+        .strip-preview {
+            display: flex;
+            gap: 8px;
+            padding: 10px 16px;
+            overflow-x: auto;
+            min-height: 58px;
+            align-items: center;
+            background: #fdf6f9;
+            border-bottom: 1px dashed #f0d8e4;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .strip-preview::-webkit-scrollbar {
+            height: 3px;
+        }
+        .strip-preview::-webkit-scrollbar-thumb {
+            background: #e8c8d8;
+            border-radius: 10px;
+        }
+        .strip-preview .thumb {
+            width: 42px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid #fff;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .strip-preview .thumb:hover {
+            transform: scale(1.08);
+            border-color: var(--pink);
+        }
+        .strip-preview .thumb-placeholder {
+            width: 42px;
+            height: 56px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            border: 2px dashed #e0c8d8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #c8a8b8;
+            background: #fff;
+        }
+        .strip-preview .badge-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #d4687c;
+            background: #fce4ec;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .strip-preview .btn-reset-strip {
+            font-size: 0.7rem;
+            padding: 6px 10px;
+            border-radius: 14px;
+            border: 1.5px solid #e8c8d8;
+            background: #fff;
+            cursor: pointer;
+            color: #9a7a8a;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: 'Nunito', sans-serif;
+            transition: var(--transition);
+        }
+        .strip-preview .btn-reset-strip:hover {
+            background: #fff0f4;
+            border-color: #d4687c;
+            color: #d4687c;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 12px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fff;
+        }
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 0;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        .filter-row::-webkit-scrollbar {
+            height: 2px;
+        }
+        .filter-row::-webkit-scrollbar-thumb {
+            background: #e8c8d8;
+            border-radius: 10px;
+        }
+        .filter-chip {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .filter-chip.active {
+            border-color: #d4687c;
+            box-shadow: 0 0 0 4px rgba(212, 104, 124, 0.25);
+            transform: scale(1.1);
+        }
+        .filter-chip:hover {
+            transform: scale(1.08);
+        }
+        .filter-chip.active:hover {
+            transform: scale(1.1);
+        }
+
+        .main-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            border: none;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active {
+            transform: scale(0.94);
+        }
+        .btn-capture {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffb5c2 0%, #e87890 100%);
+            border: 5px solid #fff;
+            box-shadow: 0 6px 24px rgba(212, 104, 124, 0.45), 0 0 0 6px rgba(255, 181, 194, 0.25);
+            position: relative;
+            animation: pulse-capture 2.5s ease-in-out infinite;
+            font-size: 2rem;
+        }
+        @keyframes pulse-capture {
+            0%,
+            100% {
+                box-shadow: 0 6px 24px rgba(212, 104, 124, 0.45), 0 0 0 6px rgba(255, 181, 194, 0.25);
+            }
+            50% {
+                box-shadow: 0 6px 30px rgba(212, 104, 124, 0.6), 0 0 0 14px rgba(255, 181, 194, 0.08);
+            }
+        }
+        .btn-capture:active {
+            animation: none;
+            transform: scale(0.88);
+            box-shadow: 0 4px 16px rgba(212, 104, 124, 0.5), 0 0 0 4px rgba(255, 181, 194, 0.3);
+        }
+        .btn-small {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #f0d8e4;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow-sm);
+            color: var(--text);
+            position: relative;
+        }
+        .btn-small:hover {
+            background: #fff5f9;
+            border-color: #d4a5ff;
+        }
+        .btn-small.active-btn {
+            background: #f3e5f5;
+            border-color: #b87fe0;
+            box-shadow: 0 0 0 4px rgba(180, 127, 224, 0.2);
+        }
+        .btn-strip {
+            padding: 10px 18px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #d4a5ff, #b87fe0);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 4px 16px rgba(180, 127, 224, 0.35);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .btn-strip:disabled {
+            background: #e0d0e8;
+            box-shadow: none;
+            cursor: not-allowed;
+            color: #b8a8c0;
+            opacity: 0.7;
+        }
+        .btn-strip:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(180, 127, 224, 0.45);
+        }
+        .timer-chips {
+            display: flex;
+            gap: 6px;
+        }
+        .timer-chip {
+            padding: 6px 12px;
+            border-radius: 16px;
+            border: 2px solid #e8d8f0;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.75rem;
+            font-family: 'Nunito', sans-serif;
+            transition: var(--transition);
+            color: #7a6f85;
+        }
+        .timer-chip.active {
+            background: #f3e5f5;
+            border-color: #b87fe0;
+            color: #6a3f8a;
+            box-shadow: 0 0 0 3px rgba(180, 127, 224, 0.18);
+        }
+        .timer-chip:hover {
+            border-color: #d4a5ff;
+        }
+
+        /* Gallery Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(40, 20, 35, 0.7);
+            z-index: 100;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-sheet {
+            width: 100%;
+            max-width: 440px;
+            max-height: 80vh;
+            background: #fff;
+            border-radius: 28px 28px 0 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+            overflow-y: auto;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
+        }
+        .modal-overlay.open .modal-sheet {
+            transform: translateY(0);
+        }
+        .modal-handle {
+            width: 40px;
+            height: 5px;
+            background: #d8c8e0;
+            border-radius: 10px;
+            margin: 0 auto 8px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .btn-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #f5f0f8;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            font-family: 'Nunito', sans-serif;
+        }
+        .btn-close:hover {
+            background: #fce4ec;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .gallery-item {
+            aspect-ratio: 3/4;
+            border-radius: var(--radius-xs);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            border: 3px solid #f8e8f0;
+            transition: var(--transition);
+            background: #faf5f8;
+        }
+        .gallery-item:hover {
+            border-color: var(--pink);
+            transform: scale(1.03);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            opacity: 0;
+        }
+        .gallery-item:hover .delete-btn {
+            opacity: 1;
+        }
+        .gallery-empty {
+            text-align: center;
+            padding: 30px;
+            color: #b8a8c0;
+            font-weight: 600;
+        }
+        .gallery-empty .emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Full Image Preview */
+        .full-preview-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .full-preview-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .full-preview-overlay img {
+            max-width: 92vw;
+            max-height: 70vh;
+            border-radius: 16px;
+            object-fit: contain;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+            border: 4px solid #fff;
+        }
+        .full-preview-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-action {
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            font-family: 'Nunito', sans-serif;
+            transition: var(--transition);
+            color: #fff;
+        }
+        .btn-download {
+            background: #4CAF50;
+        }
+        .btn-delete {
+            background: #e87890;
+        }
+        .btn-close-full {
+            background: #666;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #4a3f55;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+            white-space: nowrap;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .btn-capture {
+                width: 60px;
+                height: 60px;
+                font-size: 1.6rem;
+                border-width: 4px;
+            }
+            .btn-small {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+            }
+            .filter-chip {
+                width: 34px;
+                height: 34px;
+                font-size: 0.55rem;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <div class="header">
+            <span class="logo">📸</span>
+            <h1>PhotoBooth Cute</h1>
+            <span class="badge">✨ Strip Dọc</span>
+        </div>
+
+        <!-- Camera Section -->
+        <div class="camera-section" id="cameraSection">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="flash-overlay" id="flashOverlay"></div>
+            <div class="timer-display" id="timerDisplay">
+                <span class="timer-number" id="timerNumber"></span>
+            </div>
+            <div class="no-camera" id="noCamera">
+                <span class="emoji-big">📷</span>
+                <p>Hãy cấp quyền camera để bắt đầu chụp ảnh nhé!</p>
+                <button onclick="startCamera()">🌟 Bật Camera</button>
+            </div>
+        </div>
+
+        <!-- Strip Preview -->
+        <div class="strip-preview" id="stripPreview">
+            <span class="badge-count" id="stripCount">0/6 ảnh</span>
+            <span style="color:#c8a8b8;font-size:0.75rem;flex-shrink:0;">👉</span>
+            <div id="stripThumbs" style="display:flex;gap:8px;"></div>
+            <button class="btn-reset-strip" id="btnResetStrip" onclick="resetStrip()" style="display:none;">🗑️ Xóa hết</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <!-- Filter Row -->
+            <div class="filter-row" id="filterRow"></div>
+
+            <!-- Timer Chips -->
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
+                <span style="font-size:0.75rem;color:#7a6f85;font-weight:700;">⏱️ Hẹn giờ:</span>
+                <div class="timer-chips" id="timerChips">
+                    <button class="timer-chip active" data-timer="0">Tắt</button>
+                    <button class="timer-chip" data-timer="3">3s</button>
+                    <button class="timer-chip" data-timer="5">5s</button>
+                    <button class="timer-chip" data-timer="10">10s</button>
+                </div>
+            </div>
+
+            <!-- Main Actions -->
+            <div class="main-actions">
+                <button class="btn btn-small" id="btnGallery" title="Thư viện ảnh" onclick="openGallery()">🖼️</button>
+                <button class="btn btn-small" id="btnFilterToggle" title="Bộ lọc màu" onclick="scrollToFilters()">🎨</button>
+                <button class="btn btn-capture" id="btnCapture" title="Chụp ảnh" onclick="triggerCapture()">📸</button>
+                <button class="btn btn-small" id="btnTimerQuick" title="Hẹn giờ nhanh 3s" onclick="quickTimer3()">⏱️</button>
+                <button class="btn btn-strip" id="btnCreateStrip" disabled onclick="createStrip()">
+                    ✨ Ghép Strip
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div class="modal-overlay" id="galleryOverlay">
+        <div class="modal-sheet" id="gallerySheet">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <h3>🖼️ Thư Viện Ảnh</h3>
+                <button class="btn-close" onclick="closeGallery()">✕</button>
+            </div>
+            <div class="gallery-grid" id="galleryGrid"></div>
+            <div class="gallery-empty" id="galleryEmpty">
+                <span class="emoji">📭</span>
+                Chưa có ảnh nào. Hãy chụp ảnh đầu tiên nhé!
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Image Preview Overlay -->
+    <div class="full-preview-overlay" id="fullPreviewOverlay">
+        <img id="fullPreviewImg" src="" alt="Preview" />
+        <div class="full-preview-actions">
+            <button class="btn-action btn-download" onclick="downloadFullPreview()">💾 Tải về</button>
+            <button class="btn-action btn-delete" onclick="deleteFullPreview()">🗑️ Xóa</button>
+            <button class="btn-action btn-close-full" onclick="closeFullPreview()">✕ Đóng</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Hidden Canvases -->
+    <canvas id="captureCanvas" style="display:none;"></canvas>
+    <canvas id="stripCanvas" style="display:none;"></canvas>
+
+    <script>
+        (function() {
+            // ==================== DOM Elements ====================
+            const video = document.getElementById('video');
+            const flashOverlay = document.getElementById('flashOverlay');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerNumber = document.getElementById('timerNumber');
+            const noCamera = document.getElementById('noCamera');
+            const cameraSection = document.getElementById('cameraSection');
+            const stripPreview = document.getElementById('stripPreview');
+            const stripThumbs = document.getElementById('stripThumbs');
+            const stripCount = document.getElementById('stripCount');
+            const btnResetStrip = document.getElementById('btnResetStrip');
+            const btnCreateStrip = document.getElementById('btnCreateStrip');
+            const btnCapture = document.getElementById('btnCapture');
+            const filterRow = document.getElementById('filterRow');
+            const timerChips = document.getElementById('timerChips');
+            const galleryOverlay = document.getElementById('galleryOverlay');
+            const galleryGrid = document.getElementById('galleryGrid');
+            const galleryEmpty = document.getElementById('galleryEmpty');
+            const fullPreviewOverlay = document.getElementById('fullPreviewOverlay');
+            const fullPreviewImg = document.getElementById('fullPreviewImg');
+            const toast = document.getElementById('toast');
+            const captureCanvas = document.getElementById('captureCanvas');
+            const stripCanvas = document.getElementById('stripCanvas');
+            const ctxCapture = captureCanvas.getContext('2d');
+            const ctxStrip = stripCanvas.getContext('2d');
+
+            // ==================== State ====================
+            let stripPhotos = []; // { data: base64, width: number, height: number }
+            let galleryPhotos = []; // { data: base64, width: number, height: number, id: string, isStrip: boolean }
+            let currentFilter = 'none';
+            let currentTimer = 0; // seconds, 0 = off
+            let isCapturing = false;
+            let videoReady = false;
+            let fullPreviewIndex = -1; // index in galleryPhotos for full preview
+            const MAX_STRIP_PHOTOS = 6;
+            const MIN_STRIP_PHOTOS = 2;
+            const MAX_GALLERY = 20;
+
+            // ==================== Filter Definitions ====================
+            const filters = [
+                { name: '🌸 TN', css: 'none', bg: '#f8d0d8', emoji: '🌸' },
+                { name: '🖤 ĐT', css: 'grayscale(1)', bg: '#999', emoji: '🖤' },
+                { name: '🤎 CĐ', css: 'sepia(0.8)', bg: '#c8a882', emoji: '🤎' },
+                { name: '💖 Hồng', css: 'hue-rotate(320deg) saturate(1.4) brightness(1.1)', bg: '#f8b8c8', emoji: '💖' },
+                { name: '💙 Mát', css: 'hue-rotate(190deg) saturate(1.2) brightness(1.05)', bg: '#a8d8f0', emoji: '💙' },
+                { name: '🧡 Ấm', css: 'hue-rotate(25deg) saturate(1.3) brightness(1.08)', bg: '#f0c8a0', emoji: '🧡' },
+                { name: '💜 Mộng', css: 'hue-rotate(270deg) saturate(1.2) brightness(1.05)', bg: '#d8c0f0',
+                emoji: '💜' },
+                { name: '✨ Tươi', css: 'brightness(1.15) contrast(1.1) saturate(1.2)', bg: '#fff8e0', emoji: '✨' },
+            ];
+
+            // ==================== Initialize ====================
+            function init() {
+                buildFilterChips();
+                setupTimerChips();
+                loadGalleryFromStorage();
+                updateStripUI();
+                startCamera();
+            }
+
+            function buildFilterChips() {
+                filterRow.innerHTML = '';
+                filters.forEach((f, i) => {
+                    const chip = document.createElement('button');
+                    chip.className = 'filter-chip' + (f.css === currentFilter ? ' active' : '');
+                    chip.style.background = f.bg;
+                    chip.textContent = f.emoji;
+                    chip.title = f.name;
+                    chip.addEventListener('click', () => {
+                        setFilter(f.css, chip);
+                    });
+                    filterRow.appendChild(chip);
+                });
+            }
+
+            function setFilter(css, chipEl) {
+                currentFilter = css;
+                video.style.filter = css;
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                if (chipEl) chipEl.classList.add('active');
+                showToast('🎨 Filter: ' + filters.find(f => f.css === css)?.name || 'Tự nhiên');
+            }
+
+            function setupTimerChips() {
+                timerChips.querySelectorAll('.timer-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        currentTimer = parseInt(chip.dataset.timer);
+                        timerChips.querySelectorAll('.timer-chip').forEach(c => c.classList
+                            .remove('active'));
+                        chip.classList.add('active');
+                        if (currentTimer > 0) {
+                            showToast('⏱️ Hẹn giờ ' + currentTimer + ' giây');
+                        } else {
+                            showToast('⏱️ Chụp ngay');
+                        }
+                    });
+                });
+            }
+
+            // ==================== Camera ====================
+            async function startCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 640 },
+                            height: { ideal: 853 },
+                        },
+                        audio: false,
+                    });
+                    video.srcObject = stream;
+                    video.style.filter = currentFilter;
+                    noCamera.style.display = 'none';
+                    video.style.display = 'block';
+
+                    video.addEventListener('loadedmetadata', () => {
+                        videoReady = true;
+                        captureCanvas.width = video.videoWidth;
+                        captureCanvas.height = video.videoHeight;
+                    });
+
+                    video.addEventListener('play', () => {
+                        videoReady = true;
+                        if (captureCanvas.width === 0 || captureCanvas.height === 0) {
+                            captureCanvas.width = video.videoWidth || 640;
+                            captureCanvas.height = video.videoHeight || 853;
+                        }
+                    });
+
+                } catch (err) {
+                    console.warn('Camera error:', err);
+                    noCamera.style.display = 'flex';
+                    video.style.display = 'none';
+                    videoReady = false;
+                }
+            }
+
+            // ==================== Capture ====================
+            function triggerCapture() {
+                if (!videoReady || isCapturing) return;
+                if (stripPhotos.length >= MAX_STRIP_PHOTOS) {
+                    showToast('⚠️ Đã đủ ' + MAX_STRIP_PHOTOS + ' ảnh! Hãy tạo strip trước nhé ✨');
+                    return;
+                }
+                if (currentTimer > 0) {
+                    startTimerCapture();
+                } else {
+                    capturePhoto();
+                }
+            }
+
+            function startTimerCapture() {
+                if (isCapturing) return;
+                isCapturing = true;
+                let countdown = currentTimer;
+                timerDisplay.classList.add('show');
+                timerNumber.textContent = countdown;
+                timerNumber.style.animation = 'none';
+                void timerNumber.offsetWidth;
+                timerNumber.style.animation = 'pop-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+                const interval = setInterval(() => {
+                    countdown--;
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        timerDisplay.classList.remove('show');
+                        capturePhoto();
+                        isCapturing = false;
+                    } else {
+                        timerNumber.textContent = countdown;
+                        timerNumber.style.animation = 'none';
+                        void timerNumber.offsetWidth;
+                        timerNumber.style.animation = 'pop-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    }
+                }, 1000);
+            }
+
+            function capturePhoto() {
+                if (!videoReady) {
+                    showToast('⚠️ Camera chưa sẵn sàng');
+                    return;
+                }
+                // Flash effect
+                flashOverlay.classList.add('active');
+                setTimeout(() => flashOverlay.classList.remove('active'), 100);
+
+                // Draw video to canvas with filter
+                ctxCapture.filter = currentFilter;
+                ctxCapture.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+                ctxCapture.filter = 'none';
+
+                const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.88);
+                const photoObj = {
+                    data: dataUrl,
+                    width: captureCanvas.width,
+                    height: captureCanvas.height,
+                };
+
+                // Add to strip
+                stripPhotos.push(photoObj);
+                // Add to gallery
+                addToGallery(dataUrl, captureCanvas.width, captureCanvas.height, false);
+
+                updateStripUI();
+                showToast('📸 Đã chụp! (' + stripPhotos.length + '/' + MAX_STRIP_PHOTOS + ')');
+
+                // Play a tiny beep
+                playBeep();
+            }
+
+            function playBeep() {
+                try {
+                    const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.value = 880;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } catch (e) { /* ignore */ }
+            }
+
+            // ==================== Strip ====================
+            function updateStripUI() {
+                const count = stripPhotos.length;
+                stripCount.textContent = count + '/' + MAX_STRIP_PHOTOS + ' ảnh';
+                btnCreateStrip.disabled = count < MIN_STRIP_PHOTOS;
+                btnResetStrip.style.display = count > 0 ? 'inline-block' : 'none';
+
+                // Render thumbnails
+                stripThumbs.innerHTML = '';
+                stripPhotos.forEach((photo, i) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = photo.data;
+                    thumb.className = 'thumb';
+                    thumb.title = 'Ảnh ' + (i + 1);
+                    thumb.addEventListener('click', () => {
+                        // Preview this photo in full
+                        previewPhotoFromStrip(i);
+                    });
+                    stripThumbs.appendChild(thumb);
+                });
+                // Placeholders for remaining slots
+                for (let i = count; i < MAX_STRIP_PHOTOS; i++) {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'thumb-placeholder';
+                    placeholder.textContent = '📷';
+                    stripThumbs.appendChild(placeholder);
+                }
+                // Scroll to end
+                stripThumbs.scrollLeft = stripThumbs.scrollWidth;
+            }
+
+            function resetStrip() {
+                if (stripPhotos.length === 0) return;
+                stripPhotos = [];
+                updateStripUI();
+                showToast('🔄 Đã reset strip');
+            }
+
+            function createStrip() {
+                if (stripPhotos.length < MIN_STRIP_PHOTOS) {
+                    showToast('⚠️ Cần ít nhất ' + MIN_STRIP_PHOTOS + ' ảnh để ghép strip');
+                    return;
+                }
+
+                // Calculate strip dimensions
+                const baseWidth = stripPhotos[0].width;
+                let totalHeight = 0;
+                const scaledHeights = [];
+
+                stripPhotos.forEach(photo => {
+                    const scale = baseWidth / photo.width;
+                    const h = Math.round(photo.height * scale);
+                    scaledHeights.push(h);
+                    totalHeight += h;
+                });
+
+                // Add small gaps between photos (white borders)
+                const gapPx = 4;
+                totalHeight += gapPx * (stripPhotos.length - 1);
+
+                stripCanvas.width = baseWidth;
+                stripCanvas.height = totalHeight;
+
+                // White background
+                ctxStrip.fillStyle = '#FFFFFF';
+                ctxStrip.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+
+                // Draw each photo
+                let currentY = 0;
+                stripPhotos.forEach((photo, i) => {
+                    const h = scaledHeights[i];
+                    ctxStrip.drawImage(
+                        createImageFromBase64(photo.data),
+                        0,
+                        currentY,
+                        baseWidth,
+                        h
+                    );
+                    currentY += h + gapPx;
+                });
+
+                // Get strip data
+                const stripDataUrl = stripCanvas.toDataURL('image/jpeg', 0.9);
+
+                // Add to gallery
+                addToGallery(stripDataUrl, baseWidth, totalHeight, true);
+
+                // Reset strip
+                stripPhotos = [];
+                updateStripUI();
+
+                // Show the strip in full preview
+                showFullPreviewFromData(stripDataUrl, galleryPhotos.length - 1);
+
+                showToast('🎉 Strip đã được tạo! Đã lưu vào thư viện');
+            }
+
+            // Helper: create Image from base64 synchronously for already-loaded photos
+            function createImageFromBase64(dataUrl) {
+                const img = new Image();
+                img.src = dataUrl;
+                // Since these are already captured and stored, they should load instantly from memory
+                return img;
+            }
+
+            // For the strip creation, we need images to be loaded. Let's make createStrip async.
+            async function createStripAsync() {
+                if (stripPhotos.length < MIN_STRIP_PHOTOS) {
+                    showToast('⚠️ Cần ít nhất ' + MIN_STRIP_PHOTOS + ' ảnh để ghép strip');
+                    return;
+                }
+
+                const baseWidth = stripPhotos[0].width;
+                let totalHeight = 0;
+                const scaledHeights = [];
+
+                stripPhotos.forEach(photo => {
+                    const scale = baseWidth / photo.width;
+                    const h = Math.round(photo.height * scale);
+                    scaledHeights.push(h);
+                    totalHeight += h;
+                });
+
+                const gapPx = 4;
+                totalHeight += gapPx * (stripPhotos.length - 1);
+
+                stripCanvas.width = baseWidth;
+                stripCanvas.height = totalHeight;
+
+                ctxStrip.fillStyle = '#FFFFFF';
+                ctxStrip.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+
+                // Load all images
+                const images = await Promise.all(
+                    stripPhotos.map(p => {
+                        return new Promise((resolve) => {
+                            const img = new Image();
+                            img.onload = () => resolve(img);
+                            img.src = p.data;
+                        });
+                    })
+                );
+
+                let currentY = 0;
+                images.forEach((img, i) => {
+                    const h = scaledHeights[i];
+                    ctxStrip.drawImage(img, 0, currentY, baseWidth, h);
+                    currentY += h + gapPx;
+                });
+
+                const stripDataUrl = stripCanvas.toDataURL('image/jpeg', 0.9);
+                addToGallery(stripDataUrl, baseWidth, totalHeight, true);
+                stripPhotos = [];
+                updateStripUI();
+                showFullPreviewFromData(stripDataUrl, galleryPhotos.length - 1);
+                showToast('🎉 Strip đã được tạo! Đã lưu vào thư viện');
+            }
+
+            // Override createStrip with async version
+            function createStrip() {
+                createStripAsync().catch(err => {
+                    console.error('Strip creation error:', err);
+                    showToast('⚠️ Lỗi tạo strip, thử lại nhé');
+                });
+            }
+
+            function previewPhotoFromStrip(index) {
+                if (index >= 0 && index < stripPhotos.length) {
+                    showFullPreviewFromData(stripPhotos[index].data, -1); // -1 means not in gallery
+                }
+            }
+
+            // ==================== Gallery ====================
+            function addToGallery(dataUrl, width, height, isStrip) {
+                const photo = {
+                    data: dataUrl,
+                    width,
+                    height,
+                    isStrip,
+                    id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                    timestamp: Date.now(),
+                };
+                galleryPhotos.push(photo);
+                // Limit gallery size
+                while (galleryPhotos.length > MAX_GALLERY) {
+                    galleryPhotos.shift();
+                }
+                saveGalleryToStorage();
+            }
+
+            function saveGalleryToStorage() {
+                try {
+                    const toSave = galleryPhotos.map(p => ({
+                        data: p.data,
+                        width: p.width,
+                        height: p.height,
+                        isStrip: p.isStrip,
+                        id: p.id,
+                        timestamp: p.timestamp,
+                    }));
+                    localStorage.setItem('photobooth_gallery', JSON.stringify(toSave));
+                } catch (e) {
+                    // Storage full - remove oldest
+                    if (galleryPhotos.length > 5) {
+                        galleryPhotos = galleryPhotos.slice(-5);
+                        saveGalleryToStorage();
+                    }
+                }
+            }
+
+            function loadGalleryFromStorage() {
+                try {
+                    const saved = localStorage.getItem('photobooth_gallery');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        galleryPhotos = parsed;
+                        if (galleryPhotos.length > MAX_GALLERY) {
+                            galleryPhotos = galleryPhotos.slice(-MAX_GALLERY);
+                        }
+                    }
+                } catch (e) {
+                    galleryPhotos = [];
+                }
+            }
+
+            function openGallery() {
+                renderGallery();
+                galleryOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeGallery() {
+                galleryOverlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            function renderGallery() {
+                galleryGrid.innerHTML = '';
+                if (galleryPhotos.length === 0) {
+                    galleryEmpty.style.display = 'block';
+                } else {
+                    galleryEmpty.style.display = 'none';
+                    galleryPhotos.forEach((photo, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'gallery-item';
+                        const img = document.createElement('img');
+                        img.src = photo.data;
+                        img.alt = photo.isStrip ? 'Strip ảnh' : 'Ảnh chụp';
+                        img.loading = 'lazy';
+                        item.appendChild(img);
+
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'delete-btn';
+                        delBtn.textContent = '✕';
+                        delBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deleteGalleryItem(index);
+                        });
+                        item.appendChild(delBtn);
+
+                        item.addEventListener('click', () => {
+                            showFullPreview(index);
+                        });
+                        galleryGrid.appendChild(item);
+                    });
+                }
+            }
+
+            function deleteGalleryItem(index) {
+                if (index >= 0 && index < galleryPhotos.length) {
+                    galleryPhotos.splice(index, 1);
+                    saveGalleryToStorage();
+                    renderGallery();
+                    if (fullPreviewIndex === index) {
+                        closeFullPreview();
+                    }
+                    showToast('🗑️ Đã xóa ảnh');
+                }
+            }
+
+            function showFullPreview(index) {
+                if (index >= 0 && index < galleryPhotos.length) {
+                    fullPreviewIndex = index;
+                    fullPreviewImg.src = galleryPhotos[index].data;
+                    fullPreviewOverlay.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function showFullPreviewFromData(dataUrl, galleryIndex) {
+                fullPreviewImg.src = dataUrl;
+                fullPreviewIndex = galleryIndex;
+                fullPreviewOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeFullPreview() {
+                fullPreviewOverlay.classList.remove('open');
+                fullPreviewIndex = -1;
+                document.body.style.overflow = '';
+            }
+
+            function downloadFullPreview() {
+                if (!fullPreviewImg.src) return;
+                const link = document.createElement('a');
+                link.download = 'photobooth_' + Date.now() + '.jpg';
+                link.href = fullPreviewImg.src;
+                link.click();
+                showToast('💾 Đang tải ảnh về...');
+            }
+
+            function deleteFullPreview() {
+                if (fullPreviewIndex >= 0 && fullPreviewIndex < galleryPhotos.length) {
+                    galleryPhotos.splice(fullPreviewIndex, 1);
+                    saveGalleryToStorage();
+                    closeFullPreview();
+                    renderGallery();
+                    showToast('🗑️ Đã xóa ảnh khỏi thư viện');
+                } else if (fullPreviewIndex === -1) {
+                    // Preview from strip, not in gallery
+                    closeFullPreview();
+                    showToast('📸 Ảnh này chưa được lưu vào thư viện');
+                }
+            }
+
+            // ==================== Quick Actions ====================
+            function quickTimer3() {
+                currentTimer = currentTimer === 3 ? 0 : 3;
+                timerChips.querySelectorAll('.timer-chip').forEach(c => {
+                    c.classList.remove('active');
+                    if (parseInt(c.dataset.timer) === currentTimer) c.classList.add('active');
+                });
+                if (currentTimer === 0) {
+                    timerChips.querySelector('.timer-chip[data-timer="0"]').classList.add('active');
+                }
+                showToast(currentTimer > 0 ? '⏱️ Hẹn giờ ' + currentTimer + 's' : '⏱️ Chụp ngay');
+            }
+
+            function scrollToFilters() {
+                filterRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight effect on filter row
+                filterRow.style.boxShadow = '0 0 0 6px rgba(212,104,124,0.3)';
+                setTimeout(() => { filterRow.style.boxShadow = ''; }, 800);
+            }
+
+            // ==================== Toast ====================
+            let toastTimeout;
+
+            function showToast(message) {
+                clearTimeout(toastTimeout);
+                toast.textContent = message;
+                toast.classList.add('show');
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+
+            // ==================== Close modals on overlay click ====================
+            galleryOverlay.addEventListener('click', function(e) {
+                if (e.target === galleryOverlay) {
+                    closeGallery();
+                }
+            });
+            fullPreviewOverlay.addEventListener('click', function(e) {
+                if (e.target === fullPreviewOverlay) {
+                    closeFullPreview();
+                }
+            });
+
+            // ==================== Keyboard shortcuts ====================
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeGallery();
+                    closeFullPreview();
+                }
+                if (e.key === ' ' || e.code === 'Space') {
+                    e.preventDefault();
+                    triggerCapture();
+                }
+                if (e.key === 'Enter' && !galleryOverlay.classList.contains('open') && !fullPreviewOverlay
+                    .classList.contains('open')) {
+                    e.preventDefault();
+                    if (!btnCreateStrip.disabled) createStrip();
+                }
+            });
+
+            // ==================== Touch feedback on capture button ====================
+            btnCapture.addEventListener('touchstart', function(e) {
+                btnCapture.style.transform = 'scale(0.9)';
+            }, { passive: true });
+            btnCapture.addEventListener('touchend', function(e) {
+                btnCapture.style.transform = '';
+            }, { passive: true });
+
+            // ==================== Initialize App ====================
+            init();
+
+            // Expose functions to global scope for inline onclick handlers
+            window.startCamera = startCamera;
+            window.triggerCapture = triggerCapture;
+            window.createStrip = createStrip;
+            window.resetStrip = resetStrip;
+            window.openGallery = openGallery;
+            window.closeGallery = closeGallery;
+            window.closeFullPreview = closeFullPreview;
+            window.downloadFullPreview = downloadFullPreview;
+            window.deleteFullPreview = deleteFullPreview;
+            window.scrollToFilters = scrollToFilters;
+            window.quickTimer3 = quickTimer3;
+
+            console.log('📸✨ PhotoBooth Cute đã sẵn sàng!');
+            console.log('  - Chụp ảnh: Nhấn nút 📸 hoặc phím Space');
+            console.log('  - Ghép strip dọc: Chụp 2-6 ảnh rồi nhấn "Ghép Strip"');
+            console.log('  - Thư viện: Xem lại ảnh đã chụp');
+            console.log('  - Filter: Chọn bộ lọc màu yêu thích');
+            console.log('  - Hẹn giờ: 3s, 5s, 10s');
+            console.log('💖 Chúc bạn có những bức ảnh thật cute!');
+        })();
+    </script>
+</body>
+</html>
