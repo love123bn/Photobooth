@@ -1,7 +1,10 @@
 :root {
-    --bg-color: #fff0f5; /* Lavender Blush */
-    --primary-color: #ffb6c1; /* Light Pink */
-    --secondary-color: #ff69b4; /* Hot Pink */
+    --bg-color: #fff0f5;
+    /* Lavender Blush */
+    --primary-color: #ffb6c1;
+    /* Light Pink */
+    --secondary-color: #ff69b4;
+    /* Hot Pink */
     --text-color: #555;
     --text-light: #888;
     --white: #ffffff;
@@ -29,7 +32,8 @@ body {
 /* Mobile Container Simulation */
 .mobile-container {
     width: 100%;
-    max-width: 414px; /* iPhone Max width */
+    max-width: 414px;
+    /* iPhone Max width */
     height: 100vh;
     max-height: 896px;
     background-color: var(--bg-color);
@@ -37,7 +41,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 415px) {
@@ -77,7 +81,10 @@ body {
 .tab-pane {
     display: none;
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     padding: 20px;
     overflow-y: hidden;
     box-sizing: border-box;
@@ -129,8 +136,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* --- Lịch Vạn Niên --- */
@@ -291,7 +305,8 @@ body {
     display: inline-block;
 }
 
-.btn-cute:hover, .btn-cute:active {
+.btn-cute:hover,
+.btn-cute:active {
     background: var(--primary-color);
     color: white;
 }
@@ -374,7 +389,7 @@ body {
     border: 10px solid var(--white);
     border-radius: 50%;
     background: radial-gradient(circle, var(--white) 40%, var(--bg-color) 100%);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px var(--primary-color);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), inset 0 0 15px var(--primary-color);
     position: relative;
     margin-bottom: 40px;
 }
@@ -389,7 +404,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .clock-number {
@@ -410,18 +425,53 @@ body {
 }
 
 /* Calculate radius: clock is 250, border is 10, inner is 230, radius is 115. We place numbers at ~95px from center */
-.num1  { transform: rotate(30deg) translate(0, -95px) rotate(-30deg); }
-.num2  { transform: rotate(60deg) translate(0, -95px) rotate(-60deg); }
-.num3  { transform: rotate(90deg) translate(0, -95px) rotate(-90deg); }
-.num4  { transform: rotate(120deg) translate(0, -95px) rotate(-120deg); }
-.num5  { transform: rotate(150deg) translate(0, -95px) rotate(-150deg); }
-.num6  { transform: rotate(180deg) translate(0, -95px) rotate(-180deg); }
-.num7  { transform: rotate(210deg) translate(0, -95px) rotate(-210deg); }
-.num8  { transform: rotate(240deg) translate(0, -95px) rotate(-240deg); }
-.num9  { transform: rotate(270deg) translate(0, -95px) rotate(-270deg); }
-.num10 { transform: rotate(300deg) translate(0, -95px) rotate(-300deg); }
-.num11 { transform: rotate(330deg) translate(0, -95px) rotate(-330deg); }
-.num12 { transform: rotate(360deg) translate(0, -95px) rotate(-360deg); }
+.num1 {
+    transform: rotate(30deg) translate(0, -95px) rotate(-30deg);
+}
+
+.num2 {
+    transform: rotate(60deg) translate(0, -95px) rotate(-60deg);
+}
+
+.num3 {
+    transform: rotate(90deg) translate(0, -95px) rotate(-90deg);
+}
+
+.num4 {
+    transform: rotate(120deg) translate(0, -95px) rotate(-120deg);
+}
+
+.num5 {
+    transform: rotate(150deg) translate(0, -95px) rotate(-150deg);
+}
+
+.num6 {
+    transform: rotate(180deg) translate(0, -95px) rotate(-180deg);
+}
+
+.num7 {
+    transform: rotate(210deg) translate(0, -95px) rotate(-210deg);
+}
+
+.num8 {
+    transform: rotate(240deg) translate(0, -95px) rotate(-240deg);
+}
+
+.num9 {
+    transform: rotate(270deg) translate(0, -95px) rotate(-270deg);
+}
+
+.num10 {
+    transform: rotate(300deg) translate(0, -95px) rotate(-300deg);
+}
+
+.num11 {
+    transform: rotate(330deg) translate(0, -95px) rotate(-330deg);
+}
+
+.num12 {
+    transform: rotate(360deg) translate(0, -95px) rotate(-360deg);
+}
 
 .hand {
     position: absolute;
@@ -456,7 +506,7 @@ body {
     font-size: 3rem;
     font-weight: 700;
     color: var(--secondary-color);
-    text-shadow: 2px 2px 4px rgba(255,105,180,0.2);
+    text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
     letter-spacing: 2px;
 }
 
@@ -500,7 +550,8 @@ body {
 #drawing-canvas {
     width: 100%;
     height: 100%;
-    touch-action: none; /* Prevent scrolling while drawing */
+    touch-action: none;
+    /* Prevent scrolling while drawing */
 }
 
 /* Bottom Nav */
@@ -537,7 +588,11 @@ body {
 }
 
 /* icons for fa */
-.fa-book-heart:before { content: "\f4e6"; } /* Approx icon */
+.fa-book-heart:before {
+    content: "\f4e6";
+}
+
+/* Approx icon */
 
 /* --- Cài Đặt --- */
 .settings-container {
@@ -574,7 +629,7 @@ body {
     border: 3px solid transparent;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .color-btn.active {
@@ -671,8 +726,13 @@ body {
     transition: color 0.2s;
 }
 
-.action-btn.edit:hover { color: #4169e1; }
-.action-btn.delete:hover { color: #ff4500; }
+.action-btn.edit:hover {
+    color: #4169e1;
+}
+
+.action-btn.delete:hover {
+    color: #ff4500;
+}
 
 /* --- Custom Edit Modal --- */
 .custom-modal {
@@ -695,7 +755,7 @@ body {
     max-width: 350px;
     padding: 20px;
     border-radius: var(--border-radius);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     gap: 15px;
