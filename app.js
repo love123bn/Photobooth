@@ -37,6 +37,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
 
+    // --- Holidays ---
+    // Solar holidays: key = "MM-DD"
+    const solarHolidays = {
+        '01-01': '🎆 Tết Dương lịch',
+        '04-30': '🎉 Giải phóng miền Nam',
+        '05-01': '🌹 Quốc tế Lao động',
+        '09-01': '🇻🇳 Nghỉ bù Quốc khánh',
+        '09-02': '🇻🇳 Quốc khánh',
+    };
+
+    // Lunar holidays: key = "lunar-MM-DD"
+    const lunarHolidays = {
+        '01-01': '🧧 Tết Nguyên Đán (Mùng 1)',
+        '01-02': '🧧 Tết Nguyên Đán (Mùng 2)',
+        '01-03': '🧧 Tết Nguyên Đán (Mùng 3)',
+        '01-04': '🧧 Tết Nguyên Đán (Mùng 4)',
+        '01-05': '🧧 Tết Nguyên Đán (Mùng 5)',
+        '03-10': '🏔️ Giỗ Tổ Hùng Vương',
+    };
+
+    // Get lunar date string from a solar date, returns "MM-DD" or null
+    function getLunarMMDD(year, month, day) {
+        try {
+            const d = new Date(year, month, day);
+            const formatter = new Intl.DateTimeFormat('vi-VN-u-ca-chinese', { day: '2-digit', month: '2-digit' });
+            const parts = formatter.formatToParts(d);
+            let m = '', dd = '';
+            for (const p of parts) {
+                if (p.type === 'month') m = p.value.padStart(2, '0');
+                if (p.type === 'day') dd = p.value.padStart(2, '0');
+            }
+            return m && dd ? `${m}-${dd}` : null;
+        } catch(e) { return null; }
+    }
+
+    function getHoliday(year, month, day) {
+        const solarKey = `${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        if (solarHolidays[solarKey]) return solarHolidays[solarKey];
+        const lunarKey = getLunarMMDD(year, month, day);
+        if (lunarKey && lunarHolidays[lunarKey]) return lunarHolidays[lunarKey];
+        return null;
+    }
+
     function renderCalendar() {
         daysContainer.innerHTML = '';
         monthYearDisplay.textContent = `${months[currentMonth]} ${currentYear}`;
@@ -62,12 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 dayDiv.classList.add('today');
             }
 
+            // Check for holiday
+            const holiday = getHoliday(currentYear, currentMonth, i);
+            if (holiday) {
+                dayDiv.classList.add('holiday');
+                dayDiv.setAttribute('title', holiday);
+                const dot = document.createElement('span');
+                dot.classList.add('holiday-dot');
+                dayDiv.appendChild(dot);
+            }
+
             dayDiv.addEventListener('click', () => {
                 document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
                 dayDiv.classList.add('selected');
                 
                 // Sử dụng API Intl của trình duyệt để lấy lịch âm
                 let lunarStr = "";
+                let holidayName = "";
                 try {
                     const dateObj = new Date(currentYear, currentMonth, i);
                     const formatter = new Intl.DateTimeFormat('vi-VN-u-ca-chinese', { day: 'numeric', month: 'numeric' });
@@ -75,8 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch(e) {
                     lunarStr = "Không hỗ trợ trên trình duyệt này";
                 }
-                
-                lunarInfoDisplay.innerHTML = `<p>Ngày dương: ${i}/${currentMonth + 1}/${currentYear}</p><p style="color:var(--secondary-color); margin-top:5px;">Âm lịch: ${lunarStr}</p>`;
+                holidayName = getHoliday(currentYear, currentMonth, i);
+                const holidayHTML = holidayName
+                    ? `<p class="holiday-label">${holidayName}</p>`
+                    : '';
+                lunarInfoDisplay.innerHTML = `<p>Ngày dương: ${i}/${currentMonth + 1}/${currentYear}</p><p style="color:var(--secondary-color); margin-top:5px;">Âm lịch: ${lunarStr}</p>${holidayHTML}`;
             });
 
             daysContainer.appendChild(dayDiv);
