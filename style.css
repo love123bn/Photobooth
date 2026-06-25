@@ -1,0 +1,732 @@
+:root {
+    --bg-color: #fff0f5; /* Lavender Blush */
+    --primary-color: #ffb6c1; /* Light Pink */
+    --secondary-color: #ff69b4; /* Hot Pink */
+    --text-color: #555;
+    --text-light: #888;
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+    --border-radius: 20px;
+    --main-font: 'Quicksand', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--main-font);
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #fce4ec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Mobile Container Simulation */
+.mobile-container {
+    width: 100%;
+    max-width: 414px; /* iPhone Max width */
+    height: 100vh;
+    max-height: 896px;
+    background-color: var(--bg-color);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
+}
+
+@media (min-width: 415px) {
+    .mobile-container {
+        height: 90vh;
+        border-radius: 40px;
+        border: 8px solid white;
+    }
+}
+
+/* Header */
+.app-header {
+    background: linear-gradient(135deg, var(--primary-color), #ffc0cb);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    z-index: 10;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.app-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Main Content */
+.app-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Tabs */
+.tab-pane {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    padding: 20px;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Calendar tab: scrollable */
+#tab-calendar {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+#tab-calendar::-webkit-scrollbar {
+    width: 5px;
+}
+
+#tab-calendar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#tab-calendar::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+/* Diary tab: scrollable */
+#tab-diary {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+#tab-diary::-webkit-scrollbar {
+    width: 5px;
+}
+
+#tab-diary::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#tab-diary::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Lịch Vạn Niên --- */
+.calendar-container {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: var(--shadow);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.calendar-header button {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.day {
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.day:hover {
+    background-color: #fff0f5;
+}
+
+.day.today {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.day.selected {
+    border: 2px solid var(--secondary-color);
+}
+
+.day.empty {
+    cursor: default;
+}
+
+.day.holiday {
+    color: #e84393;
+    font-weight: 700;
+    position: relative;
+}
+
+.day.holiday.today {
+    color: white;
+}
+
+.holiday-dot {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    display: block;
+}
+
+.day.today .holiday-dot {
+    background: white;
+}
+
+.holiday-label {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #e84393;
+    background: #fff0f5;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+}
+
+.lunar-info {
+    margin-top: 20px;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* --- Nhật Ký --- */
+.diary-input-section {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+#diary-text {
+    width: 100%;
+    border: none;
+    resize: none;
+    height: 100px;
+    outline: none;
+    font-size: 1rem;
+    color: var(--text-color);
+    background: transparent;
+}
+
+.diary-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    border-top: 1px dashed #ffc0cb;
+    padding-top: 10px;
+}
+
+.btn-cute {
+    background: var(--white);
+    border: 2px solid var(--primary-color);
+    color: var(--secondary-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.btn-cute:hover, .btn-cute:active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-cute.primary {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+#photo-preview-container {
+    position: relative;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+#photo-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 10px;
+}
+
+#remove-photo {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.diary-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.diary-entry {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--primary-color);
+}
+
+.diary-entry .date {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.diary-entry .text {
+    color: var(--text-color);
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+}
+
+.diary-entry img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+/* --- Đồng Hồ --- */
+.clock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-top: 40px;
+}
+
+.analog-clock {
+    width: 250px;
+    height: 250px;
+    border: 10px solid var(--white);
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--white) 40%, var(--bg-color) 100%);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px var(--primary-color);
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.clock-center {
+    width: 16px;
+    height: 16px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.clock-number {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    left: 50%;
+    top: 50%;
+    margin-left: -15px;
+    margin-top: -15px;
+    z-index: 5;
+    text-shadow: 1px 1px 2px var(--white);
+}
+
+/* Calculate radius: clock is 250, border is 10, inner is 230, radius is 115. We place numbers at ~95px from center */
+.num1  { transform: rotate(30deg) translate(0, -95px) rotate(-30deg); }
+.num2  { transform: rotate(60deg) translate(0, -95px) rotate(-60deg); }
+.num3  { transform: rotate(90deg) translate(0, -95px) rotate(-90deg); }
+.num4  { transform: rotate(120deg) translate(0, -95px) rotate(-120deg); }
+.num5  { transform: rotate(150deg) translate(0, -95px) rotate(-150deg); }
+.num6  { transform: rotate(180deg) translate(0, -95px) rotate(-180deg); }
+.num7  { transform: rotate(210deg) translate(0, -95px) rotate(-210deg); }
+.num8  { transform: rotate(240deg) translate(0, -95px) rotate(-240deg); }
+.num9  { transform: rotate(270deg) translate(0, -95px) rotate(-270deg); }
+.num10 { transform: rotate(300deg) translate(0, -95px) rotate(-300deg); }
+.num11 { transform: rotate(330deg) translate(0, -95px) rotate(-330deg); }
+.num12 { transform: rotate(360deg) translate(0, -95px) rotate(-360deg); }
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom;
+    background: var(--text-color);
+    border-radius: 10px;
+}
+
+.hour-hand {
+    width: 6px;
+    height: 60px;
+    margin-left: -3px;
+    background: var(--secondary-color);
+}
+
+.min-hand {
+    width: 4px;
+    height: 80px;
+    margin-left: -2px;
+}
+
+.second-hand {
+    width: 2px;
+    height: 100px;
+    margin-left: -1px;
+    background: var(--primary-color);
+}
+
+.digital-clock {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    text-shadow: 2px 2px 4px rgba(255,105,180,0.2);
+    letter-spacing: 2px;
+}
+
+.current-date {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-top: 10px;
+}
+
+/* --- Canvas --- */
+#tab-canvas {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.canvas-tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: var(--white);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 15px;
+}
+
+#brush-size {
+    accent-color: var(--secondary-color);
+}
+
+.canvas-wrapper {
+    flex: 1;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+}
+
+#drawing-canvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none; /* Prevent scrolling while drawing */
+}
+
+/* Bottom Nav */
+.bottom-nav {
+    flex-shrink: 0;
+    background: var(--white);
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    box-shadow: 0 -5px 15px rgba(255, 105, 180, 0.1);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 10;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+}
+
+.nav-item i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.nav-item.active {
+    color: var(--secondary-color);
+    transform: translateY(-5px);
+}
+
+/* icons for fa */
+.fa-book-heart:before { content: "\f4e6"; } /* Approx icon */
+
+/* --- Cài Đặt --- */
+.settings-container {
+    padding-top: 10px;
+}
+
+.setting-group {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.setting-group h3 {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-options {
+    display: flex;
+    gap: 15px;
+    justify-content: space-around;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.color-btn.active {
+    border-color: var(--text-color);
+    transform: scale(1.1);
+}
+
+.cute-select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    background: var(--white);
+    color: var(--text-color);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+}
+
+.cute-select:focus {
+    border-color: var(--secondary-color);
+}
+
+/* --- Camera Modal --- */
+.camera-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+#camera-video {
+    flex: 1;
+    width: 100%;
+    object-fit: cover;
+    background: #222;
+}
+
+.camera-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.cam-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid #fff;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.capture-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
+    background: rgba(255, 105, 180, 0.5);
+    border-color: var(--primary-color);
+}
+
+.entry-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+    border-top: 1px dashed #ffe4e1;
+    padding-top: 10px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-light);
+    transition: color 0.2s;
+}
+
+.action-btn.edit:hover { color: #4169e1; }
+.action-btn.delete:hover { color: #ff4500; }
+
+/* --- Custom Edit Modal --- */
+.custom-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    background: var(--white);
+    width: 90%;
+    max-width: 350px;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content h3 {
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cute-textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    color: var(--text-color);
+}
+
+.cute-textarea:focus {
+    border-color: var(--secondary-color);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
