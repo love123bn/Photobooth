@@ -2,1526 +2,169 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lịch Âm Dương & Nhật Ký & Đếm Ngày</title>
-    <style>
-        :root {
-            --bg: #0a0a14;
-            --glass-bg: rgba(20, 20, 40, 0.55);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-shadow: rgba(0, 0, 0, 0.4);
-            --text: #e8e8f0;
-            --text-secondary: #b0b0c8;
-            --accent: #c4a0ff;
-            --accent2: #7ec8f8;
-            --accent3: #ff9eb5;
-            --gold: #f0c060;
-            --red: #ff6b7a;
-            --green: #5ce0b8;
-            --card-radius: 20px;
-            --tab-height: 70px;
-            --safe-bottom: env(safe-area-inset-bottom, 12px);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Canvas Particles Background */
-        #particlesCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Mobile Container */
-        .app-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 440px;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            background: transparent;
-            border-radius: 0;
-            overflow: hidden;
-        }
-        @media (min-width: 500px) {
-            .app-container {
-                height: 92vh;
-                height: 92dvh;
-                max-height: 900px;
-                border-radius: 28px;
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-            }
-        }
-
-        /* Header */
-        .app-header {
-            padding: 16px 20px 8px;
-            text-align: center;
-            flex-shrink: 0;
-            z-index: 2;
-        }
-        .app-header .title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #e0d0ff, #b8d8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 8px rgba(180, 160, 255, 0.4));
-        }
-        .app-header .subtitle {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            letter-spacing: 0.3px;
-            margin-top: 2px;
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 8px 16px 20px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .main-content::-webkit-scrollbar {
-            width: 0;
-        }
-
-        /* Glass Card */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--card-radius);
-            padding: 18px;
-            box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -30%;
-            left: -20%;
-            width: 140%;
-            height: 160%;
-            background: radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .glass-card>* {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Screen panels */
-        .screen {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-            animation: fadeSlideIn 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-        .screen.active {
-            display: flex;
-        }
-        @keyframes fadeSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ============ TAB BAR ============ */
-        .tab-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            background: rgba(16, 16, 32, 0.7);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 6px var(--safe-bottom);
-            flex-shrink: 0;
-            z-index: 10;
-            position: relative;
-        }
-        .tab-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            background: transparent;
-            border: none;
-            color: #8888a8;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            font-size: 0.7rem;
-            font-weight: 500;
-            letter-spacing: 0.2px;
-            position: relative;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-            min-width: 60px;
-        }
-        .tab-btn .tab-icon {
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-            filter: grayscale(30%);
-        }
-        .tab-btn.active {
-            color: #e0d0ff;
-            background: rgba(180, 150, 255, 0.12);
-            box-shadow: 0 0 20px rgba(160, 130, 255, 0.2);
-        }
-        .tab-btn.active .tab-icon {
-            transform: scale(1.15);
-            filter: grayscale(0%);
-            animation: popBounce 0.4s ease;
-        }
-        @keyframes popBounce {
-            0%,
-            100% {
-                transform: scale(1.15);
-            }
-            40% {
-                transform: scale(1.35);
-            }
-            70% {
-                transform: scale(1.05);
-            }
-        }
-        .tab-indicator {
-            position: absolute;
-            bottom: -2px;
-            height: 3px;
-            border-radius: 3px;
-            background: var(--accent);
-            transition: left 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2), width 0.35s ease;
-            box-shadow: 0 0 14px rgba(180, 140, 255, 0.7);
-        }
-
-        /* ============ LỊCH ============ */
-        .calendar-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-        .calendar-nav button {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .calendar-nav button:active {
-            background: rgba(255, 255, 255, 0.18);
-            transform: scale(0.9);
-        }
-        .calendar-month-label {
-            font-weight: 700;
-            font-size: 1.05rem;
-            letter-spacing: 0.5px;
-            color: #e8e0ff;
-        }
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            text-align: center;
-        }
-        .calendar-grid .day-header {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #9999bb;
-            padding: 6px 0;
-            letter-spacing: 0.3px;
-        }
-        .calendar-grid .day-header.weekend {
-            color: #ff8899;
-        }
-        .calendar-cell {
-            aspect-ratio: 1/1;
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            position: relative;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid transparent;
-            min-width: 0;
-        }
-        .calendar-cell:hover {
-            background: rgba(255, 255, 255, 0.07);
-        }
-        .calendar-cell:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 0.12);
-        }
-        .calendar-cell .solar {
-            font-weight: 600;
-            font-size: 0.9rem;
-            line-height: 1;
-            color: #ddd;
-        }
-        .calendar-cell .lunar {
-            font-size: 0.6rem;
-            font-weight: 400;
-            color: #999;
-            line-height: 1;
-            margin-top: 1px;
-        }
-        .calendar-cell.today {
-            border: 2px solid var(--accent2) !important;
-            box-shadow: 0 0 18px rgba(120, 180, 255, 0.35);
-            background: rgba(100, 160, 240, 0.12) !important;
-            border-radius: 16px;
-        }
-        .calendar-cell.today .solar {
-            color: #fff;
-            font-weight: 700;
-        }
-        .calendar-cell.other-month {
-            opacity: 0.35;
-            pointer-events: none;
-        }
-        .calendar-cell.holiday {
-            background: rgba(255, 100, 120, 0.1) !important;
-            border: 1px solid rgba(255, 120, 140, 0.3) !important;
-        }
-        .calendar-cell.holiday .solar {
-            color: #ff9eb5 !important;
-        }
-        .calendar-cell.lunar-holiday {
-            background: rgba(240, 180, 60, 0.1) !important;
-            border: 1px solid rgba(240, 180, 60, 0.35) !important;
-        }
-        .calendar-cell.lunar-holiday .lunar {
-            color: #f0c060 !important;
-            font-weight: 600;
-        }
-        .holiday-dot {
-            position: absolute;
-            bottom: 4px;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #ff6b7a;
-            box-shadow: 0 0 6px #ff6b7a;
-        }
-        .lunar-holiday-dot {
-            background: #f0c060;
-            box-shadow: 0 0 6px #f0c060;
-        }
-        .legend {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 0.65rem;
-            color: #aaa;
-            margin-top: 4px;
-        }
-        .legend span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .legend .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        /* ============ NHẬT KÝ ============ */
-        .diary-camera-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-        }
-        .camera-preview {
-            width: 100%;
-            max-height: 240px;
-            border-radius: 16px;
-            background: #111;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            display: block;
-        }
-        .camera-btns {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .btn {
-            padding: 10px 18px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.07);
-            color: #ddd;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85rem;
-            letter-spacing: 0.3px;
-            transition: all 0.3s;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn:active {
-            transform: scale(0.94);
-            background: rgba(255, 255, 255, 0.16);
-        }
-        .btn.accent {
-            background: rgba(180, 140, 255, 0.2);
-            border-color: rgba(180, 140, 255, 0.4);
-            color: #e0d0ff;
-            box-shadow: 0 0 20px rgba(150, 120, 240, 0.25);
-        }
-        .btn.danger {
-            background: rgba(255, 80, 100, 0.15);
-            border-color: rgba(255, 80, 100, 0.35);
-            color: #ffa0b0;
-        }
-        .diary-textarea {
-            width: 100%;
-            min-height: 80px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #ddd;
-            padding: 12px;
-            font-size: 0.9rem;
-            resize: vertical;
-            font-family: inherit;
-            outline: none;
-            transition: border 0.3s;
-        }
-        .diary-textarea:focus {
-            border-color: rgba(180, 150, 255, 0.5);
-            box-shadow: 0 0 16px rgba(150, 120, 240, 0.2);
-        }
-        .diary-entries {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 350px;
-            overflow-y: auto;
-        }
-        .diary-entry {
-            display: flex;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 14px;
-            padding: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            align-items: flex-start;
-        }
-        .diary-entry img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 10px;
-            flex-shrink: 0;
-        }
-        .diary-entry .entry-info {
-            flex: 1;
-            font-size: 0.8rem;
-            color: #bbb;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .diary-entry .entry-date {
-            font-size: 0.7rem;
-            color: #888;
-        }
-        .diary-entry .entry-text {
-            color: #ccc;
-            word-break: break-word;
-        }
-        .diary-entry .delete-entry {
-            background: transparent;
-            border: none;
-            color: #ff8899;
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 4px 8px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .diary-entry .delete-entry:active {
-            background: rgba(255, 80, 100, 0.2);
-        }
-
-        /* ============ ĐẾM NGÀY ============ */
-        .countdown-display {
-            text-align: center;
-            padding: 16px 0;
-        }
-        .countdown-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #f0c060, #ff9eb5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 12px rgba(240, 180, 80, 0.5));
-        }
-        .countdown-label {
-            font-size: 0.9rem;
-            color: #bbb;
-            letter-spacing: 0.3px;
-        }
-        .countdown-event-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #e0d0ff;
-            margin-top: 4px;
-        }
-        .countdown-inputs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .countdown-inputs input {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px 14px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #ddd;
-            font-size: 0.85rem;
-            outline: none;
-            font-family: inherit;
-        }
-        .countdown-inputs input:focus {
-            border-color: rgba(180, 150, 255, 0.5);
-            box-shadow: 0 0 14px rgba(150, 120, 240, 0.2);
-        }
-        .countdown-presets {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .preset-chip {
-            padding: 6px 12px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #bbb;
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: all 0.25s;
-            white-space: nowrap;
-        }
-        .preset-chip:active {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(0.94);
-        }
-
-        /* ============ ĐỒNG HỒ ============ */
-        .clock-display {
-            text-align: center;
-            padding: 10px 0;
-        }
-        .clock-time {
-            font-size: 3.5rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            font-variant-numeric: tabular-nums;
-            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-            background: linear-gradient(180deg, #ffffff, #c8d8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 20px rgba(180, 200, 255, 0.5));
-        }
-        .clock-date {
-            font-size: 1rem;
-            color: #bbb;
-            letter-spacing: 0.4px;
-            margin-top: 4px;
-        }
-        .clock-seconds-bar {
-            height: 3px;
-            border-radius: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
-            margin-top: 10px;
-            transition: width 1s linear;
-            box-shadow: 0 0 16px rgba(180, 150, 255, 0.5);
-        }
-        .analog-clock-canvas {
-            display: block;
-            margin: 0 auto;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            box-shadow: 0 0 40px rgba(100, 100, 180, 0.2);
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(30, 30, 60, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 10px 22px;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            z-index: 99;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.35s;
-            letter-spacing: 0.3px;
-        }
-        .toast.show {
-            opacity: 1;
-        }
-
-        @media (max-width: 380px) {
-            .calendar-cell {
-                border-radius: 10px;
-            }
-            .calendar-cell .solar {
-                font-size: 0.75rem;
-            }
-            .calendar-cell .lunar {
-                font-size: 0.55rem;
-            }
-            .clock-time {
-                font-size: 2.6rem;
-            }
-            .countdown-number {
-                font-size: 2.8rem;
-            }
-            .tab-btn {
-                padding: 6px 8px;
-                font-size: 0.65rem;
-                min-width: 48px;
-            }
-            .tab-btn .tab-icon {
-                font-size: 1.3rem;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pinky App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Nunito:wght@400;600;700&family=Pacifico&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="mobile-container">
+        <header class="app-header">
+            <h1 id="header-title">Lịch Vạn Niên</h1>
+        </header>
 
-    <!-- Particles Background -->
-    <canvas id="particlesCanvas"></canvas>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <!-- App Container -->
-    <div class="app-container" id="appContainer">
-        <!-- Header -->
-        <div class="app-header">
-            <div class="title">✨ Lịch & Nhật Ký ✨</div>
-            <div class="subtitle" id="headerSubtitle">Âm Dương · Ảnh · Đếm Ngày</div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <!-- Screen 0: Lịch -->
-            <div class="screen active" id="screen-calendar">
-                <div class="glass-card">
-                    <div class="calendar-nav">
-                        <button id="calPrevMonth" aria-label="Tháng trước">◀</button>
-                        <span class="calendar-month-label" id="calMonthLabel">Tháng 6 / 2026</span>
-                        <button id="calNextMonth" aria-label="Tháng sau">▶</button>
-                        <button id="calToday" style="font-size:0.7rem;border-radius:20px;padding:6px 12px;width:auto;">Hôm nay</button>
+        <main class="app-content">
+            <!-- TAB LỊCH VẠN NIÊN -->
+            <section id="tab-calendar" class="tab-pane active">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                        <h2 id="month-year">Tháng 6 2026</h2>
+                        <button id="next-month"><i class="fas fa-chevron-right"></i></button>
                     </div>
-                    <div class="calendar-grid" id="calendarGrid"></div>
-                    <div class="legend">
-                        <span><span class="dot" style="background:#ff6b7a;box-shadow:0 0 6px #ff6b7a;"></span> Lễ dương</span>
-                        <span><span class="dot" style="background:#f0c060;box-shadow:0 0 6px #f0c060;"></span> Lễ âm</span>
-                        <span><span style="color:#7ec8f8;">●</span> Hôm nay</span>
+                    <div class="calendar-weekdays">
+                        <div>CN</div><div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div>
+                    </div>
+                    <div class="calendar-days" id="calendar-days">
+                        <!-- Days will be generated by JS -->
                     </div>
                 </div>
-                <div class="glass-card" id="selectedDayInfo" style="font-size:0.85rem;color:#bbb;text-align:center;">
-                    👆 Chạm vào một ngày để xem chi tiết
+                <div class="lunar-info" id="lunar-info">
+                    <p>Chọn một ngày để xem chi tiết</p>
                 </div>
-            </div>
+            </section>
 
-            <!-- Screen 1: Nhật ký -->
-            <div class="screen" id="screen-diary">
-                <div class="glass-card">
-                    <div class="diary-camera-area">
-                        <video class="camera-preview" id="cameraVideo" autoplay playsinline muted style="display:none;"></video>
-                        <canvas id="cameraCanvas" style="display:none;"></canvas>
-                        <img class="camera-preview" id="capturedPreview" src="" alt="Ảnh chụp" style="display:none;max-height:240px;object-fit:cover;" />
-                        <div id="cameraPlaceholder" style="width:100%;height:160px;border-radius:16px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:#666;border:1px dashed rgba(255,255,255,0.15);">
-                            📷 Chụp ảnh hoặc chọn từ thư viện
+            <!-- TAB NHẬT KÝ -->
+            <section id="tab-diary" class="tab-pane">
+                <div class="diary-input-section">
+                    <textarea id="diary-text" placeholder="Hôm nay của bạn thế nào? (✿◠‿◠)"></textarea>
+                    <div class="diary-actions">
+                        <div class="camera-options" style="display: flex; gap: 5px;">
+                            <label for="diary-photo-gallery" class="btn-cute" title="Thư viện ảnh"><i class="fas fa-image"></i></label>
+                            <input type="file" id="diary-photo-gallery" class="diary-photo-input" accept="image/*" hidden>
+
+                            <button type="button" id="btn-cam-front" class="btn-cute" title="Cam trước"><i class="fas fa-user-circle"></i></button>
+                            <button type="button" id="btn-cam-rear" class="btn-cute" title="Cam sau"><i class="fas fa-camera"></i></button>
                         </div>
-                        <div class="camera-btns">
-                            <button class="btn" id="btnOpenCamera">📸 Mở Camera</button>
-                            <button class="btn" id="btnCapture" style="display:none;">🔴 Chụp</button>
-                            <button class="btn" id="btnCloseCamera" style="display:none;">❌ Đóng</button>
-                            <label class="btn" style="cursor:pointer;">🖼️ Chọn ảnh<input type="file" accept="image/*" id="fileInput" style="display:none;"></label>
+                        <button id="save-diary" class="btn-cute primary">Lưu nhật ký</button>
+                    </div>
+                    <div id="photo-preview-container" style="display: none;">
+                        <img id="photo-preview" src="" alt="Preview">
+                        <button id="remove-photo"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="diary-filter-section" style="margin-bottom: 15px; background: var(--white); padding: 10px; border-radius: var(--border-radius); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between;">
+                    <label for="diary-date-filter" style="font-weight: 600; color: var(--secondary-color);">Xem ngày:</label>
+                    <input type="date" id="diary-date-filter" class="cute-select" style="width: auto; padding: 5px 10px;">
+                </div>
+                <div class="diary-entries" id="diary-entries">
+                    <!-- Entries will appear here -->
+                </div>
+            </section>
+
+            <!-- TAB ĐỒNG HỒ -->
+            <section id="tab-clock" class="tab-pane">
+                <div class="clock-container">
+                    <div class="analog-clock">
+                        <!-- Clock Numbers -->
+                        <div class="clock-number num1">1</div>
+                        <div class="clock-number num2">2</div>
+                        <div class="clock-number num3">3</div>
+                        <div class="clock-number num4">4</div>
+                        <div class="clock-number num5">5</div>
+                        <div class="clock-number num6">6</div>
+                        <div class="clock-number num7">7</div>
+                        <div class="clock-number num8">8</div>
+                        <div class="clock-number num9">9</div>
+                        <div class="clock-number num10">10</div>
+                        <div class="clock-number num11">11</div>
+                        <div class="clock-number num12">12</div>
+                        
+                        <div class="hand hour-hand" id="hour-hand"></div>
+                        <div class="hand min-hand" id="min-hand"></div>
+                        <div class="hand second-hand" id="second-hand"></div>
+                        <div class="clock-center"></div>
+                    </div>
+                    <div class="digital-clock" id="digital-clock">00:00:00</div>
+                    <div class="current-date" id="current-date">Thứ Hai, 1 tháng 1</div>
+                </div>
+            </section>
+
+
+
+            <!-- TAB CÀI ĐẶT -->
+            <section id="tab-settings" class="tab-pane">
+                <div class="settings-container">
+                    <div class="setting-group">
+                        <h3><i class="fas fa-palette"></i> Màu Sắc Chủ Đạo</h3>
+                        <div class="color-options" id="theme-options">
+                            <button class="color-btn active" data-primary="#ffb6c1" data-secondary="#ff69b4" data-bg="#fff0f5" style="background: #ffb6c1;"></button>
+                            <button class="color-btn" data-primary="#add8e6" data-secondary="#4169e1" data-bg="#f0f8ff" style="background: #add8e6;"></button>
+                            <button class="color-btn" data-primary="#dda0dd" data-secondary="#9370db" data-bg="#f8f8ff" style="background: #dda0dd;"></button>
+                            <button class="color-btn" data-primary="#98fb98" data-secondary="#3cb371" data-bg="#f5fffa" style="background: #98fb98;"></button>
+                            <button class="color-btn" data-primary="#f0e68c" data-secondary="#ff8c00" data-bg="#fffff0" style="background: #f0e68c;"></button>
                         </div>
-                        <textarea class="diary-textarea" id="diaryText" placeholder="Viết ghi chú cho khoảnh khắc này..."></textarea>
-                        <button class="btn accent" id="btnSaveDiary">💾 Lưu nhật ký</button>
                     </div>
-                </div>
-                <div class="glass-card">
-                    <div style="font-weight:600;margin-bottom:8px;color:#ddd;">📖 Nhật ký đã lưu</div>
-                    <div class="diary-entries" id="diaryEntries">
-                        <div style="color:#666;text-align:center;padding:20px;">Chưa có mục nhật ký nào</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Screen 2: Đếm ngày -->
-            <div class="screen" id="screen-countdown">
-                <div class="glass-card">
-                    <div class="countdown-display">
-                        <div class="countdown-number" id="countdownNumber">0</div>
-                        <div class="countdown-label" id="countdownLabel">ngày</div>
-                        <div class="countdown-event-name" id="countdownEventName">Chọn một sự kiện</div>
-                    </div>
-                    <div class="countdown-inputs">
-                        <input type="date" id="countdownDate" title="Chọn ngày">
-                        <input type="text" id="countdownName" placeholder="Tên sự kiện..." maxlength="40">
-                    </div>
-                    <div class="countdown-presets" style="margin-top:10px;">
-                        <span class="preset-chip" data-days="0">🎉 Hôm nay</span>
-                        <span class="preset-chip" data-days="7">📅 1 tuần</span>
-                        <span class="preset-chip" data-days="30">🗓️ 30 ngày</span>
-                        <span class="preset-chip" data-days="365">🎂 1 năm</span>
-                        <span class="preset-chip" data-event="tet">🧧 Tết 2027</span>
-                        <span class="preset-chip" data-event="noel">🎄 Noel 2026</span>
+                    <div class="setting-group">
+                        <h3><i class="fas fa-font"></i> Phông Chữ</h3>
+                        <select id="font-select" class="cute-select">
+                            <option value="'Quicksand', sans-serif">Quicksand (Mặc định)</option>
+                            <option value="'Nunito', sans-serif">Nunito (Bo tròn)</option>
+                            <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans (Đáng yêu)</option>
+                            <option value="'Pacifico', cursive">Pacifico (Nghệ thuật)</option>
+                            <option value="'Roboto', sans-serif">Roboto (Cơ bản)</option>
+                            <option value="'Arial', sans-serif">Arial (Truyền thống)</option>
+                        </select>
                     </div>
                 </div>
-            </div>
+            </section>
+        </main>
 
-            <!-- Screen 3: Đồng hồ -->
-            <div class="screen" id="screen-clock">
-                <div class="glass-card">
-                    <div class="clock-display">
-                        <canvas class="analog-clock-canvas" id="analogClock" width="200" height="200"></canvas>
-                        <div class="clock-time" id="clockTime">00:00:00</div>
-                        <div class="clock-date" id="clockDate">Thứ ..., ngày ... tháng ... năm ...</div>
-                        <div class="clock-seconds-bar" id="clockSecondsBar" style="width:0%;"></div>
-                    </div>
-                </div>
-                <div class="glass-card" style="text-align:center;font-size:0.8rem;color:#999;">
-                    🌏 Múi giờ: <strong id="timezoneDisplay">Asia/Ho_Chi_Minh (GMT+7)</strong>
+        <!-- CAMERA MODAL -->
+        <div id="camera-modal" class="camera-modal" style="display: none;">
+            <video id="camera-video" autoplay playsinline></video>
+            <div class="camera-controls">
+                <button type="button" id="btn-close-camera" class="cam-btn"><i class="fas fa-times"></i></button>
+                <button type="button" id="btn-capture" class="cam-btn capture-btn"><i class="fas fa-circle"></i></button>
+                <button type="button" id="btn-switch-camera" class="cam-btn"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <canvas id="camera-canvas" style="display: none;"></canvas>
+        </div>
+
+        <!-- EDIT MODAL -->
+        <div id="edit-modal" class="custom-modal" style="display: none;">
+            <div class="modal-content">
+                <h3><i class="fas fa-edit"></i> Sửa Nhật Ký</h3>
+                <textarea id="edit-text-input" class="cute-textarea"></textarea>
+                <div class="modal-actions">
+                    <button id="btn-cancel-edit" class="btn-cute">Hủy</button>
+                    <button id="btn-save-edit" class="btn-cute primary">Lưu</button>
                 </div>
             </div>
         </div>
 
-        <!-- Tab Bar -->
-        <div class="tab-bar" id="tabBar">
-            <button class="tab-btn active" data-screen="calendar">
-                <span class="tab-icon">📅</span> Lịch
-            </button>
-            <button class="tab-btn" data-screen="diary">
-                <span class="tab-icon">📝</span> Nhật ký
-            </button>
-            <button class="tab-btn" data-screen="countdown">
-                <span class="tab-icon">⏳</span> Đếm ngày
-            </button>
-            <button class="tab-btn" data-screen="clock">
-                <span class="tab-icon">🕐</span> Đồng hồ
-            </button>
-        </div>
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-target="tab-calendar" data-title="Lịch Vạn Niên">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch</span>
+            </a>
+            <a href="#" class="nav-item" data-target="tab-diary" data-title="Nhật Ký">
+                <i class="fas fa-book-heart"></i>
+                <span>Nhật ký</span>
+            </a>
+            <a href="#" class="nav-item" data-target="tab-clock" data-title="Đồng Hồ">
+                <i class="fas fa-clock"></i>
+                <span>Đồng hồ</span>
+            </a>
+
+            <a href="#" class="nav-item" data-target="tab-settings" data-title="Cài Đặt">
+                <i class="fas fa-cog"></i>
+                <span>Cài đặt</span>
+            </a>
+        </nav>
     </div>
-
-    <script>
-        (function() {
-            // ==================== PARTICLES CANVAS ====================
-            const particlesCanvas = document.getElementById('particlesCanvas');
-            const pCtx = particlesCanvas.getContext('2d');
-            let particles = [];
-            const PARTICLE_COUNT = 100;
-            let pWidth, pHeight;
-
-            function resizeParticles() {
-                pWidth = particlesCanvas.width = window.innerWidth;
-                pHeight = particlesCanvas.height = window.innerHeight;
-            }
-            resizeParticles();
-            window.addEventListener('resize', () => {
-                resizeParticles();
-                initParticles();
-            });
-
-            class Particle {
-                constructor() { this.reset(); }
-                reset() {
-                    this.x = Math.random() * pWidth;
-                    this.y = Math.random() * pHeight;
-                    this.vx = (Math.random() - 0.5) * 0.35;
-                    this.vy = (Math.random() - 0.5) * 0.35;
-                    this.radius = Math.random() * 2.2 + 0.8;
-                    this.alpha = Math.random() * 0.5 + 0.2;
-                    this.alphaSpeed = (Math.random() - 0.5) * 0.008;
-                }
-                update() {
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.alpha += this.alphaSpeed;
-                    if (this.alpha > 0.7) this.alphaSpeed = -Math.abs(this.alphaSpeed);
-                    if (this.alpha < 0.15) this.alphaSpeed = Math.abs(this.alphaSpeed);
-                    if (this.x < -20) this.x = pWidth + 20;
-                    if (this.x > pWidth + 20) this.x = -20;
-                    if (this.y < -20) this.y = pHeight + 20;
-                    if (this.y > pHeight + 20) this.y = -20;
-                }
-                draw(ctx) {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(180,170,230,${this.alpha})`;
-                    ctx.fill();
-                    // glow
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius * 1.8, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(160,140,220,${this.alpha*0.25})`;
-                    ctx.fill();
-                }
-            }
-
-            function initParticles() {
-                particles = [];
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    particles.push(new Particle());
-                }
-            }
-            initParticles();
-
-            function drawConnections(ctx) {
-                const maxDist = 100;
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < maxDist) {
-                            const alpha = (1 - dist / maxDist) * 0.18;
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.strokeStyle = `rgba(180,170,230,${alpha})`;
-                            ctx.lineWidth = 0.6;
-                            ctx.stroke();
-                        }
-                    }
-                }
-            }
-
-            function animateParticles() {
-                pCtx.clearRect(0, 0, pWidth, pHeight);
-                particles.forEach(p => { p.update();
-                    p.draw(pCtx); });
-                drawConnections(pCtx);
-                requestAnimationFrame(animateParticles);
-            }
-            animateParticles();
-
-            // ==================== TOAST ====================
-            const toast = document.getElementById('toast');
-            let toastTimeout;
-
-            function showToast(msg) {
-                toast.textContent = msg;
-                toast.classList.add('show');
-                clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => toast.classList.remove('show'), 2200);
-            }
-
-            // ==================== TAB SWITCHING ====================
-            const tabBar = document.getElementById('tabBar');
-            const tabBtns = tabBar.querySelectorAll('.tab-btn');
-            const screens = {
-                calendar: document.getElementById('screen-calendar'),
-                diary: document.getElementById('screen-diary'),
-                countdown: document.getElementById('screen-countdown'),
-                clock: document.getElementById('screen-clock'),
-            };
-            const headerSubtitle = document.getElementById('headerSubtitle');
-            const screenNames = {
-                calendar: 'Âm Dương · Ngày lễ',
-                diary: 'Chụp ảnh · Ghi chú',
-                countdown: 'Đếm ngược sự kiện',
-                clock: 'Giờ hiện tại',
-            };
-            let currentScreen = 'calendar';
-
-            function switchScreen(screenName) {
-                if (currentScreen === screenName) return;
-                Object.values(screens).forEach(s => s.classList.remove('active'));
-                screens[screenName].classList.add('active');
-                tabBtns.forEach(b => b.classList.remove('active'));
-                const activeBtn = tabBar.querySelector(`[data-screen="${screenName}"]`);
-                if (activeBtn) activeBtn.classList.add('active');
-                currentScreen = screenName;
-                headerSubtitle.textContent = screenNames[screenName] || '';
-                if (screenName === 'clock') updateClock();
-                if (screenName === 'countdown') updateCountdown();
-                if (screenName === 'calendar') renderCalendar();
-            }
-
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    switchScreen(btn.dataset.screen);
-                });
-            });
-
-            // ==================== ÂM LỊCH ====================
-            const PI = Math.PI;
-
-            function jdFromDate(dd, mm, yy) {
-                let a = Math.floor((14 - mm) / 12);
-                let y = yy + 4800 - a;
-                let m = mm + 12 * a - 3;
-                let jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) +
-                    Math.floor(y / 400) - 32045;
-                return jd;
-            }
-
-            function jdToDate(jd) {
-                let a = jd + 32044;
-                let b = Math.floor((4 * a + 3) / 146097);
-                let c = a - Math.floor((b * 146097) / 4);
-                let d = Math.floor((4 * c + 3) / 1461);
-                let e = c - Math.floor((1461 * d) / 4);
-                let m = Math.floor((5 * e + 2) / 153);
-                let dd = e - Math.floor((153 * m + 2) / 5) + 1;
-                let mm = m + 3 - 12 * Math.floor(m / 10);
-                let yy = b * 100 + d - 4800 + Math.floor(m / 10);
-                return [dd, mm, yy];
-            }
-
-            function getNewMoonDay(k, timeZone) {
-                const T = k / 1236.85;
-                const T2 = T * T;
-                const T3 = T2 * T;
-                const dr = PI / 180;
-                let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
-                Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
-                const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
-                const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
-                const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
-                let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * M * dr);
-                C1 -= 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(2 * Mpr * dr);
-                C1 -= 0.0004 * Math.sin(3 * Mpr * dr);
-                C1 += 0.0104 * Math.sin(2 * F * dr) - 0.0051 * Math.sin((M + Mpr) * dr);
-                C1 -= 0.0074 * Math.sin((M - Mpr) * dr) + 0.0004 * Math.sin((2 * F + M) * dr);
-                C1 -= 0.0004 * Math.sin((2 * F - M) * dr) - 0.0006 * Math.sin((2 * F + Mpr) * dr);
-                C1 += 0.001 * Math.sin((2 * F - Mpr) * dr) + 0.0005 * Math.sin((M + 2 * Mpr) * dr);
-                const JdNew = Jd1 + C1;
-                return Math.floor(JdNew + 0.5 + timeZone / 24);
-            }
-
-            function getSunLongitude(jd, timeZone) {
-                const T = (jd - 2451545.5 - timeZone / 24) / 36525;
-                const T2 = T * T;
-                const dr = PI / 180;
-                const M = 357.5291 + 35999.0503 * T - 0.0001559 * T2 - 0.00000048 * T * T2;
-                const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T2;
-                let DL = (1.9146 - 0.004817 * T - 0.000014 * T2) * Math.sin(M * dr);
-                DL += (0.019993 - 0.000101 * T) * Math.sin(2 * M * dr) + 0.00029 * Math.sin(3 * M * dr);
-                let L = L0 + DL;
-                L -= Math.floor(L / 360) * 360;
-                return L;
-            }
-
-            function getLunarMonth11(yy, timeZone) {
-                const off = jdFromDate(31, 12, yy) - 2415021;
-                const k = Math.floor(off / 29.530588853);
-                let nm = getNewMoonDay(k, timeZone);
-                const sunLong = getSunLongitude(nm, timeZone);
-                if (sunLong >= 9) nm = getNewMoonDay(k - 1, timeZone);
-                return nm;
-            }
-
-            function getLeapMonthOffset(a11, timeZone) {
-                const k = Math.floor((a11 - 2415021.076998695) / 29.530588853 + 0.5);
-                let last = 0;
-                let i = 1;
-                let arc = getSunLongitude(getNewMoonDay(k + i, timeZone), timeZone);
-                do {
-                    last = arc;
-                    i++;
-                    arc = getSunLongitude(getNewMoonDay(k + i, timeZone), timeZone);
-                } while (arc !== last && i < 14);
-                return i - 1;
-            }
-
-            function solar2lunar(dd, mm, yy, timeZone = 7) {
-                const a11 = getLunarMonth11(yy, timeZone);
-                const b11 = a11;
-                let lunarDay, lunarMonth, lunarYear, lunarLeap;
-                if (b11 <= jdFromDate(dd, mm, yy)) {
-                    lunarYear = yy;
-                } else {
-                    lunarYear = yy - 1;
-                }
-                const a11Prev = getLunarMonth11(lunarYear, timeZone);
-                const leapOffset = getLeapMonthOffset(a11Prev, timeZone);
-                const diff = Math.floor((jdFromDate(dd, mm, yy) - a11Prev) / 29.530588853);
-                let month = diff + 11;
-                let leap = false;
-                if (leapOffset >= 12 && month >= leapOffset) {
-                    month--;
-                    if (month === leapOffset) leap = true;
-                }
-                if (month > 12) month -= 12;
-                if (month <= 0) month += 12;
-                const jd = jdFromDate(dd, mm, yy);
-                const nm = getNewMoonDay(Math.floor((jd - 2415021.076998695) / 29.530588853), timeZone);
-                lunarDay = jd - nm + 1;
-                if (lunarDay < 1) lunarDay = 1;
-                if (lunarDay > 30) lunarDay = 30;
-                lunarMonth = month;
-                lunarLeap = leap;
-                return {
-                    lunarDay,
-                    lunarMonth,
-                    lunarYear,
-                    lunarLeap,
-                    jd
-                };
-            }
-
-            // ==================== NGÀY LỄ ====================
-            const solarHolidays = {
-                '1-1': 'Tết Dương lịch 🎉',
-                '14-2': 'Valentine 💕',
-                '8-3': 'Quốc tế Phụ nữ 👩',
-                '30-4': 'Thống nhất đất nước 🇻🇳',
-                '1-5': 'Quốc tế Lao động ✊',
-                '2-9': 'Quốc khánh Việt Nam 🎆',
-                '20-10': 'Phụ nữ Việt Nam 🌹',
-                '20-11': 'Nhà giáo Việt Nam 📚',
-                '25-12': 'Giáng sinh 🎄',
-            };
-            const lunarHolidays = {
-                '1-1': 'Tết Nguyên đán 🧧',
-                '15-1': 'Rằm tháng Giêng 🏮',
-                '10-3': 'Giỗ tổ Hùng Vương 👑',
-                '5-5': 'Tết Đoan Ngọ 🍚',
-                '15-7': 'Rằm tháng 7 / Vu Lan 🌸',
-                '15-8': 'Tết Trung thu 🥮',
-                '23-12': 'Ông Công Ông Táo 🐟',
-            };
-
-            function getHolidayInfo(solarDay, solarMonth, lunarDay, lunarMonth, lunarLeap) {
-                const solarKey = `${solarDay}-${solarMonth}`;
-                const lunarKey = `${lunarDay}-${lunarMonth}`;
-                const info = { solarHoliday: null, lunarHoliday: null, isSolarHoliday: false, isLunarHoliday: false };
-                if (solarHolidays[solarKey]) {
-                    info.solarHoliday = solarHolidays[solarKey];
-                    info.isSolarHoliday = true;
-                }
-                if (!lunarLeap && lunarHolidays[lunarKey]) {
-                    info.lunarHoliday = lunarHolidays[lunarKey];
-                    info.isLunarHoliday = true;
-                }
-                return info;
-            }
-
-            // ==================== LỊCH ====================
-            let calYear, calMonth;
-
-            function initCalDate() {
-                const now = new Date();
-                calYear = now.getFullYear();
-                calMonth = now.getMonth() + 1;
-            }
-            initCalDate();
-
-            function renderCalendar() {
-                const grid = document.getElementById('calendarGrid');
-                const label = document.getElementById('calMonthLabel');
-                const today = new Date();
-                const tDay = today.getDate();
-                const tMonth = today.getMonth() + 1;
-                const tYear = today.getFullYear();
-
-                label.textContent = `Tháng ${calMonth} / ${calYear}`;
-                const firstDayOfMonth = new Date(calYear, calMonth - 1, 1);
-                const startDayOfWeek = firstDayOfMonth.getDay(); // 0=CN
-                const daysInMonth = new Date(calYear, calMonth, 0).getDate();
-                const daysInPrevMonth = new Date(calYear, calMonth - 1, 0).getDate();
-
-                let html = '';
-                const headers = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-                headers.forEach((h, i) => {
-                    const cls = (i === 0) ? 'day-header weekend' : 'day-header';
-                    html += `<div class="${cls}">${h}</div>`;
-                });
-
-                // Prev month cells
-                for (let i = startDayOfWeek - 1; i >= 0; i--) {
-                    const d = daysInPrevMonth - i;
-                    const pm = calMonth === 1 ? 12 : calMonth - 1;
-                    const py = calMonth === 1 ? calYear - 1 : calYear;
-                    const lunar = solar2lunar(d, pm, py);
-                    html +=
-                        `<div class="calendar-cell other-month"><span class="solar">${d}</span><span class="lunar">${lunar.lunarDay}/${lunar.lunarMonth}</span></div>`;
-                }
-
-                // Current month
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const lunar = solar2lunar(d, calMonth, calYear);
-                    const holidayInfo = getHolidayInfo(d, calMonth, lunar.lunarDay, lunar.lunarMonth, lunar.lunarLeap);
-                    let cls = 'calendar-cell';
-                    if (d === tDay && calMonth === tMonth && calYear === tYear) cls += ' today';
-                    if (holidayInfo.isSolarHoliday) cls += ' holiday';
-                    if (holidayInfo.isLunarHoliday) cls += ' lunar-holiday';
-                    let dots = '';
-                    if (holidayInfo.isSolarHoliday) dots += '<span class="holiday-dot"></span>';
-                    if (holidayInfo.isLunarHoliday) dots += '<span class="holiday-dot lunar-holiday-dot"></span>';
-                    const lunarDisplay = lunar.lunarLeap ? `N${lunar.lunarDay}/${lunar.lunarMonth}` :
-                        `${lunar.lunarDay}/${lunar.lunarMonth}`;
-                    const lunarTitle =
-                        `ÂL: ${lunar.lunarLeap?'Nhuận ':''}${lunar.lunarDay}/${lunar.lunarMonth}/${lunar.lunarYear}`;
-                    html +=
-                        `<div class="${cls}" data-solar="${d}/${calMonth}/${calYear}" data-lunar-title="${lunarTitle}" data-lunar-day="${lunar.lunarDay}" data-lunar-month="${lunar.lunarMonth}" data-lunar-leap="${lunar.lunarLeap}" data-solar-holiday="${holidayInfo.solarHoliday||''}" data-lunar-holiday="${holidayInfo.lunarHoliday||''}">
-                <span class="solar">${d}</span><span class="lunar">${lunarDisplay}</span>${dots}</div>`;
-                }
-
-                // Next month cells
-                const totalCells = startDayOfWeek + daysInMonth;
-                const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-                for (let d = 1; d <= remaining; d++) {
-                    const nm = calMonth === 12 ? 1 : calMonth + 1;
-                    const ny = calMonth === 12 ? calYear + 1 : calYear;
-                    const lunar = solar2lunar(d, nm, ny);
-                    html +=
-                        `<div class="calendar-cell other-month"><span class="solar">${d}</span><span class="lunar">${lunar.lunarDay}/${lunar.lunarMonth}</span></div>`;
-                }
-
-                grid.innerHTML = html;
-
-                // Click handlers
-                grid.querySelectorAll('.calendar-cell:not(.other-month)').forEach(cell => {
-                    cell.addEventListener('click', () => {
-                        const solar = cell.dataset.solar;
-                        const lunarTitle = cell.dataset.lunarTitle;
-                        const solarHoliday = cell.dataset.solarHoliday;
-                        const lunarHoliday = cell.dataset.lunarHoliday;
-                        let infoText = `📅 Dương lịch: ${solar}\n🌙 Âm lịch: ${lunarTitle}`;
-                        if (solarHoliday) infoText += `\n🎈 Lễ dương: ${solarHoliday}`;
-                        if (lunarHoliday) infoText += `\n🏮 Lễ âm: ${lunarHoliday}`;
-                        document.getElementById('selectedDayInfo').innerHTML = infoText.replace(/\n/g,
-                            '<br>');
-                    });
-                });
-            }
-
-            document.getElementById('calPrevMonth').addEventListener('click', () => {
-                calMonth--;
-                if (calMonth < 1) { calMonth = 12;
-                    calYear--; }
-                renderCalendar();
-            });
-            document.getElementById('calNextMonth').addEventListener('click', () => {
-                calMonth++;
-                if (calMonth > 12) { calMonth = 1;
-                    calYear++; }
-                renderCalendar();
-            });
-            document.getElementById('calToday').addEventListener('click', () => {
-                initCalDate();
-                renderCalendar();
-            });
-            renderCalendar();
-
-            // ==================== NHẬT KÝ ====================
-            const cameraVideo = document.getElementById('cameraVideo');
-            const cameraCanvas = document.getElementById('cameraCanvas');
-            const capturedPreview = document.getElementById('capturedPreview');
-            const cameraPlaceholder = document.getElementById('cameraPlaceholder');
-            const btnOpenCamera = document.getElementById('btnOpenCamera');
-            const btnCapture = document.getElementById('btnCapture');
-            const btnCloseCamera = document.getElementById('btnCloseCamera');
-            const fileInput = document.getElementById('fileInput');
-            const diaryText = document.getElementById('diaryText');
-            const btnSaveDiary = document.getElementById('btnSaveDiary');
-            const diaryEntriesDiv = document.getElementById('diaryEntries');
-            let cameraStream = null;
-            let capturedImageData = null;
-            let diaryEntries = [];
-
-            function loadDiaryEntries() {
-                try {
-                    const data = localStorage.getItem('diary_entries');
-                    diaryEntries = data ? JSON.parse(data) : [];
-                } catch (e) {
-                    diaryEntries = [];
-                }
-            }
-
-            function saveDiaryEntries() {
-                localStorage.setItem('diary_entries', JSON.stringify(diaryEntries));
-            }
-
-            function renderDiaryEntries() {
-                if (diaryEntries.length === 0) {
-                    diaryEntriesDiv.innerHTML =
-                        '<div style="color:#666;text-align:center;padding:20px;">Chưa có mục nhật ký nào</div>';
-                    return;
-                }
-                diaryEntriesDiv.innerHTML = diaryEntries.map((entry, index) => `
-            <div class="diary-entry">
-              ${entry.image ? `<img src="${entry.image}" alt="entry image" loading="lazy">` : ''}
-              <div class="entry-info">
-                <div class="entry-date">${entry.date}</div>
-                <div class="entry-text">${entry.text || '(không có ghi chú)'}</div>
-              </div>
-              <button class="delete-entry" data-index="${index}" title="Xóa">🗑️</button>
-            </div>
-          `).join('');
-                diaryEntriesDiv.querySelectorAll('.delete-entry').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const idx = parseInt(btn.dataset.index);
-                        diaryEntries.splice(idx, 1);
-                        saveDiaryEntries();
-                        renderDiaryEntries();
-                        showToast('Đã xóa mục nhật ký');
-                    });
-                });
-            }
-
-            async function openCamera() {
-                try {
-                    cameraStream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
-                        audio: false
-                    });
-                    cameraVideo.srcObject = cameraStream;
-                    cameraVideo.style.display = 'block';
-                    capturedPreview.style.display = 'none';
-                    cameraPlaceholder.style.display = 'none';
-                    btnOpenCamera.style.display = 'none';
-                    btnCapture.style.display = 'inline-flex';
-                    btnCloseCamera.style.display = 'inline-flex';
-                    capturedImageData = null;
-                } catch (err) {
-                    showToast('Không thể mở camera. Hãy chọn ảnh từ thư viện.');
-                    console.log('Camera error:', err);
-                }
-            }
-
-            function closeCamera() {
-                if (cameraStream) {
-                    cameraStream.getTracks().forEach(t => t.stop());
-                    cameraStream = null;
-                }
-                cameraVideo.style.display = 'none';
-                cameraVideo.srcObject = null;
-                btnOpenCamera.style.display = 'inline-flex';
-                btnCapture.style.display = 'none';
-                btnCloseCamera.style.display = 'none';
-                if (!capturedImageData) {
-                    capturedPreview.style.display = 'none';
-                    cameraPlaceholder.style.display = 'flex';
-                }
-            }
-
-            function capturePhoto() {
-                if (!cameraStream) return;
-                const video = cameraVideo;
-                const canvas = cameraCanvas;
-                canvas.width = video.videoWidth || 640;
-                canvas.height = video.videoHeight || 480;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
-                capturedPreview.src = capturedImageData;
-                capturedPreview.style.display = 'block';
-                cameraPlaceholder.style.display = 'none';
-                cameraVideo.style.display = 'none';
-                closeCamera();
-                showToast('📸 Đã chụp ảnh!');
-            }
-
-            btnOpenCamera.addEventListener('click', openCamera);
-            btnCapture.addEventListener('click', capturePhoto);
-            btnCloseCamera.addEventListener('click', closeCamera);
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    capturedImageData = ev.target.result;
-                    capturedPreview.src = capturedImageData;
-                    capturedPreview.style.display = 'block';
-                    cameraPlaceholder.style.display = 'none';
-                    if (cameraStream) closeCamera();
-                    showToast('🖼️ Đã chọn ảnh từ thư viện');
-                };
-                reader.readAsDataURL(file);
-            });
-            btnSaveDiary.addEventListener('click', () => {
-                if (!capturedImageData) {
-                    showToast('Vui lòng chụp hoặc chọn ảnh trước!');
-                    return;
-                }
-                const now = new Date();
-                const dateStr = now.toLocaleString('vi-VN', { dateStyle: 'medium', timeStyle: 'short' });
-                diaryEntries.unshift({
-                    image: capturedImageData,
-                    text: diaryText.value.trim(),
-                    date: dateStr,
-                });
-                if (diaryEntries.length > 50) diaryEntries = diaryEntries.slice(0, 50);
-                saveDiaryEntries();
-                renderDiaryEntries();
-                capturedImageData = null;
-                capturedPreview.style.display = 'none';
-                cameraPlaceholder.style.display = 'flex';
-                diaryText.value = '';
-                showToast('✅ Đã lưu nhật ký!');
-            });
-
-            loadDiaryEntries();
-            renderDiaryEntries();
-
-            // ==================== ĐẾM NGÀY ====================
-            const countdownNumber = document.getElementById('countdownNumber');
-            const countdownLabel = document.getElementById('countdownLabel');
-            const countdownEventName = document.getElementById('countdownEventName');
-            const countdownDateInput = document.getElementById('countdownDate');
-            const countdownNameInput = document.getElementById('countdownName');
-
-            function updateCountdown() {
-                const dateVal = countdownDateInput.value;
-                const eventName = countdownNameInput.value.trim() || 'Sự kiện';
-                countdownEventName.textContent = eventName;
-                if (!dateVal) {
-                    countdownNumber.textContent = '—';
-                    countdownLabel.textContent = 'chọn ngày';
-                    return;
-                }
-                const targetDate = new Date(dateVal + 'T00:00:00');
-                const now = new Date();
-                now.setHours(0, 0, 0, 0);
-                const diffTime = targetDate - now;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                countdownNumber.textContent = Math.abs(diffDays);
-                if (diffDays > 0) {
-                    countdownLabel.textContent = 'ngày còn lại';
-                } else if (diffDays === 0) {
-                    countdownLabel.textContent = '🎉 HÔM NAY!';
-                    countdownNumber.textContent = '0';
-                } else {
-                    countdownLabel.textContent = 'ngày đã qua';
-                }
-            }
-
-            countdownDateInput.addEventListener('change', updateCountdown);
-            countdownNameInput.addEventListener('input', updateCountdown);
-
-            document.querySelectorAll('.preset-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    const days = chip.dataset.days;
-                    const event = chip.dataset.event;
-                    if (days !== undefined) {
-                        const target = new Date();
-                        target.setDate(target.getDate() + parseInt(days));
-                        countdownDateInput.value = target.toISOString().split('T')[0];
-                        if (!countdownNameInput.value.trim()) {
-                            countdownNameInput.value = days === '0' ? 'Hôm nay' : days ===
-                                '7' ? '1 tuần' : days === '30' ? '30 ngày' : '1 năm';
-                        }
-                    } else if (event === 'tet') {
-                        countdownDateInput.value = '2027-02-17';
-                        countdownNameInput.value = 'Tết Nguyên đán 2027 🧧';
-                    } else if (event === 'noel') {
-                        const yr = new Date().getFullYear();
-                        countdownDateInput.value = `${yr}-12-25`;
-                        countdownNameInput.value = `Giáng sinh ${yr} 🎄`;
-                    }
-                    updateCountdown();
-                });
-            });
-
-            // Set default
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            countdownDateInput.value = tomorrow.toISOString().split('T')[0];
-            countdownNameInput.value = 'Ngày mai';
-            updateCountdown();
-
-            // ==================== ĐỒNG HỒ ====================
-            const clockTimeEl = document.getElementById('clockTime');
-            const clockDateEl = document.getElementById('clockDate');
-            const clockSecondsBar = document.getElementById('clockSecondsBar');
-            const analogCanvas = document.getElementById('analogClock');
-            const aCtx = analogCanvas.getContext('2d');
-            const timezoneDisplay = document.getElementById('timezoneDisplay');
-            timezoneDisplay.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone +
-                ` (GMT${new Date().getTimezoneOffset()/-60>=0?'+':''}${-new Date().getTimezoneOffset()/60})`;
-
-            function drawAnalogClock() {
-                const now = new Date();
-                const cx = 100,
-                    cy = 100,
-                    r = 90;
-                aCtx.clearRect(0, 0, 200, 200);
-
-                // Outer ring
-                aCtx.beginPath();
-                aCtx.arc(cx, cy, r, 0, Math.PI * 2);
-                aCtx.strokeStyle = 'rgba(255,255,255,0.2)';
-                aCtx.lineWidth = 3;
-                aCtx.stroke();
-
-                // Tick marks
-                for (let i = 0; i < 60; i++) {
-                    const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
-                    const isHour = i % 5 === 0;
-                    const inner = isHour ? r - 14 : r - 7;
-                    const outer = r - 2;
-                    aCtx.beginPath();
-                    aCtx.moveTo(cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner);
-                    aCtx.lineTo(cx + Math.cos(angle) * outer, cy + Math.sin(angle) * outer);
-                    aCtx.strokeStyle = isHour ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)';
-                    aCtx.lineWidth = isHour ? 2 : 1;
-                    aCtx.stroke();
-                }
-
-                const h = now.getHours() % 12;
-                const m = now.getMinutes();
-                const s = now.getSeconds();
-                const ms = now.getMilliseconds();
-
-                // Hour hand
-                const hAngle = (h + m / 60) / 12 * Math.PI * 2 - Math.PI / 2;
-                aCtx.beginPath();
-                aCtx.moveTo(cx, cy);
-                aCtx.lineTo(cx + Math.cos(hAngle) * r * 0.5, cy + Math.sin(hAngle) * r * 0.5);
-                aCtx.strokeStyle = '#e0d0ff';
-                aCtx.lineWidth = 4;
-                aCtx.lineCap = 'round';
-                aCtx.stroke();
-
-                // Minute hand
-                const mAngle = (m + s / 60) / 60 * Math.PI * 2 - Math.PI / 2;
-                aCtx.beginPath();
-                aCtx.moveTo(cx, cy);
-                aCtx.lineTo(cx + Math.cos(mAngle) * r * 0.7, cy + Math.sin(mAngle) * r * 0.7);
-                aCtx.strokeStyle = '#b8d8ff';
-                aCtx.lineWidth = 3;
-                aCtx.stroke();
-
-                // Second hand
-                const sAngle = (s + ms / 1000) / 60 * Math.PI * 2 - Math.PI / 2;
-                aCtx.beginPath();
-                aCtx.moveTo(cx, cy);
-                aCtx.lineTo(cx + Math.cos(sAngle) * r * 0.8, cy + Math.sin(sAngle) * r * 0.8);
-                aCtx.strokeStyle = '#ff9eb5';
-                aCtx.lineWidth = 1.5;
-                aCtx.stroke();
-
-                // Center dot
-                aCtx.beginPath();
-                aCtx.arc(cx, cy, 5, 0, Math.PI * 2);
-                aCtx.fillStyle = '#fff';
-                aCtx.fill();
-                aCtx.beginPath();
-                aCtx.arc(cx, cy, 3, 0, Math.PI * 2);
-                aCtx.fillStyle = '#1a1a30';
-                aCtx.fill();
-            }
-
-            function updateClock() {
-                const now = new Date();
-                clockTimeEl.textContent = now.toLocaleTimeString('vi-VN', { hour12: false });
-                const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-                clockDateEl.textContent =
-                    `${weekdays[now.getDay()]}, ngày ${now.getDate()} tháng ${now.getMonth()+1} năm ${now.getFullYear()}`;
-                const secPercent = (now.getSeconds() / 60) * 100;
-                clockSecondsBar.style.width = secPercent + '%';
-                drawAnalogClock();
-            }
-
-            setInterval(() => {
-                if (currentScreen === 'clock') updateClock();
-            }, 200);
-            updateClock();
-
-            // ==================== INIT ====================
-            switchScreen('calendar');
-            renderCalendar();
-
-            console.log('✨ Ứng dụng Lịch Âm Dương & Nhật Ký & Đếm Ngày đã sẵn sàng!');
-            console.log('📅 Tab Lịch: Xem lịch âm dương, ngày lễ');
-            console.log('📝 Tab Nhật ký: Chụp ảnh + ghi chú, lưu localStorage');
-            console.log('⏳ Tab Đếm ngày: Đếm ngược đến sự kiện');
-            console.log('🕐 Tab Đồng hồ: Đồng hồ analog + digital');
-            console.log('🎨 Particles + Glassmorphism UI');
-        })();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
