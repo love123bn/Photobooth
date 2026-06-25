@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            
+
             // Remove active class from all
             navItems.forEach(nav => nav.classList.remove('active'));
             tabPanes.forEach(tab => tab.classList.remove('active'));
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('active');
             const targetId = item.getAttribute('data-target');
             document.getElementById(targetId).classList.add('active');
-            
+
             // Update title
             headerTitle.textContent = item.getAttribute('data-title');
 
@@ -43,8 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '01-01': '🎆 Tết Dương lịch',
         '04-30': '🎉 Giải phóng miền Nam',
         '05-01': '🌹 Quốc tế Lao động',
-        '09-01': '🇻🇳 Nghỉ bù Quốc khánh',
-        '09-02': '🇻🇳 Quốc khánh',
+        '09-02': 'Quốc khánh',
     };
 
     // Lunar holidays: key = "lunar-MM-DD"
@@ -69,11 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (p.type === 'day') dd = p.value.padStart(2, '0');
             }
             return m && dd ? `${m}-${dd}` : null;
-        } catch(e) { return null; }
+        } catch (e) { return null; }
     }
 
     function getHoliday(year, month, day) {
-        const solarKey = `${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const solarKey = `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         if (solarHolidays[solarKey]) return solarHolidays[solarKey];
         const lunarKey = getLunarMMDD(year, month, day);
         if (lunarKey && lunarHolidays[lunarKey]) return lunarHolidays[lunarKey];
@@ -118,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dayDiv.addEventListener('click', () => {
                 document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
                 dayDiv.classList.add('selected');
-                
+
                 // Sử dụng API Intl của trình duyệt để lấy lịch âm
                 let lunarStr = "";
                 let holidayName = "";
@@ -126,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const dateObj = new Date(currentYear, currentMonth, i);
                     const formatter = new Intl.DateTimeFormat('vi-VN-u-ca-chinese', { day: 'numeric', month: 'numeric' });
                     lunarStr = formatter.format(dateObj);
-                } catch(e) {
+                } catch (e) {
                     lunarStr = "Không hỗ trợ trên trình duyệt này";
                 }
                 holidayName = getHoliday(currentYear, currentMonth, i);
@@ -171,23 +170,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateClock() {
         const now = new Date();
-        
+
         // Analog
         const seconds = now.getSeconds();
         const secondsDegrees = ((seconds / 60) * 360);
         secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
 
         const mins = now.getMinutes();
-        const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6);
+        const minsDegrees = ((mins / 60) * 360) + ((seconds / 60) * 6);
         minHand.style.transform = `rotate(${minsDegrees}deg)`;
 
         const hours = now.getHours();
-        const hoursDegrees = ((hours / 12) * 360) + ((mins/60)*30);
+        const hoursDegrees = ((hours / 12) * 360) + ((mins / 60) * 30);
         hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
 
         // Digital
         digitalClock.textContent = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
+
         // Date
         currentDateDisplay.textContent = `${weekdays[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
     }
@@ -217,11 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStream = null;
     let currentFacingMode = 'user';
 
-    diaryPhotoGallery.addEventListener('change', function(e) {
+    diaryPhotoGallery.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 currentPhotoDataUrl = event.target.result;
                 photoPreview.src = currentPhotoDataUrl;
                 photoPreviewContainer.style.display = 'inline-block';
@@ -259,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCamFront.addEventListener('click', () => openCamera('user'));
     btnCamRear.addEventListener('click', () => openCamera('environment'));
     btnCloseCamera.addEventListener('click', closeCamera);
-    
+
     btnSwitchCamera.addEventListener('click', () => {
         openCamera(currentFacingMode === 'user' ? 'environment' : 'user');
     });
@@ -334,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Format for display
             const entryDate = new Date(entry.timestamp);
-            const displayTime = `${entryDate.getHours().toString().padStart(2,'0')}:${entryDate.getMinutes().toString().padStart(2,'0')} - ${entryDate.getDate()}/${entryDate.getMonth()+1}/${entryDate.getFullYear()}`;
+            const displayTime = `${entryDate.getHours().toString().padStart(2, '0')}:${entryDate.getMinutes().toString().padStart(2, '0')} - ${entryDate.getDate()}/${entryDate.getMonth() + 1}/${entryDate.getFullYear()}`;
 
             let innerHTML = `<div class="date">${displayTime}</div>`;
             if (entry.text) {
@@ -355,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Bind events
             entryDiv.querySelector('.delete').addEventListener('click', () => {
-                if(confirm('Bạn có chắc muốn xóa nhật ký này không?')) {
+                if (confirm('Bạn có chắc muốn xóa nhật ký này không?')) {
                     diaries = diaries.filter(d => d.id !== entry.id);
                     localStorage.setItem('diaries', JSON.stringify(diaries));
                     renderDiaries();
@@ -434,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
             root.style.setProperty('--bg-color', bg);
 
             // Save to localStorage
-            localStorage.setItem('theme', JSON.stringify({primary, secondary, bg}));
+            localStorage.setItem('theme', JSON.stringify({ primary, secondary, bg }));
         });
     });
 
@@ -448,11 +447,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved settings
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-        const {primary, secondary, bg} = JSON.parse(savedTheme);
+        const { primary, secondary, bg } = JSON.parse(savedTheme);
         root.style.setProperty('--primary-color', primary);
         root.style.setProperty('--secondary-color', secondary);
         root.style.setProperty('--bg-color', bg);
-        
+
         // Find and activate the correct button
         colorBtns.forEach(b => {
             if (b.getAttribute('data-primary') === primary) {
